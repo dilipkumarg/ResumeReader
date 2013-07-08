@@ -1,13 +1,18 @@
 package com.imaginea.resumereader.factory;
 
+import java.io.File;
 import java.io.IOException;
 
 public abstract class DocumentExtractor {
-	protected String filePath;
+	protected File docFile;
 
 	DocumentExtractor(String filePath) {
-		this.filePath = filePath;
+		this.docFile = new File(filePath);
 	}
 
-	public abstract String readDocument() throws IOException;
+	public String getFileName() throws IOException {
+		return this.docFile.getCanonicalPath();
+	}
+
+	public abstract String getTextContent() throws IOException;
 }

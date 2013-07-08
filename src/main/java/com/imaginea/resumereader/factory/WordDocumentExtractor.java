@@ -16,10 +16,10 @@ public class WordDocumentExtractor extends DocumentExtractor {
 
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	public String readDocument() throws IOException {
+	public String getTextContent() throws IOException {
 		HWPFDocument doc = null;
 		try {
-			FileInputStream istream = new FileInputStream(this.filePath);
+			FileInputStream istream = new FileInputStream(this.docFile);
 			doc = new HWPFDocument(istream);
 		} catch (FileNotFoundException fne) {
 			LOGGER.log(Level.SEVERE, "File Not Found Exception occured",

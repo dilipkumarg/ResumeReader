@@ -16,10 +16,10 @@ public class DocXExtractor extends DocumentExtractor {
 
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	public String readDocument() throws IOException {
+	public String getTextContent() throws IOException {
 		XWPFDocument docx = null;
 		try {
-			docx = new XWPFDocument(new FileInputStream(this.filePath));
+			docx = new XWPFDocument(new FileInputStream(this.docFile));
 		} catch (FileNotFoundException fne) {
 			LOGGER.log(Level.SEVERE, "File Not Found Exception occured",
 					fne.getMessage());

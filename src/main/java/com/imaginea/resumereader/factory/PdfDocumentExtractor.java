@@ -16,10 +16,10 @@ public class PdfDocumentExtractor extends DocumentExtractor {
 
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	public String readDocument() throws IOException {
+	public String getTextContent() throws IOException {
 		PdfReader pdfReader = null;
 		try {
-			pdfReader = new PdfReader(new FileInputStream(this.filePath));
+			pdfReader = new PdfReader(new FileInputStream(this.docFile));
 		} catch (FileNotFoundException fne) {
 			LOGGER.log(Level.SEVERE, "File Not Found Exception occured",
 					fne.getMessage());

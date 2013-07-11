@@ -47,10 +47,9 @@ public class ResumeIndexer {
 		return document;
 	}
 
-	public int appendIndexDirectory(File indexDir, File dataDir, Date timeStamp)
+	public int appendIndexDirectory(File dataDir, Date timeStamp)
 			throws IOException {
-		indexWriter = new IndexWriter(FSDirectory.open(indexDir), indexConfig);
-		indexDirectory(indexWriter, dataDir, timeStamp);
+		indexDirectory(dataDir, timeStamp);
 
 		int numIndexed = indexWriter.maxDoc();
 		indexWriter.close();
@@ -59,22 +58,22 @@ public class ResumeIndexer {
 
 	}
 
-	private void indexDirectory(IndexWriter indexWriter, File dataDir,
-			Date timeStamp) throws IOException {
+	private void indexDirectory(File dataDir, Date timeStamp)
+			throws IOException {
 
 		File[] files = dataDir.listFiles();
 		for (File f : files) {
 			if (f.isDirectory()) {
-				indexDirectory(indexWriter, f, timeStamp);
+				indexDirectory(f, timeStamp);
 			} else {
-				indexFileWithIndexWriter(indexWriter, f, timeStamp);
+				indexFileWithIndexWriter(f, timeStamp);
 			}
 		}
 
 	}
 
-	private void indexFileWithIndexWriter(IndexWriter indexWriter, File f,
-			Date timestamp) throws IOException {
+	private void indexFileWithIndexWriter(File f, Date timestamp)
+			throws IOException {
 		long millisec = f.lastModified();
 		Date lastModified = new Date(millisec);
 		if (f.isHidden() || f.isDirectory() || !f.canRead() || !f.exists()

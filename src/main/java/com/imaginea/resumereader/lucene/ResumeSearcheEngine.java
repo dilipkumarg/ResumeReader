@@ -1,5 +1,6 @@
 package com.imaginea.resumereader.lucene;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 public class ResumeSearcheEngine {
@@ -28,30 +30,27 @@ public class ResumeSearcheEngine {
 	private IndexSearcher searcher;
 
 	public ResumeSearcheEngine(String defaultField, String fileNameField,
-			Directory indexDirectory, int maxHits) {
+			File indexDir, int maxHits) throws IOException {
 		this.defaultField = defaultField;
 		this.fileNameField = fileNameField;
-		this.indexDirectory = indexDirectory;
+		this.indexDirectory = FSDirectory.open(indexDir);
 		this.maxHits = maxHits;
 	}
 
-	public SearchResult search(String queryString) throws IOException,
+	public SearchResult searchKey(String queryString) throws IOException,
 			ParseException {
 		long startTime = System.currentTimeMillis();
-		IndexSearcher searcher = null;
-
-		IndexReader ir = DirectoryReader.open(indexDirectory);
-		searcher = new IndexSearcher(ir);
-		QueryParser queryParser = new QueryParser(Version.LUCENE_43,
-				defaultField, new StandardAnalyzer(Version.LUCENE_43));
+		IndexReader indexReader = DirectoryReader.open(indexDirectory);
+		IndexSearcher searcher = new IndexSearcher(indexReader);
 		Query query;
+		
 		try {
-			query = queryParser.parse(queryString);
+			query = new QueryParser(Version.LUCENE_43, defaultField,
+					new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
 		} catch (ParseException pe) {
 			LOGGER.log(Level.SEVERE, "Parse error occured:", pe.getMessage());
 			throw new ParseException(pe.getMessage());
 		}
-
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				this.maxHits, true);
 		searcher.search(query, collector);

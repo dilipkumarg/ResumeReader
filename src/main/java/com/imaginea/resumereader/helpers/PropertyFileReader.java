@@ -11,6 +11,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.imaginea.resumereader.exceptions.ErrorCode;
+import com.imaginea.resumereader.exceptions.MyPropertyException;
+
 public class PropertyFileReader {
 	private final Properties properties;
 	private final String FILE_NAME = "config.properties";
@@ -20,7 +23,7 @@ public class PropertyFileReader {
 	private final String TIME_STAMP_FORMAT = "MM-dd-yyyy HH:mm:ss";
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	PropertyFileReader() throws IOException {
+	public PropertyFileReader() throws IOException {
 		properties = new Properties();
 		try {
 			properties.load(new FileInputStream(FILE_NAME));
@@ -36,8 +39,7 @@ public class PropertyFileReader {
 		}
 	}
 
-	private void createDefaultPropertyFile() throws FileNotFoundException,
-			IOException {
+	private void createDefaultPropertyFile() throws IOException {
 		properties.setProperty(INDEX_DIR, "");
 		properties.setProperty(FILE_DIR, "");
 		this.setLastTimeStamp(new Date());
@@ -52,8 +54,7 @@ public class PropertyFileReader {
 		}
 	}
 
-	public void setIndexDir(String indexDir) throws FileNotFoundException,
-			IOException {
+	public void setIndexDir(String indexDir) throws IOException {
 		properties.setProperty(INDEX_DIR, indexDir);
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
@@ -70,20 +71,18 @@ public class PropertyFileReader {
 	 * returns index directory path
 	 * 
 	 * @return indexDirPath
-	 * @throws IllegalArgumentException
+	 * @throws MyPropertyException
 	 */
-	public String getIndexDir() {
+	public String getIndexDir() throws MyPropertyException {
 		String indexDirPath = properties.getProperty(INDEX_DIR).trim();
 		if (indexDirPath.isEmpty()) {
-			LOGGER.log(Level.SEVERE,
-					"Index Directory Path empty, throwing NullPointerException");
-			throw new IllegalArgumentException("index Directory Path is Empty");
+			throw new MyPropertyException("Index Directory Path Empty",
+					ErrorCode.INDEX_DIR_EMPTY);
 		}
 		return indexDirPath;
 	}
 
-	public void setFileDir(String fileDir) throws FileNotFoundException,
-			IOException {
+	public void setFileDir(String fileDir) throws IOException {
 		properties.setProperty(FILE_DIR, fileDir);
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
@@ -100,15 +99,14 @@ public class PropertyFileReader {
 	 * returns file directory path
 	 * 
 	 * @return fileDirPath
-	 * @throws IllegalArgumentException
+	 * @throws MyPropertyException
 	 */
 
-	public String getFileDir() {
+	public String getFileDir() throws MyPropertyException {
 		String fileDirPath = properties.getProperty(FILE_DIR).trim();
 		if (fileDirPath.isEmpty()) {
-			LOGGER.log(Level.SEVERE,
-					"File Directory Path empty, throwing NullPointerException");
-			throw new IllegalArgumentException("File Directory Path is Empty");
+			throw new MyPropertyException("File Directory Path is Empty",
+					ErrorCode.FILE_DIR_EMPTY);
 		}
 		return fileDirPath;
 	}

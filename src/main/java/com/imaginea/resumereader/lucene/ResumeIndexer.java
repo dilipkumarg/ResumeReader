@@ -2,6 +2,7 @@ package com.imaginea.resumereader.lucene;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +17,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import com.imaginea.resumereader.factory.DocumentExtractorFactory;
 import com.imaginea.resumereader.factory.DocumentExtractor;
 
 public class ResumeIndexer {
@@ -43,6 +45,52 @@ public class ResumeIndexer {
 		document.add(new TextField("content", content, Field.Store.YES));
 		document.add(new StringField("filename", fileName, Field.Store.YES));
 		return document;
+	}
+
+	public int appendIndexDirectory(File indexDir, File dataDir, Date timeStamp)
+			throws IOException {
+		indexWriter = new IndexWriter(FSDirectory.open(indexDir), indexConfig);
+		indexDirectory(indexWriter, dataDir, timeStamp);
+
+		int numIndexed = indexWriter.maxDoc();
+		indexWriter.close();
+
+		return numIndexed;
+
+	}
+
+	private void indexDirectory(IndexWriter indexWriter, File dataDir,
+			Date timeStamp) throws IOException {
+
+		File[] files = dataDir.listFiles();
+		for (File f : files) {
+			if (f.isDirectory()) {
+				indexDirectory(indexWriter, f, timeStamp);
+			} else {
+				indexFileWithIndexWriter(indexWriter, f, timeStamp);
+			}
+		}
+
+	}
+
+	private void indexFileWithIndexWriter(IndexWriter indexWriter, File f,
+			Date timestamp) throws IOException {
+		long millisec = f.lastModified();
+		Date lastModified = new Date(millisec);
+		if (f.isHidden() || f.isDirectory() || !f.canRead() || !f.exists()
+				|| lastModified.compareTo(timestamp) < 0) {
+			return;
+		}
+		String fullFilePath = f.getCanonicalPath();
+		String fileName = fullFilePath
+				.substring(fullFilePath.lastIndexOf("/") + 1);
+		System.out.println("Indexing file " + fileName);
+		DocumentExtractorFactory factory = new DocumentExtractorFactory();
+		Document doc = new Document();
+		String content = factory.getDocExtractor(fullFilePath).getTextContent();
+		doc.add(new TextField("contents", content, Field.Store.YES));
+		doc.add(new StringField("filename", fileName, Field.Store.YES));
+		indexWriter.addDocument(doc);
 	}
 
 	public void indexResume(DocumentExtractor inputDoc) throws IOException {

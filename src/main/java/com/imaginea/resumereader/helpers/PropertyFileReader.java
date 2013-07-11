@@ -148,9 +148,4 @@ public class PropertyFileReader {
 		}
 		return prevTimeStamp;
 	}
-
-	public static void main(String[] args) throws IOException, ParseException {
-		PropertyFileReader pr = new PropertyFileReader();
-		System.out.println(pr.getFileDir());
-	}
 }

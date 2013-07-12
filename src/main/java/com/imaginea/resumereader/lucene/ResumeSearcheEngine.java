@@ -41,14 +41,13 @@ public class ResumeSearcheEngine {
 			ParseException {
 		long startTime = System.currentTimeMillis();
 		IndexReader indexReader = DirectoryReader.open(indexDirectory);
-		IndexSearcher searcher = new IndexSearcher(indexReader);
+		searcher = new IndexSearcher(indexReader);
 		Query query;
-		
 		try {
 			query = new QueryParser(Version.LUCENE_43, defaultField,
 					new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
 		} catch (ParseException pe) {
-			LOGGER.log(Level.SEVERE, "Parse error occured:", pe.getMessage());
+			LOGGER.log(Level.SEVERE, "Parse exception occured:", pe.getMessage());
 			throw new ParseException(pe.getMessage());
 		}
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
@@ -58,7 +57,6 @@ public class ResumeSearcheEngine {
 		long endTime = System.currentTimeMillis();
 		return new SearchResult(extractHits(hits), collector.getTotalHits(),
 				endTime - startTime, queryString);
-
 	}
 
 	private List<String> extractHits(ScoreDoc[] hits) throws IOException {

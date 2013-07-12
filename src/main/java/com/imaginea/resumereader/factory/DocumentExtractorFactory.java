@@ -11,6 +11,8 @@ public class DocumentExtractorFactory {
 			documentExtractor = new DocXExtractor(filePath);
 		} else if (filePath.endsWith("pdf")) {
 			documentExtractor = new PdfDocumentExtractor(filePath);
+		} else {
+			throw new IllegalArgumentException("Unsupported File Format Found");
 		}
 		return documentExtractor;
 	}

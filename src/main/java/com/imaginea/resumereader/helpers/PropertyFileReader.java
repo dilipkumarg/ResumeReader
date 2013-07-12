@@ -12,13 +12,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.imaginea.resumereader.exceptions.ErrorCode;
-import com.imaginea.resumereader.exceptions.MyPropertyException;
+import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 
 public class PropertyFileReader {
 	private final Properties properties;
 	private final String FILE_NAME = "config.properties";
-	private final String INDEX_DIR = "indexDir";
-	private final String FILE_DIR = "fileDir";
+	private final String INDEX_DIR_PATH = "indexDir";
+	private final String RESUME_DIR_PATH = "fileDir";
 	private final String LAST_TIME_STAMP = "lastTimeStamp";
 	private final String TIME_STAMP_FORMAT = "MM-dd-yyyy HH:mm:ss";
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
@@ -40,9 +40,9 @@ public class PropertyFileReader {
 	}
 
 	private void createDefaultPropertyFile() throws IOException {
-		properties.setProperty(INDEX_DIR, "");
-		properties.setProperty(FILE_DIR, "");
-		this.setLastTimeStamp(new Date());
+		properties.setProperty(INDEX_DIR_PATH, "");
+		properties.setProperty(RESUME_DIR_PATH, "");
+		this.setLastTimeStamp(new Date(0));
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"Default property file");
@@ -54,8 +54,8 @@ public class PropertyFileReader {
 		}
 	}
 
-	public void setIndexDir(String indexDir) throws IOException {
-		properties.setProperty(INDEX_DIR, indexDir);
+	public void setIndexDirPath(String indexDir) throws IOException {
+		properties.setProperty(INDEX_DIR_PATH, indexDir);
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"index Directory updated");
@@ -71,19 +71,19 @@ public class PropertyFileReader {
 	 * returns index directory path
 	 * 
 	 * @return indexDirPath
-	 * @throws MyPropertyException
+	 * @throws MyPropertyFieldException
 	 */
-	public String getIndexDir() throws MyPropertyException {
-		String indexDirPath = properties.getProperty(INDEX_DIR).trim();
+	public String getIndexDirPath() throws MyPropertyFieldException {
+		String indexDirPath = properties.getProperty(INDEX_DIR_PATH).trim();
 		if (indexDirPath.isEmpty()) {
-			throw new MyPropertyException("Index Directory Path Empty",
+			throw new MyPropertyFieldException("Index Directory Path Empty",
 					ErrorCode.INDEX_DIR_EMPTY);
 		}
 		return indexDirPath;
 	}
 
-	public void setFileDir(String fileDir) throws IOException {
-		properties.setProperty(FILE_DIR, fileDir);
+	public void setResumeDirPath(String fileDir) throws IOException {
+		properties.setProperty(RESUME_DIR_PATH, fileDir);
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"File Directory updated");
@@ -99,13 +99,13 @@ public class PropertyFileReader {
 	 * returns file directory path
 	 * 
 	 * @return fileDirPath
-	 * @throws MyPropertyException
+	 * @throws MyPropertyFieldException
 	 */
 
-	public String getFileDir() throws MyPropertyException {
-		String fileDirPath = properties.getProperty(FILE_DIR).trim();
+	public String getResumeDirPath() throws MyPropertyFieldException {
+		String fileDirPath = properties.getProperty(RESUME_DIR_PATH).trim();
 		if (fileDirPath.isEmpty()) {
-			throw new MyPropertyException("File Directory Path is Empty",
+			throw new MyPropertyFieldException("File Directory Path is Empty",
 					ErrorCode.FILE_DIR_EMPTY);
 		}
 		return fileDirPath;

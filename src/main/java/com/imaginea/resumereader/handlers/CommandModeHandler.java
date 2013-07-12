@@ -5,7 +5,7 @@ import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.imaginea.resumereader.exceptions.MyPropertyException;
+import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 import com.imaginea.resumereader.services.ResumeService;
 
 public class CommandModeHandler implements Handler {
@@ -17,7 +17,7 @@ public class CommandModeHandler implements Handler {
 	}
 
 	public void intialize(String[] args) throws IOException,
-			MyPropertyException, ParseException,
+			MyPropertyFieldException, ParseException,
 			org.apache.lucene.queryparser.classic.ParseException {
 		String command = args[0];
 		if (command.equalsIgnoreCase("update")) {
@@ -36,7 +36,7 @@ public class CommandModeHandler implements Handler {
 	}
 
 	private void doOtherTasks(String[] args) throws IOException,
-			MyPropertyException,
+			MyPropertyFieldException,
 			org.apache.lucene.queryparser.classic.ParseException {
 		String command = args[0];
 		if (command.equalsIgnoreCase("indexdir")) {

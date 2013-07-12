@@ -1,4 +1,4 @@
-package com.imaginea.resumereader.factory;
+package com.imaginea.resumereader.docfactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -6,21 +6,20 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.extractor.WordExtractor;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
-public class WordDocumentExtractor extends DocumentExtractor {
-	WordDocumentExtractor(String filePath) {
+public class PdfDocumentExtractor extends DocumentExtractor {
+	PdfDocumentExtractor(String filePath) {
 		super(filePath);
 	}
 
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
 	public String getTextContent() throws IOException {
-		HWPFDocument doc = null;
+		PdfReader pdfReader = null;
 		try {
-			FileInputStream istream = new FileInputStream(this.docFile);
-			doc = new HWPFDocument(istream);
+			pdfReader = new PdfReader(new FileInputStream(this.docFile));
 		} catch (FileNotFoundException fne) {
 			LOGGER.log(Level.SEVERE, "File Not Found Exception occured",
 					fne.getMessage());
@@ -29,13 +28,13 @@ public class WordDocumentExtractor extends DocumentExtractor {
 			LOGGER.log(Level.SEVERE, "IOException occured", ie.getMessage());
 			throw new IOException(ie.getMessage(), ie);
 		}
-		WordExtractor docExtract = new WordExtractor(doc);
-		String[] data = docExtract.getParagraphText();
+		int pageCount = pdfReader.getNumberOfPages();
 		StringBuilder textContent = new StringBuilder();
 
-		for (int i = 0; i < data.length; i++) {
-			textContent.append(data[i]);
+		for (int i = 1; i <= pageCount; i++) {
+			textContent.append(PdfTextExtractor.getTextFromPage(pdfReader, i));
 		}
 		return textContent.toString();
 	}
+
 }

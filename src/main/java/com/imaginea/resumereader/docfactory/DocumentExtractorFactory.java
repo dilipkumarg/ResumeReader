@@ -1,4 +1,4 @@
-package com.imaginea.resumereader.factory;
+package com.imaginea.resumereader.docfactory;
 
 public class DocumentExtractorFactory {
 

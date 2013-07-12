@@ -1,7 +1,7 @@
 package com.imaginea.resumereader.exceptions;
 
 public enum ErrorCode {
-	FILE_DIR_EMPTY(201), INDEX_DIR_EMPTY(202);
+	RESUME_DIR_EMPTY(201), INDEX_DIR_EMPTY(202);
 
 	private final int number;
 

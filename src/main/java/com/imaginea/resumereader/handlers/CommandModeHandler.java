@@ -5,60 +5,89 @@ import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.imaginea.resumereader.exceptions.ErrorCode;
 import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 import com.imaginea.resumereader.services.ResumeService;
 
-public class CommandModeHandler implements Handler {
+public class CommandModeHandler extends Handler {
 	ResumeService resumeService;
-	private Logger LOGGER = Logger.getLogger(this.getClass().getName());
+	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	public CommandModeHandler() throws IOException {
+	public CommandModeHandler(String[] args) throws IOException {
+		super(args);
 		resumeService = new ResumeService();
 	}
 
-	public void intialize(String[] args) throws IOException,
-			MyPropertyFieldException, ParseException,
+	public void intialize() throws IOException, ParseException,
 			org.apache.lucene.queryparser.classic.ParseException {
-		String command = args[0];
-		if (command.equalsIgnoreCase("update")) {
-			resumeService.updateIndex();
-		} else {
-			// calling function because other than update we need one more
-			// parameter
-			try {
-				doOtherTasks(args);
-			} catch (IllegalArgumentException iae) {
-				LOGGER.log(Level.SEVERE,
-						"Illegal argument exception occured,\n ERROR: {0}",
-						new Object[] { iae.getMessage() });
+		String command = this.args[0];
+		try {
+			if (command.equalsIgnoreCase("update")) {
+				this.update();
+			} else if (command.equalsIgnoreCase("indexdir")) {
+				this.setIndexDirPath();
+			} else if (command.equalsIgnoreCase("resumedir")) {
+				this.setResumeDirPath();
+			} else if (command.equalsIgnoreCase("search")) {
+				this.search();
+			} else {
+				throw new IllegalArgumentException("Command not found");
 			}
+		} catch (IllegalArgumentException iae) {
+			LOGGER.log(Level.SEVERE,
+					"IllegalArgumentException occured,\n Error:{0}",
+					new Object[] { iae.getMessage() });
 		}
 	}
 
-	private void doOtherTasks(String[] args) throws IOException,
-			MyPropertyFieldException,
+	private void update() throws IOException, ParseException {
+		try {
+			resumeService.updateIndex();
+		} catch (MyPropertyFieldException mpe) {
+			this.printMyPropertyExceptionHelp(mpe);
+		}
+	}
+
+	private void setIndexDirPath() throws IOException {
+		if (this.args.length < 2) {
+			throw new IllegalArgumentException(
+					"Need one more parameter to perform this operation");
+		}
+		resumeService.setIndexDirPath(this.args[1]);
+	}
+
+	private void setResumeDirPath() throws IOException {
+		if (this.args.length < 2) {
+			throw new IllegalArgumentException(
+					"Need one more parameter to perform this operation");
+		}
+		resumeService.setResumeDirPath(this.args[1]);
+	}
+
+	private void search() throws IOException,
 			org.apache.lucene.queryparser.classic.ParseException {
-		String command = args[0];
-		if (command.equalsIgnoreCase("indexdir")) {
-			if (args.length < 2) {
-				throw new IllegalArgumentException(
-						"Need one more parameter to perform this operation");
-			}
-			resumeService.setIndexDirPath(args[1]);
-		} else if (command.equalsIgnoreCase("filedir")) {
-			if (args.length < 2) {
-				throw new IllegalArgumentException(
-						"Need one more parameter to perform this operation");
-			}
-			resumeService.setFileDirPath(args[1]);
-		} else if (command.equalsIgnoreCase("search")) {
-			if (args.length < 2) {
-				throw new IllegalArgumentException(
-						"Need one more parameter to perform this operation");
-			}
-			resumeService.search(args[1]);
+		if (this.args.length < 2) {
+			throw new IllegalArgumentException(
+					"Need one more parameter to perform this operation");
+		}
+		try {
+			resumeService.search(this.args[1]);
+		} catch (MyPropertyFieldException mpe) {
+			this.printMyPropertyExceptionHelp(mpe);
+		}
+	}
+
+	private void printMyPropertyExceptionHelp(MyPropertyFieldException mpe) {
+		if (mpe.getErrorCode() == ErrorCode.RESUME_DIR_EMPTY) {
+			System.out
+					.println("Resume Directory path not exists in the property File"
+							+ "\nplease set using \"resumedir <path>\"");
+		} else if (mpe.getErrorCode() == ErrorCode.INDEX_DIR_EMPTY) {
+			System.out
+					.println("Index Directory path not exists in the property File"
+							+ "\nplease set using \"indexdir <path>\"");
 		} else {
-			throw new IllegalArgumentException("Command not found");
+			System.out.println(mpe.getMessage());
 		}
 	}
 }

@@ -86,7 +86,7 @@ public class PropertyFileReader {
 		properties.setProperty(RESUME_DIR_PATH, fileDir);
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
-					"File Directory updated");
+					"Resume Directory updated");
 		} catch (IOException ie) {
 			LOGGER.log(Level.SEVERE,
 					"IOError occured. while writing property file\n ERROR:{0}",
@@ -106,7 +106,7 @@ public class PropertyFileReader {
 		String fileDirPath = properties.getProperty(RESUME_DIR_PATH).trim();
 		if (fileDirPath.isEmpty()) {
 			throw new MyPropertyFieldException("File Directory Path is Empty",
-					ErrorCode.FILE_DIR_EMPTY);
+					ErrorCode.RESUME_DIR_EMPTY);
 		}
 		return fileDirPath;
 	}

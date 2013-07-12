@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
@@ -15,6 +17,7 @@ public class ResumeService {
 	private PropertyFileReader properties;
 	private String RESUME_CONTENT_FIELD = "content";
 	private String RESUME_FILE_PATH_FIELD = "filename";
+	private Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
 	public ResumeService() throws IOException {
 		properties = new PropertyFileReader();
@@ -27,6 +30,10 @@ public class ResumeService {
 			indexDirPath = properties.getIndexDirPath();
 			resumeDirPath = properties.getResumeDirPath();
 		} catch (MyPropertyFieldException mpe) {
+			LOGGER.log(
+					Level.SEVERE,
+					"Property Field Exception occured, \nError Code:{0}\n Error:{1}",
+					new Object[] { mpe.getErrorCode(), mpe.getMessage() });
 			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
 		Date prevTimeStamp = properties.getLastTimeStamp();
@@ -43,6 +50,10 @@ public class ResumeService {
 		try {
 			indexDirPath = properties.getIndexDirPath();
 		} catch (MyPropertyFieldException mpe) {
+			LOGGER.log(
+					Level.SEVERE,
+					"Property Field Exception occured, \nError Code:{0}\n Error:{1}",
+					new Object[] { mpe.getErrorCode(), mpe.getMessage() });
 			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
 		ResumeSearcheEngine searchEngine = new ResumeSearcheEngine(
@@ -56,7 +67,7 @@ public class ResumeService {
 		properties.setIndexDirPath(indexDirPath);
 	}
 
-	public void setFileDirPath(String fileDirPath) throws IOException {
+	public void setResumeDirPath(String fileDirPath) throws IOException {
 		properties.setResumeDirPath(fileDirPath);
 	}
 }

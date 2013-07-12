@@ -62,6 +62,7 @@ public class ResumeIndexer {
 			if (file.isDirectory()
 					&& !file.getCanonicalPath().equalsIgnoreCase(
 							indexDir.getDirectory().getCanonicalPath())) {
+				// recursive calls
 				indexDirectory(file, timeStamp);
 			} else {
 				indexFile(file, timeStamp);
@@ -74,6 +75,7 @@ public class ResumeIndexer {
 		Date lastModified = new Date(millisec);
 		String filePath = f.getCanonicalPath();
 		LOGGER.log(Level.INFO, "Indexing File: {0}", new Object[] { filePath });
+		// checking for new file
 		if (!isValidFile(f) || lastModified.compareTo(timestamp) < 0) {
 			LOGGER.log(Level.INFO, "Not a Valid file or no change in file ");
 			return;

@@ -44,7 +44,7 @@ public class CommandModeHandler extends Handler {
 		try {
 			resumeService.updateIndex();
 		} catch (MyPropertyFieldException mpe) {
-			this.printMyPropertyExceptionHelp(mpe);
+			this.printPropertyExceptionHelp(mpe);
 		}
 	}
 
@@ -73,11 +73,11 @@ public class CommandModeHandler extends Handler {
 		try {
 			resumeService.search(this.args[1]);
 		} catch (MyPropertyFieldException mpe) {
-			this.printMyPropertyExceptionHelp(mpe);
+			this.printPropertyExceptionHelp(mpe);
 		}
 	}
 
-	private void printMyPropertyExceptionHelp(MyPropertyFieldException mpe) {
+	private void printPropertyExceptionHelp(MyPropertyFieldException mpe) {
 		if (mpe.getErrorCode() == ErrorCode.RESUME_DIR_EMPTY) {
 			System.out
 					.println("Resume Directory path not exists in the property File"

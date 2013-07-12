@@ -30,7 +30,7 @@ public class ResumeService {
 			indexDirPath = properties.getIndexDirPath();
 			resumeDirPath = properties.getResumeDirPath();
 		} catch (MyPropertyFieldException mpe) {
-			this.logPropertyFiledException(mpe);
+			this.logPropertyFieldException(mpe, "updateindex");
 			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
 		Date prevTimeStamp = properties.getLastTimeStamp();
@@ -48,7 +48,7 @@ public class ResumeService {
 		try {
 			indexDirPath = properties.getIndexDirPath();
 		} catch (MyPropertyFieldException mpe) {
-			this.logPropertyFiledException(mpe);
+			this.logPropertyFieldException(mpe, "search");
 			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
 		ResumeSearcheEngine searchEngine = new ResumeSearcheEngine(
@@ -66,10 +66,11 @@ public class ResumeService {
 		properties.setResumeDirPath(fileDirPath);
 	}
 
-	private void logPropertyFiledException(MyPropertyFieldException mpe) {
-		LOGGER.log(
-				Level.SEVERE,
-				"Property Field Exception occured, \nError Code:{0}\n Error:{1}",
-				new Object[] { mpe.getErrorCode(), mpe.getMessage() });
+	private void logPropertyFieldException(MyPropertyFieldException mpe,
+			String method) {
+		LOGGER.log(Level.SEVERE, "Property Field Exception occured, "
+				+ "\n\tReported Method: {0} "
+				+ "\n\tError Code:{1}\n\tError:{2}",
+				new Object[] { method, mpe.getErrorCode(), mpe.getMessage() });
 	}
 }

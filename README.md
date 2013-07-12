@@ -25,4 +25,5 @@ This project used maven build. so no need to worry about classpath settings  and
 ###Running:
 Presently we are supporting only command mode operations.
 Before indexing and searching initially you have to set the index directory path and resume directory path by using above commands.
+(or) else you can directly set this details by editing *config.properties* file
 

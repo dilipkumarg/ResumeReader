@@ -3,27 +3,27 @@ ResumeReader
 Resume Reader is java application used to index and search resumes.
 
 ###Supported Formats:
-Presently we are supporting following three document formats for reading resumes.
+Presently we are supporting following three document formats for indexing resumes.
  * doc,
  * docx and
  * pdf.
 
-###Commands:
- * indexdir <Path> : which is used to set the index directory path
- * resumedir <Path> : which is used to set the resume directory path
- * update: which is used to update the index, it will read the files in the "resumedir" folder, and adds to the index
- * search <Search key>: which is used to search the resumes for given search key.
+###Commands (All commands are NOT Case Sensitive):
+ * <strong>indexdir <Path> :</strong> This is used to set the index directory path.
+ * <strong>resumedir <Path> :</strong> This is used to set the resume directory path.
+ * <strong>update:</strong> This is used to update the index, it reads all the newly added files in the "resumedir" folder, and adds to the index i.e "indexdir".
+ * <strong>search <Search key>:</strong> This is used to search the resumes for a given search key. Use quotes when the search key contains spaces.
 
 ###Libraries Used: 
- * Apache Lucene: for indexing the resumes.
- * Apache Poi: for reading doc and docx files.
- * Itextpdf: for reading pdf files.
+ * Apache Lucene: For indexing and searching the resumes.
+ * Apache Poi: For reading doc and docx files.
+ * Itextpdf: For reading pdf files.
   
 ###Installation:
-This project used maven build. so no need to worry about classpath settings  and all.
+This project uses maven build, which takes care of libraries and classpaths. 
 
 ###Running:
-Presently we are supporting only command mode operations.
-Before indexing and searching initially you have to set the index directory path and resume directory path by using above commands.
-(or) else you can directly set this details by editing *config.properties* file
+Presently we support only command mode operations.
+Before indexing or searching, you need to set the index and resume directory paths by using the first two commands.
+(or) else you can directly set this details by editing <config.properties> which resides in project root directory. 
 

@@ -21,7 +21,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-public class ResumeSearcheEngine {
+public class ResumeSearchEngine {
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 	private String defaultField;
 	private String fileNameField;
@@ -29,7 +29,7 @@ public class ResumeSearcheEngine {
 	private int maxHits;
 	private IndexSearcher searcher;
 
-	public ResumeSearcheEngine(String defaultField, String fileNameField,
+	public ResumeSearchEngine(String defaultField, String fileNameField,
 			File indexDir, int maxHits) throws IOException {
 		this.defaultField = defaultField;
 		this.fileNameField = fileNameField;
@@ -47,7 +47,8 @@ public class ResumeSearcheEngine {
 			query = new QueryParser(Version.LUCENE_43, defaultField,
 					new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
 		} catch (ParseException pe) {
-			LOGGER.log(Level.SEVERE, "Parse exception occured:", pe.getMessage());
+			LOGGER.log(Level.SEVERE, "Parse exception occured:",
+					pe.getMessage());
 			throw new ParseException(pe.getMessage());
 		}
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
@@ -64,7 +65,7 @@ public class ResumeSearcheEngine {
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			hitList.add(d.getField(fileNameField).toString());
+			hitList.add(d.getField(fileNameField).stringValue());
 		}
 		return hitList;
 	}

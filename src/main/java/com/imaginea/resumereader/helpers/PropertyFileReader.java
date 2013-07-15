@@ -18,7 +18,7 @@ public class PropertyFileReader {
 	private final Properties properties;
 	private final String FILE_NAME = "config.properties";
 	private final String INDEX_DIR_PATH = "indexDir";
-	private final String RESUME_DIR_PATH = "fileDir";
+	private final String RESUME_DIR_PATH = "resumeDir";
 	private final String LAST_TIME_STAMP = "lastTimeStamp";
 	private final String TIME_STAMP_FORMAT = "MM-dd-yyyy HH:mm:ss";
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());

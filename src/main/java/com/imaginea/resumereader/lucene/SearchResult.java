@@ -24,11 +24,11 @@ public class SearchResult {
 		return this.totalHitCount;
 	}
 
-	public long searchDuration() {
+	public long getSearchDuration() {
 		return this.searchDuration;
 	}
 
-	public String query() {
+	public String getQuery() {
 		return this.query;
 	}
 }

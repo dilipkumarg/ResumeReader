@@ -23,44 +23,39 @@ public class ResumeService {
 		properties = new PropertyFileReader();
 	}
 
-	public void updateIndex() throws IOException, MyPropertyFieldException,
+	public int updateIndex() throws IOException, MyPropertyFieldException,
 			ParseException {
 		String indexDirPath, resumeDirPath;
 		try {
 			indexDirPath = properties.getIndexDirPath();
 			resumeDirPath = properties.getResumeDirPath();
 		} catch (MyPropertyFieldException mpe) {
-			LOGGER.log(
-					Level.SEVERE,
-					"Property Field Exception occured, \nError Code:{0}\n Error:{1}",
-					new Object[] { mpe.getErrorCode(), mpe.getMessage() });
+			this.logPropertyFieldException(mpe, "updateindex");
 			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
 		Date prevTimeStamp = properties.getLastTimeStamp();
 		ResumeIndexer resumeIndexer = new ResumeIndexer(new File(indexDirPath),
 				new File(resumeDirPath), RESUME_CONTENT_FIELD,
 				RESUME_FILE_PATH_FIELD);
-		resumeIndexer.appendIndexDirectory(prevTimeStamp);
+		int numIndexed = resumeIndexer.appendIndexDirectory(prevTimeStamp);
 		properties.setLastTimeStamp(new Date());
+		return numIndexed;
 	}
 
-	public void search(String query) throws MyPropertyFieldException,
+	public SearchResult search(String query) throws MyPropertyFieldException,
 			IOException, org.apache.lucene.queryparser.classic.ParseException {
 		String indexDirPath;
 		try {
 			indexDirPath = properties.getIndexDirPath();
 		} catch (MyPropertyFieldException mpe) {
-			LOGGER.log(
-					Level.SEVERE,
-					"Property Field Exception occured, \nError Code:{0}\n Error:{1}",
-					new Object[] { mpe.getErrorCode(), mpe.getMessage() });
+			this.logPropertyFieldException(mpe, "search");
 			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
 		ResumeSearcheEngine searchEngine = new ResumeSearcheEngine(
 				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD, new File(
 						indexDirPath), 10);
 		SearchResult searchResult = searchEngine.searchKey(query);
-		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
+		return searchResult;
 	}
 
 	public void setIndexDirPath(String indexDirPath) throws IOException {
@@ -69,5 +64,13 @@ public class ResumeService {
 
 	public void setResumeDirPath(String fileDirPath) throws IOException {
 		properties.setResumeDirPath(fileDirPath);
+	}
+
+	private void logPropertyFieldException(MyPropertyFieldException mpe,
+			String method) {
+		LOGGER.log(Level.SEVERE, "Property Field Exception occured, "
+				+ "\n\tReported Method: {0} "
+				+ "\n\tError Code:{1}\n\tError:{2}",
+				new Object[] { method, mpe.getErrorCode(), mpe.getMessage() });
 	}
 }

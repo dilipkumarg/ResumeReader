@@ -1,4 +1,4 @@
-package com.imaginea.resumereader.factory;
+package com.imaginea.resumereader.docfactory;
 
 import java.io.File;
 import java.io.IOException;

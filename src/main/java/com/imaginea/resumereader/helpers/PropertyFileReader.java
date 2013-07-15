@@ -47,9 +47,7 @@ public class PropertyFileReader {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"Default property file");
 		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while writing property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
+			this.logIOException(ie, "createDefaultPropertyFile");
 			throw new IOException(ie);
 		}
 	}
@@ -60,9 +58,7 @@ public class PropertyFileReader {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"index Directory updated");
 		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while writing property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
+			this.logIOException(ie, "setIndexDirPath");
 			throw new IOException(ie);
 		}
 	}
@@ -88,9 +84,7 @@ public class PropertyFileReader {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"Resume Directory updated");
 		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while writing property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
+			this.logIOException(ie, "setResumeDirPath");
 			throw new IOException(ie);
 		}
 	}
@@ -120,9 +114,7 @@ public class PropertyFileReader {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"Last TimeStamp updated");
 		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while writing property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
+			this.logIOException(ie, "setLastTimeStamp");
 			throw new IOException(ie);
 		}
 	}
@@ -145,5 +137,11 @@ public class PropertyFileReader {
 			throw new ParseException(pe.getMessage(), pe.getErrorOffset());
 		}
 		return prevTimeStamp;
+	}
+
+	private void logIOException(IOException ie, String method) {
+		LOGGER.log(Level.SEVERE, "IOError occured. while writing property file"
+				+ "\n\t Reported Function:{0}" + "\n\t ERROR:{1}",
+				new Object[] { method, ie.getMessage() });
 	}
 }

@@ -47,7 +47,8 @@ public class ResumeSearcheEngine {
 			query = new QueryParser(Version.LUCENE_43, defaultField,
 					new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
 		} catch (ParseException pe) {
-			LOGGER.log(Level.SEVERE, "Parse exception occured:", pe.getMessage());
+			LOGGER.log(Level.SEVERE, "Parse exception occured:",
+					pe.getMessage());
 			throw new ParseException(pe.getMessage());
 		}
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
@@ -64,7 +65,7 @@ public class ResumeSearcheEngine {
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			hitList.add(d.getField(fileNameField).toString());
+			hitList.add(d.getField(fileNameField).stringValue());
 		}
 		return hitList;
 	}

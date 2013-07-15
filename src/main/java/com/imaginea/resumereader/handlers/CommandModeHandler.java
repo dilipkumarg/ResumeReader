@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import com.imaginea.resumereader.exceptions.ErrorCode;
 import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
+import com.imaginea.resumereader.lucene.SearchResult;
 import com.imaginea.resumereader.services.ResumeService;
 
 public class CommandModeHandler extends Handler {
@@ -41,11 +42,16 @@ public class CommandModeHandler extends Handler {
 	}
 
 	private void update() throws IOException, ParseException {
+		int numOfupdates = 0;
 		try {
-			resumeService.updateIndex();
+			numOfupdates = resumeService.updateIndex();
 		} catch (MyPropertyFieldException mpe) {
 			this.printPropertyExceptionHelp(mpe);
+			System.exit(mpe.getErrorCode().getNumber());
 		}
+		System.out.println("Resume Index Updated successfully");
+		System.out.println("Number of new files added to the index are:"
+				+ numOfupdates);
 	}
 
 	private void setIndexDirPath() throws IOException {
@@ -70,10 +76,19 @@ public class CommandModeHandler extends Handler {
 			throw new IllegalArgumentException(
 					"Need one more parameter to perform this operation");
 		}
+		SearchResult searchResult = null;
 		try {
-			resumeService.search(this.args[1]);
+			searchResult = resumeService.search(this.args[1]);
 		} catch (MyPropertyFieldException mpe) {
 			this.printPropertyExceptionHelp(mpe);
+			System.exit(mpe.getErrorCode().getNumber());
+		}
+		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
+		System.out.println("Search Duration:"
+				+ searchResult.getSearchDuration() + "ms");
+		System.out.println("\n****TOP HITS***");
+		for (String Hit : searchResult.getTopHits()) {
+			System.out.println(Hit);
 		}
 	}
 
@@ -81,11 +96,11 @@ public class CommandModeHandler extends Handler {
 		if (mpe.getErrorCode() == ErrorCode.RESUME_DIR_EMPTY) {
 			System.out
 					.println("Resume Directory path not exists in the property File"
-							+ "\nplease set using \"resumedir <path>\"");
+							+ "\nplease set using \"resumedir <path>\" command");
 		} else if (mpe.getErrorCode() == ErrorCode.INDEX_DIR_EMPTY) {
 			System.out
 					.println("Index Directory path not exists in the property File"
-							+ "\nplease set using \"indexdir <path>\"");
+							+ "\nplease set using \"indexdir <path>\" command");
 		} else {
 			System.out.println(mpe.getMessage());
 		}

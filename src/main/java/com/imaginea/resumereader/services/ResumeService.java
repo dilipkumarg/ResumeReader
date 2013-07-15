@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.lucene.ResumeIndexer;
-import com.imaginea.resumereader.lucene.ResumeSearcheEngine;
+import com.imaginea.resumereader.lucene.ResumeSearchEngine;
 import com.imaginea.resumereader.lucene.SearchResult;
 
 public class ResumeService {
@@ -51,7 +51,7 @@ public class ResumeService {
 			this.logPropertyFieldException(mpe, "search");
 			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
-		ResumeSearcheEngine searchEngine = new ResumeSearcheEngine(
+		ResumeSearchEngine searchEngine = new ResumeSearchEngine(
 				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD, new File(
 						indexDirPath), 10);
 		SearchResult searchResult = searchEngine.searchKey(query);

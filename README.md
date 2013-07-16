@@ -24,7 +24,7 @@ This project uses maven build, which takes care of libraries and classpaths.
 Steps for creating Jar and configuring:
  * Go to the project root directory.
  * Run the below command.
-   >mvn package
+   > mvn package
    This command will generate jar file in your project build directory (i.e target). Inside the folder "ResumeReader".
 
 NOTE:Before indexing or searching, you need to set the index and resume directory paths by using the first two commands.
@@ -34,5 +34,5 @@ NOTE:Before indexing or searching, you need to set the index and resume director
 Presently we support only command mode operations.
 Running commands: 
  * Go to the { project build directory }/ResumeReader
- * > java -jar ResumeReader.jar { your command }
+ > java -jar ResumeReader.jar { your command }
 

@@ -3,7 +3,7 @@ ResumeReader
 Resume Reader is java application used to index and search resumes.
 
 ###Supported Formats:
-Presently we are support following three document formats for indexing resumes.
+Presently we support following three document formats for indexing resumes.
  * doc,
  * docx and
  * pdf.

@@ -32,7 +32,6 @@ NOTE:Before indexing or searching, you need to set the index and resume director
 
 ###Running:
 Presently we support only command mode operations.
-Running commands: 
- * Go to the `<project build directory>/ResumeReader`
- `java -jar ResumeReader.jar <your command>`
+ * Go to the `<project build directory>/ResumeReader` directory.
+ * Execute `java -jar ResumeReader.jar <your command>`
 

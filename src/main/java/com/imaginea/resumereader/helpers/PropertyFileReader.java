@@ -12,13 +12,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.imaginea.resumereader.exceptions.ErrorCode;
-import com.imaginea.resumereader.exceptions.MyPropertyException;
+import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 
 public class PropertyFileReader {
 	private final Properties properties;
 	private final String FILE_NAME = "config.properties";
-	private final String INDEX_DIR = "indexDir";
-	private final String FILE_DIR = "fileDir";
+	private final String INDEX_DIR_PATH = "indexDir";
+	private final String RESUME_DIR_PATH = "resumeDir";
 	private final String LAST_TIME_STAMP = "lastTimeStamp";
 	private final String TIME_STAMP_FORMAT = "MM-dd-yyyy HH:mm:ss";
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
@@ -40,29 +40,25 @@ public class PropertyFileReader {
 	}
 
 	private void createDefaultPropertyFile() throws IOException {
-		properties.setProperty(INDEX_DIR, "");
-		properties.setProperty(FILE_DIR, "");
-		this.setLastTimeStamp(new Date());
+		properties.setProperty(INDEX_DIR_PATH, "");
+		properties.setProperty(RESUME_DIR_PATH, "");
+		this.setLastTimeStamp(new Date(0));
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"Default property file");
 		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while writing property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
+			this.logIOException(ie, "createDefaultPropertyFile");
 			throw new IOException(ie);
 		}
 	}
 
-	public void setIndexDir(String indexDir) throws IOException {
-		properties.setProperty(INDEX_DIR, indexDir);
+	public void setIndexDirPath(String indexDir) throws IOException {
+		properties.setProperty(INDEX_DIR_PATH, indexDir);
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"index Directory updated");
 		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while writing property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
+			this.logIOException(ie, "setIndexDirPath");
 			throw new IOException(ie);
 		}
 	}
@@ -71,26 +67,24 @@ public class PropertyFileReader {
 	 * returns index directory path
 	 * 
 	 * @return indexDirPath
-	 * @throws MyPropertyException
+	 * @throws MyPropertyFieldException
 	 */
-	public String getIndexDir() throws MyPropertyException {
-		String indexDirPath = properties.getProperty(INDEX_DIR).trim();
+	public String getIndexDirPath() throws MyPropertyFieldException {
+		String indexDirPath = properties.getProperty(INDEX_DIR_PATH).trim();
 		if (indexDirPath.isEmpty()) {
-			throw new MyPropertyException("Index Directory Path Empty",
+			throw new MyPropertyFieldException("Index Directory Path Empty",
 					ErrorCode.INDEX_DIR_EMPTY);
 		}
 		return indexDirPath;
 	}
 
-	public void setFileDir(String fileDir) throws IOException {
-		properties.setProperty(FILE_DIR, fileDir);
+	public void setResumeDirPath(String fileDir) throws IOException {
+		properties.setProperty(RESUME_DIR_PATH, fileDir);
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
-					"File Directory updated");
+					"Resume Directory updated");
 		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while writing property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
+			this.logIOException(ie, "setResumeDirPath");
 			throw new IOException(ie);
 		}
 	}
@@ -99,14 +93,14 @@ public class PropertyFileReader {
 	 * returns file directory path
 	 * 
 	 * @return fileDirPath
-	 * @throws MyPropertyException
+	 * @throws MyPropertyFieldException
 	 */
 
-	public String getFileDir() throws MyPropertyException {
-		String fileDirPath = properties.getProperty(FILE_DIR).trim();
+	public String getResumeDirPath() throws MyPropertyFieldException {
+		String fileDirPath = properties.getProperty(RESUME_DIR_PATH).trim();
 		if (fileDirPath.isEmpty()) {
-			throw new MyPropertyException("File Directory Path is Empty",
-					ErrorCode.FILE_DIR_EMPTY);
+			throw new MyPropertyFieldException("File Directory Path is Empty",
+					ErrorCode.RESUME_DIR_EMPTY);
 		}
 		return fileDirPath;
 	}
@@ -120,9 +114,7 @@ public class PropertyFileReader {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"Last TimeStamp updated");
 		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while writing property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
+			this.logIOException(ie, "setLastTimeStamp");
 			throw new IOException(ie);
 		}
 	}
@@ -145,5 +137,11 @@ public class PropertyFileReader {
 			throw new ParseException(pe.getMessage(), pe.getErrorOffset());
 		}
 		return prevTimeStamp;
+	}
+
+	private void logIOException(IOException ie, String method) {
+		LOGGER.log(Level.SEVERE, "IOError occured. while writing property file"
+				+ "\n\t Reported Function:{0}" + "\n\t ERROR:{1}",
+				new Object[] { method, ie.getMessage() });
 	}
 }

@@ -4,57 +4,73 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import com.imaginea.resumereader.exceptions.MyPropertyException;
+import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.lucene.ResumeIndexer;
-import com.imaginea.resumereader.lucene.ResumeSearcheEngine;
+import com.imaginea.resumereader.lucene.ResumeSearchEngine;
 import com.imaginea.resumereader.lucene.SearchResult;
 
 public class ResumeService {
 	private PropertyFileReader properties;
-	private String INDEX_CONTENT_FIELD = "content";
-	private String FILE_NAME_FIELD = "filename";
+	private String RESUME_CONTENT_FIELD = "content";
+	private String RESUME_FILE_PATH_FIELD = "filename";
+	private Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
 	public ResumeService() throws IOException {
 		properties = new PropertyFileReader();
 	}
 
-	public void updateIndex() throws IOException, MyPropertyException,
+	public int updateIndex() throws IOException, MyPropertyFieldException,
 			ParseException {
-		String indexDirPath, fileDirPath;
+		String indexDirPath, resumeDirPath;
 		try {
-			indexDirPath = properties.getIndexDir();
-			fileDirPath = properties.getFileDir();
-		} catch (MyPropertyException mpe) {
-			throw new MyPropertyException(mpe.getErrorCode());
+			indexDirPath = properties.getIndexDirPath();
+			resumeDirPath = properties.getResumeDirPath();
+		} catch (MyPropertyFieldException mpe) {
+			this.logPropertyFieldException(mpe, "updateindex");
+			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
 		Date prevTimeStamp = properties.getLastTimeStamp();
-		ResumeIndexer resumeIndexer = new ResumeIndexer(new File(indexDirPath));
-		resumeIndexer
-				.appendIndexDirectory(new File(fileDirPath), prevTimeStamp);
+		ResumeIndexer resumeIndexer = new ResumeIndexer(new File(indexDirPath),
+				new File(resumeDirPath), RESUME_CONTENT_FIELD,
+				RESUME_FILE_PATH_FIELD);
+		int numIndexed = resumeIndexer.appendIndexDirectory(prevTimeStamp);
+		properties.setLastTimeStamp(new Date());
+		return numIndexed;
 	}
 
-	public void search(String query) throws MyPropertyException, IOException,
-			org.apache.lucene.queryparser.classic.ParseException {
+	public SearchResult search(String query) throws MyPropertyFieldException,
+			IOException, org.apache.lucene.queryparser.classic.ParseException {
 		String indexDirPath;
 		try {
-			indexDirPath = properties.getIndexDir();
-		} catch (MyPropertyException mpe) {
-			throw new MyPropertyException(mpe.getErrorCode());
+			indexDirPath = properties.getIndexDirPath();
+		} catch (MyPropertyFieldException mpe) {
+			this.logPropertyFieldException(mpe, "search");
+			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
-		ResumeSearcheEngine searchEngine = new ResumeSearcheEngine(
-				INDEX_CONTENT_FIELD, FILE_NAME_FIELD, new File(indexDirPath),
-				10);
+		ResumeSearchEngine searchEngine = new ResumeSearchEngine(
+				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD, new File(
+						indexDirPath), 10);
 		SearchResult searchResult = searchEngine.searchKey(query);
-		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
+		return searchResult;
 	}
 
 	public void setIndexDirPath(String indexDirPath) throws IOException {
-		properties.setIndexDir(indexDirPath);
+		properties.setIndexDirPath(indexDirPath);
 	}
 
-	public void setFileDirPath(String fileDirPath) throws IOException {
-		properties.setFileDir(fileDirPath);
+	public void setResumeDirPath(String fileDirPath) throws IOException {
+		properties.setResumeDirPath(fileDirPath);
+	}
+
+	private void logPropertyFieldException(MyPropertyFieldException mpe,
+			String method) {
+		LOGGER.log(Level.SEVERE, "Property Field Exception occured, "
+				+ "\n\tReported Method: {0} "
+				+ "\n\tError Code:{1}\n\tError:{2}",
+				new Object[] { method, mpe.getErrorCode(), mpe.getMessage() });
 	}
 }

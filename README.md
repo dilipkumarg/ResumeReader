@@ -25,5 +25,5 @@ This project uses maven build, which takes care of libraries and classpaths.
 ###Running:
 Presently we support only command mode operations.
 Before indexing or searching, you need to set the index and resume directory paths by using the first two commands.
-(or) else you can directly set this details by editing <config.properties> which resides in project root directory. 
+(or) else you can directly set this details by editing <strong>config.properties</strong> which resides in project root directory. 
 

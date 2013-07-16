@@ -38,6 +38,7 @@ public class CommandModeHandler extends Handler {
 			LOGGER.log(Level.SEVERE,
 					"IllegalArgumentException occured,\n Error:{0}",
 					new Object[] { iae.getMessage() });
+			throw new IllegalArgumentException(iae.getMessage());
 		}
 	}
 

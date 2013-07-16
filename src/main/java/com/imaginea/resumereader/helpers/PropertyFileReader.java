@@ -144,4 +144,8 @@ public class PropertyFileReader {
 				+ "\n\t Reported Function:{0}" + "\n\t ERROR:{1}",
 				new Object[] { method, ie.getMessage() });
 	}
+
+	public void toDefaultProperties() throws IOException {
+		this.createDefaultPropertyFile();
+	}
 }

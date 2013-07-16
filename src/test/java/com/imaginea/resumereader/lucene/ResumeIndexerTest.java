@@ -8,7 +8,6 @@ import java.util.Date;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
@@ -23,10 +22,9 @@ public class ResumeIndexerTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
 	public void testFilesIndexed() throws IOException, MyPropertyFieldException {
 		PropertyFileReader propertyFileReader = new PropertyFileReader();
-		ResumeIndexer indexer = new ResumeIndexer(new File(propertyFileReader.getIndexDirPath()), new File(propertyFileReader.getResumeDirPath()), "resumeContentField", "resumePathField");
+		ResumeIndexer indexer = new ResumeIndexer(new File(propertyFileReader.getIndexDirPath()), new File(propertyFileReader.getResumeDirPath()), "content", "filepath");
 		assertEquals("0 Files must be indexed", 0, indexer.appendIndexDirectory(new Date(System.currentTimeMillis())));
 	}
 

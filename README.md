@@ -20,10 +20,19 @@ Presently we support following three document formats for indexing resumes.
  * Itextpdf: For reading pdf files.
   
 ###Installation:
-This project uses maven build, which takes care of libraries and classpaths. 
+This project uses maven build, which takes care of libraries and classpaths.
+Steps for creating Jar and configuring:
+ * Go to the project root directory.
+ * Run the below command.
+   >mvn package
+   This command will generate jar file in your project build directory (i.e target). Inside the folder "ResumeReader".
+
+NOTE:Before indexing or searching, you need to set the index and resume directory paths by using the first two commands.
+(or) else you can directly set this details by editing <strong>config.properties</strong> which resides in ResumeReader directory. 
 
 ###Running:
 Presently we support only command mode operations.
-Before indexing or searching, you need to set the index and resume directory paths by using the first two commands.
-(or) else you can directly set this details by editing <strong>config.properties</strong> which resides in project root directory. 
+Running commands: 
+ * Go to the { project build directory }/ResumeReader
+ * > java -jar ResumeReader.jar { your command }
 

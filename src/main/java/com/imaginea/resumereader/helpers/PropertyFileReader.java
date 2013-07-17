@@ -145,7 +145,7 @@ public class PropertyFileReader {
 				new Object[] { method, ie.getMessage() });
 	}
 
-	public void toDefaultProperties() throws IOException {
+	public void setToDefaultProperties() throws IOException {
 		this.createDefaultPropertyFile();
 	}
 }

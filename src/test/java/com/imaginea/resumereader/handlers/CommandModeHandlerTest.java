@@ -3,12 +3,20 @@ package com.imaginea.resumereader.handlers;
 import java.io.IOException;
 import java.text.ParseException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 
 public class CommandModeHandlerTest {
-	PropertyFileReader propReader;
+	private PropertyFileReader propReader;
+
+	@Before
+	public void setUpBeforeClass() throws IOException {
+		propReader = new PropertyFileReader();
+		propReader.setIndexDirPath("/home/dilip/resume/index");
+		propReader.setResumeDirPath("/home/dilip/resume");
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testIntialize() throws IOException, ParseException,
@@ -24,14 +32,11 @@ public class CommandModeHandlerTest {
 		CommandModeHandler handler = null;
 		try {
 			handler = new CommandModeHandler(args);
-		} catch (IOException e) {
-			System.exit(0);
-		}
-		try {
 			handler.intialize();
 		} catch (IOException | ParseException
 				| org.apache.lucene.queryparser.classic.ParseException e) {
-			System.exit(0);
+			// swallowing exceptions
+			e.printStackTrace();
 		}
 	}
 
@@ -47,17 +52,13 @@ public class CommandModeHandlerTest {
 	@Test
 	public void testSearchWithValidParams() {
 		String[] args = { "search", "java" };
-		CommandModeHandler handler = null;
 		try {
-			handler = new CommandModeHandler(args);
-		} catch (IOException e) {
-			System.exit(0);
-		}
-		try {
+			CommandModeHandler handler = new CommandModeHandler(args);
 			handler.intialize();
 		} catch (IOException | ParseException
 				| org.apache.lucene.queryparser.classic.ParseException e) {
-			System.exit(0);
+			// swallowing exceptions
+			e.printStackTrace();
 		}
 	}
 
@@ -76,14 +77,11 @@ public class CommandModeHandlerTest {
 		CommandModeHandler handler = null;
 		try {
 			handler = new CommandModeHandler(args);
-		} catch (IOException e) {
-			System.exit(0);
-		}
-		try {
 			handler.intialize();
 		} catch (IOException | ParseException
 				| org.apache.lucene.queryparser.classic.ParseException e) {
-			System.exit(0);
+			// swallowing exceptions
+			e.printStackTrace();
 		}
 	}
 
@@ -102,14 +100,11 @@ public class CommandModeHandlerTest {
 		CommandModeHandler handler = null;
 		try {
 			handler = new CommandModeHandler(args);
-		} catch (IOException e) {
-			System.exit(0);
-		}
-		try {
 			handler.intialize();
 		} catch (IOException | ParseException
 				| org.apache.lucene.queryparser.classic.ParseException e) {
-			System.exit(0);
+			// swallowing exceptions
+			e.printStackTrace();
 		}
 	}
 }

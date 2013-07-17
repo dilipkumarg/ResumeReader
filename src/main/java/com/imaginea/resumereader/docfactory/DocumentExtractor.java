@@ -10,9 +10,5 @@ public abstract class DocumentExtractor {
 		this.docFile = new File(filePath);
 	}
 
-	public String getFileName() throws IOException {
-		return this.docFile.getCanonicalPath();
-	}
-
 	public abstract String getTextContent() throws IOException;
 }

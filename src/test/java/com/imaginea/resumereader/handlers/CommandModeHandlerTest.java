@@ -36,8 +36,7 @@ public class CommandModeHandlerTest {
 		try {
 			handler = new CommandModeHandler(args);
 			handler.intialize();
-		} catch (IOException | ParseException
-				| org.apache.lucene.queryparser.classic.ParseException e) {
+		} catch (Exception e) {
 			// swallowing exceptions
 			e.printStackTrace();
 		}
@@ -58,8 +57,7 @@ public class CommandModeHandlerTest {
 		try {
 			CommandModeHandler handler = new CommandModeHandler(args);
 			handler.intialize();
-		} catch (IOException | ParseException
-				| org.apache.lucene.queryparser.classic.ParseException e) {
+		} catch (Exception e) {
 			// swallowing exceptions
 			e.printStackTrace();
 		}
@@ -81,8 +79,7 @@ public class CommandModeHandlerTest {
 		try {
 			handler = new CommandModeHandler(args);
 			handler.intialize();
-		} catch (IOException | ParseException
-				| org.apache.lucene.queryparser.classic.ParseException e) {
+		} catch (Exception e) {
 			// swallowing exceptions
 			e.printStackTrace();
 		}
@@ -104,8 +101,7 @@ public class CommandModeHandlerTest {
 		try {
 			handler = new CommandModeHandler(args);
 			handler.intialize();
-		} catch (IOException | ParseException
-				| org.apache.lucene.queryparser.classic.ParseException e) {
+		} catch (Exception e) {
 			// swallowing exceptions
 			e.printStackTrace();
 		}

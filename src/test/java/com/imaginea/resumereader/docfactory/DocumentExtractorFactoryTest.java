@@ -19,6 +19,7 @@ public class DocumentExtractorFactoryTest {
 		docFactory = new DocumentExtractorFactory();
 	}
 
+	// here file need not to be exists.
 	@Test
 	public void testGetDocExtractorDoc() {
 		String filePath = "/home/dilip/resume/Dilip.doc";

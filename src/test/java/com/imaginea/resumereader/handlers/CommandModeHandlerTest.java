@@ -12,10 +12,13 @@ public class CommandModeHandlerTest {
 	private PropertyFileReader propReader;
 
 	@Before
-	public void setUpBeforeClass() throws IOException {
+	public void setUp() throws IOException {
 		propReader = new PropertyFileReader();
-		propReader.setIndexDirPath("/home/dilip/resume/index");
-		propReader.setResumeDirPath("/home/dilip/resume");
+		String resumeDir = this.getClass().getResource("/testResumes")
+				.getPath();
+		String indexDir = this.getClass().getResource("/testIndex").getPath();
+		propReader.setIndexDirPath(indexDir);
+		propReader.setResumeDirPath(resumeDir);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -73,7 +76,7 @@ public class CommandModeHandlerTest {
 
 	@Test
 	public void testIndexDirWithValidParams() {
-		String[] args = { "indexdir", "/home/dilip/resume/index" };
+		String[] args = { "indexdir", "/home/resume/index" };
 		CommandModeHandler handler = null;
 		try {
 			handler = new CommandModeHandler(args);
@@ -96,7 +99,7 @@ public class CommandModeHandlerTest {
 
 	@Test
 	public void testResumeDirWithValidParams() {
-		String[] args = { "resumedir", "/home/dilip/resume" };
+		String[] args = { "resumedir", "/home/resume" };
 		CommandModeHandler handler = null;
 		try {
 			handler = new CommandModeHandler(args);

@@ -21,21 +21,23 @@ public class DocumentExtractorTest {
 
 	@Test
 	public void testPdfGetTextContent() throws IOException {
-		String filePath = this.getClass().getResource("/testdoc.pdf").getPath();
+		String filePath = this.getClass().getResource("/testdocs/testdoc.pdf")
+				.getPath();
 		DocumentExtractor docExtractor = docFactory.getDocExtractor(filePath);
 		assertEquals("am in resume reader", docExtractor.getTextContent());
 	}
 
 	@Test
 	public void testDocGetTextContent() throws IOException {
-		String filePath = this.getClass().getResource("/testdoc.doc").getPath();
+		String filePath = this.getClass().getResource("/testdocs/testdoc.doc")
+				.getPath();
 		DocumentExtractor docExtractor = docFactory.getDocExtractor(filePath);
 		assertEquals("am in resume reader\r\n", docExtractor.getTextContent());
 	}
 
 	@Test
 	public void testDocXGetTextContent() throws IOException {
-		String filePath = this.getClass().getResource("/testdoc.docx")
+		String filePath = this.getClass().getResource("/testdocs/testdoc.docx")
 				.getPath();
 		DocumentExtractor docExtractor = docFactory.getDocExtractor(filePath);
 		assertEquals("am in resume reader\n", docExtractor.getTextContent());

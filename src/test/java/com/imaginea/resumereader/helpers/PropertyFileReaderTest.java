@@ -56,14 +56,15 @@ public class PropertyFileReaderTest {
 
 	@Test
 	public void testSetIndexDir() throws IOException, MyPropertyFieldException {
-		String indexDir = "/home/dilip/resume/index";
+		String indexDir = this.getClass().getResource("/testIndex").getPath();
 		propReader.setIndexDirPath(indexDir);
 		assertEquals(indexDir, propReader.getIndexDirPath());
 	}
 
 	@Test
 	public void testSetResumeDir() throws IOException, MyPropertyFieldException {
-		String resumeDir = "/home/dilip/resume/index";
+		String resumeDir = this.getClass().getResource("/testResumes")
+				.getPath();
 		propReader.setIndexDirPath(resumeDir);
 		assertEquals(resumeDir, propReader.getIndexDirPath());
 	}

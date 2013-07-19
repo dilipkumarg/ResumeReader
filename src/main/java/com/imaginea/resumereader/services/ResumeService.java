@@ -3,13 +3,12 @@ package com.imaginea.resumereader.services;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
-import com.imaginea.resumereader.lucene.ResumeIndexer;
+import com.imaginea.resumereader.lucene.FileValidator;
 import com.imaginea.resumereader.lucene.ResumeSearchEngine;
 import com.imaginea.resumereader.lucene.SearchResult;
 
@@ -33,12 +32,11 @@ public class ResumeService {
 			this.logPropertyFieldException(mpe, "updateindex");
 			throw new MyPropertyFieldException(mpe.getErrorCode());
 		}
-		Date prevTimeStamp = properties.getLastTimeStamp();
-		ResumeIndexer resumeIndexer = new ResumeIndexer(new File(indexDirPath),
-				new File(resumeDirPath), RESUME_CONTENT_FIELD,
+		long prevTimeStamp = properties.getLastTimeStamp();
+		FileValidator fileValidator = new FileValidator(new File(indexDirPath), RESUME_CONTENT_FIELD,
 				RESUME_FILE_PATH_FIELD);
-		int numIndexed = resumeIndexer.appendIndexDirectory(prevTimeStamp);
-		properties.setLastTimeStamp(new Date());
+		int numIndexed = fileValidator.hashFiles(new File(resumeDirPath), prevTimeStamp);
+		properties.setLastTimeStamp(System.currentTimeMillis());
 		return numIndexed;
 	}
 

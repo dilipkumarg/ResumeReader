@@ -16,9 +16,9 @@ public class ResumeIndexerTest {
 		String indexDir = this.getClass().getResource("/testIndex").getPath();
 		String resumeDir = this.getClass().getResource("/testResumes")
 				.getPath();
-		ResumeIndexer indexer = new ResumeIndexer(new File(indexDir), new File(
+		FileIndexer indexer = new FileIndexer(new File(indexDir), new File(
 				resumeDir), "content", "filepath");
-		assertTrue(0 <= indexer.appendIndexDirectory(new Date(0)));
+		assertTrue(0 <= indexer.appendIndex(new Date(0)));
 	}
 
 }

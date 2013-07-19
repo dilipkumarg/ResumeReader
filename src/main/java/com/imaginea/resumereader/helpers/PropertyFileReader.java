@@ -42,7 +42,7 @@ public class PropertyFileReader {
 	private void createDefaultPropertyFile() throws IOException {
 		properties.setProperty(INDEX_DIR_PATH, "");
 		properties.setProperty(RESUME_DIR_PATH, "");
-		this.setLastTimeStamp(new Date(0));
+		this.setLastTimeStamp(0);
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"Default property file");
@@ -105,11 +105,9 @@ public class PropertyFileReader {
 		return fileDirPath;
 	}
 
-	public void setLastTimeStamp(Date currTimeStamp)
+	public void setLastTimeStamp(long millSeconds)
 			throws FileNotFoundException, IOException {
-		SimpleDateFormat dateFormatter = new SimpleDateFormat(TIME_STAMP_FORMAT);
-		String dateString = dateFormatter.format(currTimeStamp);
-		properties.setProperty(LAST_TIME_STAMP, dateString);
+		properties.setProperty(LAST_TIME_STAMP, Long.toString(millSeconds));
 		try {
 			properties.store(new FileOutputStream(FILE_NAME),
 					"Last TimeStamp updated");
@@ -125,17 +123,10 @@ public class PropertyFileReader {
 	 * @return prevTimeStamp
 	 * @throws ParseException
 	 */
-	public Date getLastTimeStamp() throws ParseException {
+	public long getLastTimeStamp() throws ParseException {
 		String dateString = properties.getProperty(LAST_TIME_STAMP);
-		SimpleDateFormat dateFormatter = new SimpleDateFormat(TIME_STAMP_FORMAT);
-		Date prevTimeStamp = null;
-		try {
-			prevTimeStamp = dateFormatter.parse(dateString);
-		} catch (ParseException pe) {
-			LOGGER.log(Level.SEVERE, "ParseException occured \n ERROR:{0}",
-					new Object[] { pe.getMessage() });
-			throw new ParseException(pe.getMessage(), pe.getErrorOffset());
-		}
+		long prevTimeStamp;
+		prevTimeStamp = Long.parseLong(dateString, 10) ;
 		return prevTimeStamp;
 	}
 

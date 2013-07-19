@@ -14,6 +14,7 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
@@ -54,7 +55,7 @@ public class ResumeIndexer {
 		return numIndexed;
 
 	}
-
+ 
 	private void indexDirectory(File dataDir, Date timeStamp)
 			throws IOException {
 		File[] files = dataDir.listFiles();
@@ -84,7 +85,7 @@ public class ResumeIndexer {
 		try {
 			String fileContent = factory.getDocExtractor(filePath)
 					.getTextContent();
-			indexWriter.addDocument(convertToDoc(fileContent, filePath));
+			indexWriter.updateDocument(new Term(resumePathField,filePath),convertToDoc(fileContent, filePath));
 		} catch (IllegalArgumentException iae) {
 			LOGGER.log(Level.INFO, iae.getMessage());
 		}

@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.imaginea.resumereader.exceptions.ErrorCode;
-import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
+import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 
 public class PropertyFileReaderTest {
 	private PropertyFileReader propReader;
@@ -30,8 +30,8 @@ public class PropertyFileReaderTest {
 		try {
 			propReader.getIndexDirPath();
 		} catch (Exception e) {
-			assertEquals(MyPropertyFieldException.class, e.getClass());
-			MyPropertyFieldException mpe = (MyPropertyFieldException) e;
+			assertEquals(FileDirectoryEmptyException.class, e.getClass());
+			FileDirectoryEmptyException mpe = (FileDirectoryEmptyException) e;
 			assertEquals(ErrorCode.INDEX_DIR_EMPTY, mpe.getErrorCode());
 		}
 	}
@@ -41,8 +41,8 @@ public class PropertyFileReaderTest {
 		try {
 			propReader.getResumeDirPath();
 		} catch (Exception e) {
-			assertEquals(MyPropertyFieldException.class, e.getClass());
-			MyPropertyFieldException mpe = (MyPropertyFieldException) e;
+			assertEquals(FileDirectoryEmptyException.class, e.getClass());
+			FileDirectoryEmptyException mpe = (FileDirectoryEmptyException) e;
 			assertEquals(ErrorCode.RESUME_DIR_EMPTY, mpe.getErrorCode());
 		}
 	}
@@ -55,14 +55,14 @@ public class PropertyFileReaderTest {
 	}
 
 	@Test
-	public void testSetIndexDir() throws IOException, MyPropertyFieldException {
+	public void testSetIndexDir() throws IOException, FileDirectoryEmptyException {
 		String indexDir = this.getClass().getResource("/testIndex").getPath();
 		propReader.setIndexDirPath(indexDir);
 		assertEquals(indexDir, propReader.getIndexDirPath());
 	}
 
 	@Test
-	public void testSetResumeDir() throws IOException, MyPropertyFieldException {
+	public void testSetResumeDir() throws IOException, FileDirectoryEmptyException {
 		String resumeDir = this.getClass().getResource("/testResumes")
 				.getPath();
 		propReader.setIndexDirPath(resumeDir);

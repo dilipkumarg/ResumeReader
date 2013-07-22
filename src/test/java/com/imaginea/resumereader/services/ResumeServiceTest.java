@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.imaginea.resumereader.exceptions.ErrorCode;
-import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
+import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 
 public class ResumeServiceTest {
 	private ResumeService resumeService;
@@ -29,7 +29,7 @@ public class ResumeServiceTest {
 	public void testUpdate1() {
 		try {
 			resumeService.updateIndex();
-		} catch (MyPropertyFieldException mpe) {
+		} catch (FileDirectoryEmptyException mpe) {
 			assertEquals(ErrorCode.INDEX_DIR_EMPTY, mpe.getErrorCode());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -41,7 +41,7 @@ public class ResumeServiceTest {
 		try {
 			resumeService.setIndexDirPath(INDEX_DIR);
 			resumeService.updateIndex();
-		} catch (MyPropertyFieldException mpe) {
+		} catch (FileDirectoryEmptyException mpe) {
 			assertEquals(ErrorCode.RESUME_DIR_EMPTY, mpe.getErrorCode());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,7 +55,7 @@ public class ResumeServiceTest {
 			resumeService.setIndexDirPath(INDEX_DIR);
 			resumeService.setResumeDirPath(RESUME_DIR);
 			resumeService.updateIndex();
-		} catch (MyPropertyFieldException mpe) {
+		} catch (FileDirectoryEmptyException mpe) {
 			fail("update test failed");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,7 +66,7 @@ public class ResumeServiceTest {
 	public void testSearch1() {
 		try {
 			resumeService.search("name");
-		} catch (MyPropertyFieldException mpe) {
+		} catch (FileDirectoryEmptyException mpe) {
 			assertEquals(ErrorCode.INDEX_DIR_EMPTY, mpe.getErrorCode());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,7 +79,7 @@ public class ResumeServiceTest {
 		try {
 			resumeService.setIndexDirPath(INDEX_DIR);
 			resumeService.search("name");
-		} catch (MyPropertyFieldException mpe) {
+		} catch (FileDirectoryEmptyException mpe) {
 			fail("search test failed");
 		} catch (Exception e) {
 			e.printStackTrace();

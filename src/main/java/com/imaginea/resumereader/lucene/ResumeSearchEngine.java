@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -22,7 +20,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 public class ResumeSearchEngine {
-	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 	private String defaultField;
 	private String fileNameField;
 	private Directory indexDirectory;
@@ -43,14 +40,8 @@ public class ResumeSearchEngine {
 		IndexReader indexReader = DirectoryReader.open(indexDirectory);
 		searcher = new IndexSearcher(indexReader);
 		Query query;
-		try {
-			query = new QueryParser(Version.LUCENE_43, defaultField,
-					new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
-		} catch (ParseException pe) {
-			LOGGER.log(Level.SEVERE, "Parse exception occured:",
-					pe.getMessage());
-			throw new ParseException(pe.getMessage());
-		}
+		query = new QueryParser(Version.LUCENE_43, defaultField,
+				new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				this.maxHits, true);
 		searcher.search(query, collector);

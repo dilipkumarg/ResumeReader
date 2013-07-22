@@ -2,17 +2,14 @@ package com.imaginea.resumereader.handlers;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import com.imaginea.resumereader.exceptions.ErrorCode;
-import com.imaginea.resumereader.exceptions.MyPropertyFieldException;
+import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
+import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
 import com.imaginea.resumereader.lucene.SearchResult;
 import com.imaginea.resumereader.services.ResumeService;
 
 public class CommandModeHandler extends Handler {
 	ResumeService resumeService;
-	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
 	public CommandModeHandler(String[] args) throws IOException {
 		super(args);
@@ -20,6 +17,7 @@ public class CommandModeHandler extends Handler {
 	}
 
 	public void intialize() throws IOException, ParseException,
+			FileDirectoryEmptyException, IndexDirectoryEmptyException,
 			org.apache.lucene.queryparser.classic.ParseException {
 		String command = this.args[0];
 		try {
@@ -34,22 +32,21 @@ public class CommandModeHandler extends Handler {
 			} else {
 				throw new IllegalArgumentException("Command not found");
 			}
-		} catch (IllegalArgumentException iae) {
-			LOGGER.log(Level.SEVERE,
-					"IllegalArgumentException occured,\n Error:{0}",
-					new Object[] { iae.getMessage() });
-			throw new IllegalArgumentException(iae.getMessage());
+		} catch (FileDirectoryEmptyException fde) {
+			System.out
+					.println("The Resume Directory is not set \n Please set using the command 'resumedir <path>'");
+			throw fde;
+		} catch (IndexDirectoryEmptyException ide) {
+			System.out
+					.println("The Index Directory is not set \n Please set using the command 'indexdir <path>'");
+			throw ide;
 		}
 	}
 
-	private void update() throws IOException, ParseException {
+	private void update() throws IOException, ParseException,
+			FileDirectoryEmptyException, IndexDirectoryEmptyException {
 		int numOfupdates = 0;
-		try {
-			numOfupdates = resumeService.updateIndex();
-		} catch (MyPropertyFieldException mpe) {
-			this.printPropertyExceptionHelp(mpe);
-			System.exit(mpe.getErrorCode().getNumber());
-		}
+		numOfupdates = resumeService.updateIndex();
 		System.out.println("Resume Index Updated successfully");
 		System.out.println("Number of new files added to the index are:"
 				+ numOfupdates);
@@ -72,18 +69,14 @@ public class CommandModeHandler extends Handler {
 	}
 
 	private void search() throws IOException,
-			org.apache.lucene.queryparser.classic.ParseException {
+			org.apache.lucene.queryparser.classic.ParseException,
+			FileDirectoryEmptyException, IndexDirectoryEmptyException {
 		if (this.args.length < 2) {
 			throw new IllegalArgumentException(
 					"Need one more parameter to perform this operation");
 		}
 		SearchResult searchResult = null;
-		try {
-			searchResult = resumeService.search(this.args[1]);
-		} catch (MyPropertyFieldException mpe) {
-			this.printPropertyExceptionHelp(mpe);
-			System.exit(mpe.getErrorCode().getNumber());
-		}
+		searchResult = resumeService.search(this.args[1]);
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
 		System.out.println("Search Duration:"
 				+ searchResult.getSearchDuration() + "ms");
@@ -93,17 +86,4 @@ public class CommandModeHandler extends Handler {
 		}
 	}
 
-	private void printPropertyExceptionHelp(MyPropertyFieldException mpe) {
-		if (mpe.getErrorCode() == ErrorCode.RESUME_DIR_EMPTY) {
-			System.out
-					.println("Resume Directory path not exists in the property File"
-							+ "\nplease set using \"resumedir <path>\" command");
-		} else if (mpe.getErrorCode() == ErrorCode.INDEX_DIR_EMPTY) {
-			System.out
-					.println("Index Directory path not exists in the property File"
-							+ "\nplease set using \"indexdir <path>\" command");
-		} else {
-			System.out.println(mpe.getMessage());
-		}
-	}
 }

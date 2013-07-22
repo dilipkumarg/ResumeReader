@@ -10,7 +10,6 @@ import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.lucene.FileIndexer;
 import com.imaginea.resumereader.lucene.FileValidator;
-import com.imaginea.resumereader.lucene.Indexer;
 import com.imaginea.resumereader.lucene.ResumeSearchEngine;
 import com.imaginea.resumereader.lucene.SearchResult;
 
@@ -33,8 +32,9 @@ public class ResumeService {
 				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD);
 		List<File> filesToIndex = fileValidator.hashFiles(new File(resumeDirPath),
 				prevTimeStamp);
-		Indexer indexer = new FileIndexer(new File(indexDirPath), RESUME_CONTENT_FIELD,
+		FileIndexer fileIndexer = new FileIndexer(new File(indexDirPath), RESUME_CONTENT_FIELD,
 				RESUME_FILE_PATH_FIELD); 
+		fileIndexer.indexFiles(filesToIndex);
 		properties.setLastTimeStamp(System.currentTimeMillis());
 		return filesToIndex.size();
 	}

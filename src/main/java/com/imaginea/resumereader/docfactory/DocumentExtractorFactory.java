@@ -14,11 +14,11 @@ public class DocumentExtractorFactory {
 	public DocumentExtractor getDocExtractor(String filePath) {
 		DocumentExtractor documentExtractor = null;
 
-		if (filePath.endsWith("doc")) {
+		if (filePath.toLowerCase().endsWith("doc")) {
 			documentExtractor = this.wordDocumentExtractor;
-		} else if (filePath.endsWith("docx")) {
+		} else if (filePath.toLowerCase().endsWith("docx")) {
 			documentExtractor = this.docXExtractor;
-		} else if (filePath.endsWith("pdf")) {
+		} else if (filePath.toLowerCase().endsWith("pdf")) {
 			documentExtractor = this.pdfDocumentExtractor;
 		} else {
 			throw new IllegalArgumentException("Unsupported File Format Found");

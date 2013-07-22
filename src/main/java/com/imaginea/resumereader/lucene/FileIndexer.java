@@ -2,7 +2,6 @@ package com.imaginea.resumereader.lucene;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,10 +25,10 @@ public class FileIndexer {
 	private IndexWriter indexWriter;
 	private final String resumeContentField;
 	private final String resumePathField;
+	private DocumentExtractorFactory factory;
 
-	public FileIndexer(File indexDirFile,
-			String resumeContentField, String resumePathField)
-			throws IOException {
+	public FileIndexer(File indexDirFile, String resumeContentField,
+			String resumePathField) throws IOException {
 		try {
 			this.indexDir = FSDirectory.open(indexDirFile);
 		} catch (IOException ie) {
@@ -42,24 +41,26 @@ public class FileIndexer {
 		IndexWriterConfig indexConfig = new IndexWriterConfig(
 				Version.LUCENE_43, luceneAnalyzer);
 		this.indexWriter = new IndexWriter(indexDir, indexConfig);
+		this.factory = new DocumentExtractorFactory();
 	}
 
 	public void indexFile(File f) throws IOException {
 		String filePath = f.getCanonicalPath();
-		DocumentExtractorFactory factory = new DocumentExtractorFactory();
 		try {
 			String fileContent = factory.getDocExtractor(filePath)
-					.getTextContent();
-			indexWriter.updateDocument(new Term(resumePathField,filePath),convertToDoc(fileContent, filePath));
+					.getTextContent(filePath);
+			indexWriter.updateDocument(new Term(resumePathField, filePath),
+					convertToDoc(fileContent, filePath));
 		} catch (IllegalArgumentException iae) {
 			LOGGER.log(Level.INFO, iae.getMessage());
 		}
 	}
 
-	public void commitAndCloseIndexer() throws IOException{
+	public void commitAndCloseIndexer() throws IOException {
 		indexWriter.commit();
-		indexWriter.close();	
+		indexWriter.close();
 	}
+
 	private Document convertToDoc(String fileContent, String filePath) {
 		Document doc = new Document();
 		doc.add(new TextField(this.resumeContentField, fileContent,

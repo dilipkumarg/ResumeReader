@@ -9,17 +9,13 @@ import java.util.logging.Logger;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
-public class DocXExtractor extends DocumentExtractor {
-	DocXExtractor(String filePath) {
-		super(filePath);
-	}
-
+public class DocXExtractor implements DocumentExtractor {
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	public String getTextContent() throws IOException {
+	public String getTextContent(String filePath) throws IOException {
 		XWPFDocument docx = null;
 		try {
-			docx = new XWPFDocument(new FileInputStream(this.docFile));
+			docx = new XWPFDocument(new FileInputStream(filePath));
 		} catch (FileNotFoundException fne) {
 			LOGGER.log(Level.SEVERE, "File Not Found Exception occured",
 					fne.getMessage());

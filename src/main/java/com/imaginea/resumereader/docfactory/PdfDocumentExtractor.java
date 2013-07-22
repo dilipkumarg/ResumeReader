@@ -9,17 +9,13 @@ import java.util.logging.Logger;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
-public class PdfDocumentExtractor extends DocumentExtractor {
-	PdfDocumentExtractor(String filePath) {
-		super(filePath);
-	}
-
+public class PdfDocumentExtractor implements DocumentExtractor {
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	public String getTextContent() throws IOException {
+	public String getTextContent(String filePath) throws IOException {
 		PdfReader pdfReader = null;
 		try {
-			pdfReader = new PdfReader(new FileInputStream(this.docFile));
+			pdfReader = new PdfReader(new FileInputStream(filePath));
 		} catch (FileNotFoundException fne) {
 			LOGGER.log(Level.SEVERE, "File Not Found Exception occured",
 					fne.getMessage());

@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +18,6 @@ public class PropertyFileReader {
 	private final String INDEX_DIR_PATH = "indexDir";
 	private final String RESUME_DIR_PATH = "resumeDir";
 	private final String LAST_TIME_STAMP = "lastTimeStamp";
-	private final String TIME_STAMP_FORMAT = "MM-dd-yyyy HH:mm:ss";
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
 	public PropertyFileReader() throws IOException {
@@ -126,7 +123,7 @@ public class PropertyFileReader {
 	public long getLastTimeStamp() throws ParseException {
 		String dateString = properties.getProperty(LAST_TIME_STAMP);
 		long prevTimeStamp;
-		prevTimeStamp = Long.parseLong(dateString, 10) ;
+		prevTimeStamp = Long.parseLong(dateString, 10);
 		return prevTimeStamp;
 	}
 

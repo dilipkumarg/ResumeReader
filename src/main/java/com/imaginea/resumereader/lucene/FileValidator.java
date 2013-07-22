@@ -20,6 +20,10 @@ public class FileValidator {
 
 	public List<File> hashFiles(File dataDir, long timeStamp)
 			throws IOException {
+		if(!dataDir.exists()){
+			LOGGER.log(Level.SEVERE, "The File Direcory Path is incorrect, choose a correct path");
+			System.exit(1);
+		}
 		File[] files = dataDir.listFiles();
 		for (File file : files) {
 			if (file.isDirectory()

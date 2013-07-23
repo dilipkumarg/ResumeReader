@@ -1,7 +1,5 @@
 package com.imaginea.resumereader;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

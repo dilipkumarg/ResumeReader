@@ -13,10 +13,14 @@ public class JettyServer {
 	public JettyServer() {
 
 	}
+	public static void main(String[] args) throws Exception {
+		JettyServer jServer = new JettyServer();
+		jServer.start();
+	}
 
 	private void initServer() {
 		final SocketConnector connector = new SocketConnector();
-		connector.setPort(7501);
+		connector.setPort(7502);
 		server.setConnectors(new Connector[] { connector });
 		final Context root = new Context(server, "/resumereader",
 				Context.SESSIONS);

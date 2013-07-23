@@ -10,9 +10,8 @@ import org.mortbay.jetty.webapp.WebAppContext;
 public class JettyServer {
 	private static Server server = new Server();
 
-	public static void main(String[] args) throws Exception {
-		JettyServer jettyServer = new JettyServer();
-		jettyServer.start();
+	public JettyServer() {
+
 	}
 
 	private void initServer() {

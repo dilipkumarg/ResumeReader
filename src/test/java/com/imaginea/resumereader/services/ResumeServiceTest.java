@@ -12,7 +12,7 @@ import com.imaginea.resumereader.exceptions.ErrorCode;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 
 public class ResumeServiceTest {
-	private ResumeService resumeService;
+	private ResumeIndexService resumeService;
 	private String RESUME_DIR = this.getClass().getResource("/testResumes")
 			.getPath();
 	private String INDEX_DIR = this.getClass().getResource("/testIndex")
@@ -20,7 +20,7 @@ public class ResumeServiceTest {
 
 	@Before
 	public void setUp() throws IOException {
-		resumeService = new ResumeService();
+		resumeService = new ResumeIndexService();
 		resumeService.setIndexDirPath("");
 		resumeService.setResumeDirPath("");
 	}

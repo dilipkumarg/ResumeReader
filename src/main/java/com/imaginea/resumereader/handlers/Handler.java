@@ -15,5 +15,5 @@ public abstract class Handler {
 
 	public abstract void intialize() throws IOException, ParseException,
 			org.apache.lucene.queryparser.classic.ParseException,
-			FileDirectoryEmptyException, IndexDirectoryEmptyException;
+			FileDirectoryEmptyException, IndexDirectoryEmptyException, Exception;
 }

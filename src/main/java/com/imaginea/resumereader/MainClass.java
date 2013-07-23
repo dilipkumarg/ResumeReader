@@ -15,9 +15,7 @@ public class MainClass {
 	private static final Logger LOGGER = Logger.getLogger(MainClass.class
 			.getName());
 
-	public static void main(String[] args) throws IOException, ParseException,
-			org.apache.lucene.queryparser.classic.ParseException,
-			FileDirectoryEmptyException, IndexDirectoryEmptyException {
+	public static void main(String[] args) throws Exception {
 		Handler handler;
 		if (args.length < 1) {
 			handler = new NormalModeHandler(args);

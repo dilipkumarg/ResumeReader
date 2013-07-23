@@ -14,13 +14,8 @@ public class JettyServer {
 	private static Server server = new Server();
 	static Logger logger = Logger.getLogger(JettyServer.class.getName());
 
-	JettyServer() {
+	public JettyServer() {
 
-	}
-
-	public static void main(String[] args) {
-		JettyServer jettyServer = new JettyServer();
-		jettyServer.start();
 	}
 
 	private void initServer() {
@@ -44,5 +39,10 @@ public class JettyServer {
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "error in starting server", e);
 		}
+	}
+
+	public void stop() {
+		// TODO Auto-generated method stub
+		
 	}
 }

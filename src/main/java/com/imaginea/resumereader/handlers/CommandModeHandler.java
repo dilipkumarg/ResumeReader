@@ -9,6 +9,7 @@ import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
 import com.imaginea.resumereader.lucene.SearchResult;
 import com.imaginea.resumereader.services.ResumeService;
+import com.imaginea.resumereader.servlet.JettyServer;
 
 public class CommandModeHandler extends Handler {
 	ResumeService resumeService;
@@ -22,6 +23,7 @@ public class CommandModeHandler extends Handler {
 			FileDirectoryEmptyException, IndexDirectoryEmptyException,
 			org.apache.lucene.queryparser.classic.ParseException {
 		String command = this.args[0];
+		JettyServer jServer = new JettyServer();
 		try {
 			if (command.equalsIgnoreCase("update")) {
 				this.update();
@@ -31,6 +33,10 @@ public class CommandModeHandler extends Handler {
 				this.setResumeDirPath();
 			} else if (command.equalsIgnoreCase("search")) {
 				this.search();
+			} else if (command.equalsIgnoreCase("start")) {
+				jServer.start();
+			} else if (command.equalsIgnoreCase("stop")) {
+				jServer.stop();
 			} else {
 				throw new IllegalArgumentException("Command not found");
 			}
@@ -43,8 +49,7 @@ public class CommandModeHandler extends Handler {
 					.println("The Index Directory is not set. Please set it using the command 'indexdir <path>'");
 			System.exit(1);
 		} catch (IndexNotFoundException ide) {
-			System.out
-					.println("The files are not yet indexed");
+			System.out.println("The files are not yet indexed");
 			System.exit(1);
 		}
 	}

@@ -3,6 +3,8 @@ package com.imaginea.resumereader.handlers;
 import java.io.IOException;
 import java.text.ParseException;
 
+import org.apache.lucene.index.IndexNotFoundException;
+
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
 import com.imaginea.resumereader.lucene.SearchResult;
@@ -35,11 +37,15 @@ public class CommandModeHandler extends Handler {
 		} catch (FileDirectoryEmptyException fde) {
 			System.out
 					.println("The Resume Directory is not set \n Please set using the command 'resumedir <path>'");
-			throw fde;
+			System.exit(1);
 		} catch (IndexDirectoryEmptyException ide) {
 			System.out
-					.println("The Index Directory is not set \n Please set using the command 'indexdir <path>'");
-			throw ide;
+					.println("The Index Directory is not set. Please set it using the command 'indexdir <path>'");
+			System.exit(1);
+		} catch (IndexNotFoundException ide) {
+			System.out
+					.println("The files are not yet indexed");
+			System.exit(1);
 		}
 	}
 

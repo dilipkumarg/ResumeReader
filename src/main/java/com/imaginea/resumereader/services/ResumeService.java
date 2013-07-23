@@ -27,20 +27,27 @@ public class ResumeService {
 		String indexDirPath, resumeDirPath;
 		indexDirPath = properties.getIndexDirPath();
 		resumeDirPath = properties.getResumeDirPath();
+		int resumeDirPathLength = resumeDirPath.length();
 		long prevTimeStamp = properties.getLastTimeStamp();
+		if (resumeDirPath.charAt(resumeDirPathLength - 1) == '/') {
+			; // do nothing
+		} else {
+			resumeDirPathLength++;
+		}
 		FileValidator fileValidator = new FileValidator(new File(indexDirPath),
 				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD);
-		List<File> filesToIndex = fileValidator.hashFiles(new File(resumeDirPath),
-				prevTimeStamp);
-		FileIndexer fileIndexer = new FileIndexer(new File(indexDirPath), RESUME_CONTENT_FIELD,
-				RESUME_FILE_PATH_FIELD); 
-		fileIndexer.indexFiles(filesToIndex);
+		List<File> filesToIndex = fileValidator.hashFiles(new File(
+				resumeDirPath), prevTimeStamp, resumeDirPathLength);
+		FileIndexer fileIndexer = new FileIndexer(new File(indexDirPath),
+				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD);
+		fileIndexer.indexFiles(filesToIndex, resumeDirPathLength);
 		properties.setLastTimeStamp(System.currentTimeMillis());
 		return filesToIndex.size();
 	}
 
 	public SearchResult search(String query)
-			throws IndexDirectoryEmptyException, IOException, org.apache.lucene.queryparser.classic.ParseException{
+			throws IndexDirectoryEmptyException, IOException,
+			org.apache.lucene.queryparser.classic.ParseException {
 		String indexDirPath;
 		indexDirPath = properties.getIndexDirPath();
 		ResumeSearchEngine searchEngine = new ResumeSearchEngine(

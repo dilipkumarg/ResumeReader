@@ -18,7 +18,7 @@ public class FileValidator {
 		this.listOfFiles = new ArrayList<File>();
 	}
 
-	public List<File> hashFiles(File dataDir, long timeStamp)
+	public List<File> hashFiles(File dataDir, long timeStamp, int pathLength)
 			throws IOException {
 		if(!dataDir.exists()){
 			LOGGER.log(Level.SEVERE, "The File Direcory Path is incorrect, choose a correct path");
@@ -30,18 +30,18 @@ public class FileValidator {
 					&& !file.getCanonicalPath().equalsIgnoreCase(
 							indexDir.getCanonicalPath())) {
 				// recursive calls
-				hashFiles(file, timeStamp);
+				hashFiles(file, timeStamp, pathLength);
 			} else {
-				hashValidFile(file, timeStamp);
+				hashValidFile(file, timeStamp, pathLength);
 			}
 		}
 		return this.listOfFiles;
 	}
 
-	private void hashValidFile(File f, long timestamp) throws IOException {
+	private void hashValidFile(File f, long timestamp, int pathLength) throws IOException {
 		long lastModified = f.lastModified();
-		String filePath = f.getCanonicalPath();
-		LOGGER.log(Level.INFO, "Indexing File: " + filePath);
+		String relativeFilePath = f.getCanonicalPath().substring(pathLength);
+		LOGGER.log(Level.INFO, "Indexing File: " + relativeFilePath);
 		// checking whether the file is not valid or old
 		if (isNotValidFile(f) || (lastModified < timestamp)) {
 			LOGGER.log(Level.INFO, "Not a Valid file or no change in file ");

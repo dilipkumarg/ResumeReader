@@ -22,27 +22,24 @@ public class FileIndexer extends Indexer {
 		this.factory = new DocumentExtractorFactory();
 	}
 
-	public void indexFiles(List<File> filesToIndex) throws IOException {
-		String filePath, fileContent;
+	public void indexFiles(List<File> filesToIndex, int pathLength) throws IOException {
+		String absoluteFilePath, relativeFilePath, fileContent;
 		for (File file : filesToIndex) {
-			filePath = file.getCanonicalPath();
-
-			fileContent = factory.getDocExtractor(filePath).getTextContent(
-					filePath);
-			this.index(fileContent, filePath);
+			absoluteFilePath = file.getCanonicalPath();
+			relativeFilePath = absoluteFilePath.substring(pathLength);
 			try {
-				fileContent = factory.getDocExtractor(filePath).getTextContent(
-						filePath);
-				this.index(fileContent, filePath);
+				fileContent = factory.getDocExtractor(relativeFilePath).getTextContent(
+						absoluteFilePath);
+				this.index(fileContent, relativeFilePath);
 			} catch (IOException e) {
 				LOGGER.log(Level.INFO, "Invalid file name for the file "
-						+ filePath);
+						+ relativeFilePath);
 			} catch (POIXMLException e) {
 				LOGGER.log(Level.INFO, "Invalid file name for the file "
-						+ filePath);
+						+ relativeFilePath);
 			} catch (IllegalArgumentException e) {
 				LOGGER.log(Level.INFO, "file format are not supported for "
-						+ filePath);
+						+ relativeFilePath);
 			}
 		}
 		this.commitAndCloseIndexer();

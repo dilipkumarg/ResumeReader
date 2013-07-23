@@ -35,7 +35,8 @@ function createResultsList(hits) {
 	for(var i = 0; i < hits.length; i++) {
 		var listEleAnchor = createDomEle("a","", "", hits[i]),
 		    listEle = createDomEle("li","","resultListElement", "");
-		listEleAnchor.href = "/resumereader/download?filename=" + hits[i];
+		listEleAnchor.href = "/resumereader/view?filename=" + hits[i];
+		listEleAnchor.target = "_blank";
 		listEle.appendChild(listEleAnchor);
 		resultsList.insertBefore(listEle, null);
 	}

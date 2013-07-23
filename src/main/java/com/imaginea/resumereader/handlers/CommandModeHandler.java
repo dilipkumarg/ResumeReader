@@ -7,16 +7,18 @@ import org.apache.lucene.index.IndexNotFoundException;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
+import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.lucene.SearchResult;
-import com.imaginea.resumereader.services.ResumeService;
+import com.imaginea.resumereader.services.ResumeSearchService;
+import com.imaginea.resumereader.services.ResumeIndexService;
 import com.imaginea.resumereader.servlet.JettyServer;
 
 public class CommandModeHandler extends Handler {
-	ResumeService resumeService;
+	private PropertyFileReader properties;
 
 	public CommandModeHandler(String[] args) throws IOException {
 		super(args);
-		resumeService = new ResumeService();
+		properties = new PropertyFileReader();
 	}
 
 	public void intialize() throws IOException, ParseException,
@@ -57,7 +59,9 @@ public class CommandModeHandler extends Handler {
 	private void update() throws IOException, ParseException,
 			FileDirectoryEmptyException, IndexDirectoryEmptyException {
 		int numOfupdates = 0;
-		numOfupdates = resumeService.updateIndex();
+		ResumeIndexService resumeIndexService = new ResumeIndexService();
+		numOfupdates = resumeIndexService.updateIndex(properties.getIndexDirPath(), properties.getResumeDirPath(), properties.getLastTimeStamp());
+		properties.setLastTimeStamp(System.currentTimeMillis());
 		System.out.println("Resume Index Updated successfully");
 		System.out.println("Number of new files added to the index are:"
 				+ numOfupdates);
@@ -68,7 +72,7 @@ public class CommandModeHandler extends Handler {
 			throw new IllegalArgumentException(
 					"Need one more parameter to perform this operation");
 		}
-		resumeService.setIndexDirPath(this.args[1]);
+		properties.setIndexDirPath(this.args[1]);
 	}
 
 	private void setResumeDirPath() throws IOException {
@@ -76,7 +80,7 @@ public class CommandModeHandler extends Handler {
 			throw new IllegalArgumentException(
 					"Need one more parameter to perform this operation");
 		}
-		resumeService.setResumeDirPath(this.args[1]);
+		properties.setResumeDirPath(this.args[1]);
 	}
 
 	private void search() throws IOException,
@@ -86,8 +90,9 @@ public class CommandModeHandler extends Handler {
 			throw new IllegalArgumentException(
 					"Need one more parameter to perform this operation");
 		}
+		ResumeSearchService resumeSearchService = new ResumeSearchService();
 		SearchResult searchResult = null;
-		searchResult = resumeService.search(this.args[1]);
+		searchResult = resumeSearchService.search(this.args[1], properties.getIndexDirPath());
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
 		System.out.println("Search Duration:"
 				+ searchResult.getSearchDuration() + "ms");

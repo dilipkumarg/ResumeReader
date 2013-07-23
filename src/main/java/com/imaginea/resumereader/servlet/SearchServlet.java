@@ -12,20 +12,22 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
+import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.lucene.SearchResult;
-import com.imaginea.resumereader.services.ResumeService;
+import com.imaginea.resumereader.services.ResumeSearchService;
 
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private PropertyFileReader properties;
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
+		 properties = new PropertyFileReader();
 		String searchKey = req.getParameter("searchKey");
 		PrintWriter printWriter = res.getWriter();
-		ResumeService resumeService = new ResumeService();
+		ResumeSearchService resumeSearchService = new ResumeSearchService();
 		SearchResult searchResult = null;
 		try {
-			searchResult = resumeService.search(searchKey);
+			searchResult = resumeSearchService.search(searchKey, properties.getIndexDirPath());
 		} catch (IndexDirectoryEmptyException e) {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"Index Directory Not Set");

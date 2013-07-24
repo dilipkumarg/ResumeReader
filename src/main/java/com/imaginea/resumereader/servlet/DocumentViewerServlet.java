@@ -1,5 +1,6 @@
 package com.imaginea.resumereader.servlet;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,14 @@ import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
+import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.PrettyXmlSerializer;
+import org.htmlcleaner.TagNode;
+import org.htmlcleaner.XmlSerializer;
+
+import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
+import com.imaginea.resumereader.helpers.PropertyFileReader;
 
 public class DocumentViewerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -25,13 +34,19 @@ public class DocumentViewerServlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		//String fileName = req.getParameter("filename");
+		String filePath = req.getParameter("filename");
+		String resumePath = "";
+		try {
+			resumePath = getResumeCananicalPath(filePath);
+		} catch (FileDirectoryEmptyException e) {
+			return;
+		}
 		PrintWriter printWriter = res.getWriter();
 
-		printWriter.println(getHtml());
+		printWriter.println(getHtml(resumePath));
 	}
 
-	public String getHtml() {
+	public String getHtml(String filePath) {
 		InputStream input = null;
 		String htmlContent = null;
 		try {
@@ -44,14 +59,13 @@ public class DocumentViewerServlet extends HttpServlet {
 			handler.getTransformer()
 					.setOutputProperty(OutputKeys.INDENT, "yes");
 			handler.setResult(new StreamResult(sw));
-			input = new FileInputStream(
-					"/home/dilip/resumes_sample/Dhiraj_Kumar_D_New_Format.doc");
+			input = new FileInputStream(filePath);
 			DefaultDetector detector = new DefaultDetector();
 			Metadata metadata = new Metadata();
 			org.apache.tika.parser.Parser parser = new AutoDetectParser(
 					detector);
 			parser.parse(input, handler, metadata, new ParseContext());
-			htmlContent = sw.toString();
+			htmlContent = cleanHTML(sw.toString());
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -63,6 +77,37 @@ public class DocumentViewerServlet extends HttpServlet {
 			}
 		}
 		return htmlContent;
+	}
+
+	private String getResumeCananicalPath(String relPath) throws IOException,
+			FileDirectoryEmptyException {
+		PropertyFileReader propReader = new PropertyFileReader();
+		String resumeDirPath = propReader.getResumeDirPath();
+		// removing /(slash) 's
+		if (resumeDirPath.endsWith(File.separator)) {
+			resumeDirPath = resumeDirPath.substring(0,
+					resumeDirPath.length() - 2);
+		}
+		if (relPath.startsWith(File.separator)) {
+			relPath = relPath.substring(1);
+		}
+		// appending file path with resume directory
+		return resumeDirPath.concat(File.separator + relPath);
+	}
+
+	private String cleanHTML(String htmlContent) {
+		final HtmlCleaner cleaner = new HtmlCleaner();
+		final TagNode rootTagNode = cleaner.clean(htmlContent);
+
+		// setting up properties for the serializer
+		final CleanerProperties cleanerProperties = cleaner.getProperties();
+		cleanerProperties.setOmitXmlDeclaration(true);
+
+		// use the getAsString method on an XmlSerializer class
+		final XmlSerializer xmlSerializer = new PrettyXmlSerializer(
+				cleanerProperties);
+		final String html = xmlSerializer.getAsString(rootTagNode);
+		return html;
 	}
 
 }

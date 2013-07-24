@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,8 @@ import com.imaginea.resumereader.helpers.PropertyFileReader;
 
 public class DocumentViewerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger
+			.getLogger(DocumentViewerServlet.class.getName());
 
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -43,10 +47,19 @@ public class DocumentViewerServlet extends HttpServlet {
 		}
 		PrintWriter printWriter = res.getWriter();
 
-		printWriter.println(getHtml(resumePath));
+		try {
+			printWriter.println(getHtml(resumePath));
+		} catch (IOException ioe) {
+			LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
+			res.sendError(HttpServletResponse.SC_NOT_FOUND, ioe.getMessage());
+		} catch (Exception ex) {
+			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+		}
 	}
 
-	public String getHtml(String filePath) {
+	public String getHtml(String filePath) throws IOException, Exception {
 		InputStream input = null;
 		String htmlContent = null;
 		try {
@@ -66,15 +79,8 @@ public class DocumentViewerServlet extends HttpServlet {
 					detector);
 			parser.parse(input, handler, metadata, new ParseContext());
 			htmlContent = cleanHTML(sw.toString());
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
 		} finally {
-			try {
-				input.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			input.close();
 		}
 		return htmlContent;
 	}

@@ -18,15 +18,12 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.SAXException;
 
 public class FileIndexer extends Indexer {
-	// private DocumentExtractorFactory factory;
-
 	private static final Logger LOGGER = Logger.getLogger(FileIndexer.class
 			.getName());
 
 	public FileIndexer(File indexDirFile, String resumeContentField,
 			String resumePathField) throws IOException {
 		super(indexDirFile, resumeContentField, resumePathField);
-		// this.factory = new DocumentExtractorFactory();
 	}
 
 	public void indexFiles(List<File> filesToIndex, int pathLength)
@@ -35,9 +32,6 @@ public class FileIndexer extends Indexer {
 		for (File file : filesToIndex) {
 			absoluteFilePath = file.getCanonicalPath();
 			relativeFilePath = absoluteFilePath.substring(pathLength);
-			// fileContent =
-			// factory.getDocExtractor(relativeFilePath).getTextContent(
-			// absoluteFilePath);
 			try {
 				fileContent = getTextContent(absoluteFilePath);
 				this.index(fileContent, relativeFilePath);

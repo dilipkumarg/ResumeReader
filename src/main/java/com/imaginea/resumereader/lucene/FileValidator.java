@@ -61,7 +61,7 @@ public class FileValidator {
 				break;
 			}
 		}
-			return extnMatch;
+		return extnMatch;
 	}
 	
 	private boolean isNotValidFile(File f) {

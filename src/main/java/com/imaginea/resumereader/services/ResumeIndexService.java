@@ -20,9 +20,7 @@ public class ResumeIndexService {
 	public int updateIndex(String indexDirPath, String resumeDirPath, long prevTimeStamp) throws IOException, FileDirectoryEmptyException,
 			IndexDirectoryEmptyException, ParseException {
 		int resumeDirPathLength = resumeDirPath.length();
-		if (resumeDirPath.charAt(resumeDirPathLength - 1) == '/') {
-			; // do nothing
-		} else {
+		if (!resumeDirPath.endsWith("/")) {
 			resumeDirPathLength++;
 		}
 		FileValidator fileValidator = new FileValidator(new File(indexDirPath),

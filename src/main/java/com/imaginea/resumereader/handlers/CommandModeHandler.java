@@ -25,17 +25,17 @@ public class CommandModeHandler extends Handler {
 		String command = this.args[0];
 		JettyServer jServer = new JettyServer();
 		try {
-			if (command.equalsIgnoreCase("update")) {
+			if ("update".equalsIgnoreCase(command)) {
 				this.update();
-			} else if (command.equalsIgnoreCase("indexdir")) {
+			} else if ("indexdir".equalsIgnoreCase(command)) {
 				this.setIndexDirPath();
-			} else if (command.equalsIgnoreCase("resumedir")) {
+			} else if ("resumedir".equalsIgnoreCase(command)) {
 				this.setResumeDirPath();
-			} else if (command.equalsIgnoreCase("search")) {
+			} else if ("search".equalsIgnoreCase(command)) {
 				this.search();
-			} else if (command.equalsIgnoreCase("start")) {
+			} else if ("start".equalsIgnoreCase(command)) {
 				jServer.start();
-			} else if (command.equalsIgnoreCase("stop")) {
+			} else if ("stop".equalsIgnoreCase(command)) {
 				jServer.stop();
 			} else {
 				throw new IllegalArgumentException("Command not found");

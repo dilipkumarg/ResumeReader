@@ -34,9 +34,13 @@ public class CommandModeHandler extends Handler {
 			} else if ("search".equalsIgnoreCase(command)) {
 				this.search();
 			} else if ("start".equalsIgnoreCase(command)) {
-				jServer.start();
+				if (!jServer.isStarted()) {
+					jServer.start();
+				}
 			} else if ("stop".equalsIgnoreCase(command)) {
-				jServer.stop();
+				if (!jServer.isStopped()) {
+					jServer.stop();
+				}
 			} else {
 				throw new IllegalArgumentException("Command not found");
 			}
@@ -58,7 +62,9 @@ public class CommandModeHandler extends Handler {
 			FileDirectoryEmptyException, IndexDirectoryEmptyException {
 		int numOfupdates = 0;
 		ResumeIndexService resumeIndexService = new ResumeIndexService();
-		numOfupdates = resumeIndexService.updateIndex(properties.getIndexDirPath(), properties.getResumeDirPath(), properties.getLastTimeStamp());
+		numOfupdates = resumeIndexService.updateIndex(
+				properties.getIndexDirPath(), properties.getResumeDirPath(),
+				properties.getLastTimeStamp());
 		properties.setLastTimeStamp(System.currentTimeMillis());
 		System.out.println("Resume Index Updated successfully");
 		System.out.println("Number of new files added to the index are:"
@@ -90,7 +96,8 @@ public class CommandModeHandler extends Handler {
 		}
 		ResumeSearchService resumeSearchService = new ResumeSearchService();
 		SearchResult searchResult = null;
-		searchResult = resumeSearchService.search(this.args[1], properties.getIndexDirPath());
+		searchResult = resumeSearchService.search(this.args[1],
+				properties.getIndexDirPath());
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
 		System.out.println("Search Duration:"
 				+ searchResult.getSearchDuration() + "ms");

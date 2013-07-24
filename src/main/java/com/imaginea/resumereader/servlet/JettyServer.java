@@ -11,11 +11,11 @@ public class JettyServer {
 	private static Server server = new Server();
 
 	public JettyServer() {
-
+		this(8585);
 	}
-	public static void main(String[] args) throws Exception {
-		JettyServer jServer = new JettyServer();
-		jServer.start();
+	
+	public JettyServer(Integer runningPort) {
+		server = new Server(runningPort);
 	}
 
 	private void initServer() {
@@ -40,5 +40,13 @@ public class JettyServer {
 
 	public void stop() throws Exception {
 		server.stop();
+	}
+	
+	public boolean isStarted() {
+		return server.isStarted();
+	}
+	
+	public boolean isStopped() {
+		return server.isStopped();
 	}
 }

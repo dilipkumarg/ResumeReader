@@ -37,10 +37,10 @@ public class FileIndexer extends Indexer {
 			} catch (POIXMLException e) {
 				LOGGER.log(Level.INFO, "Invalid file name for the file "
 						+ relativeFilePath);
-			} catch (IllegalArgumentException e) {
-				LOGGER.log(Level.INFO, "file format are not supported for "
+			} /*catch (IllegalArgumentException e) {
+				LOGGER.log(Level.INFO, "file format not supported for "
 						+ relativeFilePath);
-			}
+			}*/
 		}
 		this.commitAndCloseIndexer();
 	}

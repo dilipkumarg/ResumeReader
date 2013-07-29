@@ -44,7 +44,7 @@ public class PropertyFileReader {
 				"Default property file");
 	}
 
-	public void setIndexDirPath(String indexDir) throws IOException {
+	private void setIndexDirPath(String indexDir) throws IOException {
 		properties.setProperty(INDEX_DIR_PATH, indexDir);
 		properties.store(new FileOutputStream(FILE_NAME),
 				"index Directory updated");
@@ -66,6 +66,11 @@ public class PropertyFileReader {
 
 	public void setResumeDirPath(String fileDir) throws IOException {
 		properties.setProperty(RESUME_DIR_PATH, fileDir);
+		if(fileDir.endsWith("/")){
+			setIndexDirPath(fileDir+".IndexDir/");
+		}else {
+			setIndexDirPath(fileDir+"/.IndexDir/");
+		}
 		properties.store(new FileOutputStream(FILE_NAME),
 				"Resume Directory updated");
 	}

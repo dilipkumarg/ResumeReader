@@ -27,9 +27,9 @@ public class CommandModeHandler extends Handler {
 		try {
 			if ("update".equalsIgnoreCase(command)) {
 				this.update();
-			} else if ("indexdir".equalsIgnoreCase(command)) {
+			} /*else if ("indexdir".equalsIgnoreCase(command)) {
 				this.setIndexDirPath();
-			} else if ("resumedir".equalsIgnoreCase(command)) {
+			}*/ else if ("resumedir".equalsIgnoreCase(command)) {
 				this.setResumeDirPath();
 			} else if ("search".equalsIgnoreCase(command)) {
 				this.search();
@@ -71,13 +71,13 @@ public class CommandModeHandler extends Handler {
 				+ numOfupdates);
 	}
 
-	private void setIndexDirPath() throws IOException {
+	/*private void setIndexDirPath() throws IOException {
 		if (this.args.length < 2) {
 			throw new IllegalArgumentException(
 					"Need one more parameter to perform this operation");
 		}
 		properties.setIndexDirPath(this.args[1]);
-	}
+	}*/
 
 	private void setResumeDirPath() throws IOException {
 		if (this.args.length < 2) {

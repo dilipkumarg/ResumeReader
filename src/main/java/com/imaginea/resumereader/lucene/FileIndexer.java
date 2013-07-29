@@ -2,10 +2,13 @@ package com.imaginea.resumereader.lucene;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,10 +23,11 @@ import org.xml.sax.SAXException;
 public class FileIndexer extends Indexer {
 	private static final Logger LOGGER = Logger.getLogger(FileIndexer.class
 			.getName());
+	private List<String> dictionary;
 
-	public FileIndexer(File indexDirFile, String resumeContentField,
-			String resumePathField) throws IOException {
-		super(indexDirFile, resumeContentField, resumePathField);
+	public FileIndexer(File indexDirFile) throws IOException {
+		super(indexDirFile);
+		this.intializeDictionary();
 	}
 
 	public void indexFiles(List<File> filesToIndex, int pathLength)
@@ -34,6 +38,7 @@ public class FileIndexer extends Indexer {
 			relativeFilePath = absoluteFilePath.substring(pathLength);
 			try {
 				fileContent = getTextContent(absoluteFilePath);
+				getPersonName(fileContent);
 				this.index(fileContent, relativeFilePath);
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());
@@ -57,4 +62,31 @@ public class FileIndexer extends Indexer {
 		return stringWriter.toString();
 	}
 
+	private String getPersonName(String body) throws IOException, TikaException {
+		int i = 0;
+		StringBuffer Name = new StringBuffer();
+		for (String retval : body.split("\n")) {
+			if (!(retval.isEmpty() || retval.trim().equals("") || retval.trim()
+					.equals("\n")) && ++i <= 3 && retval.split(" ").length < 5) {
+				for (String word : retval.split(" ")) {
+					if (word.endsWith(".")) {
+						word = word.substring(0, word.length() - 1);
+					}
+					word = word.replaceAll("[^a-zA-Z]", "");
+					if (!this.dictionary.contains(word.toLowerCase()))
+						Name.append(word.trim() + " ");
+				}
+			}
+		}
+		return Name.toString().trim();
+	}
+
+	private void intializeDictionary() throws FileNotFoundException {
+		Scanner s = new Scanner(new File("/usr/share/dict/american-english"));
+		this.dictionary = new ArrayList<String>();
+		while (s.hasNext()) {
+			this.dictionary.add(s.next());
+		}
+		s.close();
+	}
 }

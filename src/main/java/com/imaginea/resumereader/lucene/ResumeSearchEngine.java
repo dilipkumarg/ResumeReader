@@ -26,12 +26,11 @@ public class ResumeSearchEngine {
 	private int maxHits;
 	private IndexSearcher searcher;
 
-	public ResumeSearchEngine(String defaultField, String fileNameField,
-			File indexDir, int maxHits) throws IOException {
-		this.defaultField = defaultField;
-		this.fileNameField = fileNameField;
+	public ResumeSearchEngine(File indexDir) throws IOException {
+		this.defaultField = IndexFieldNames.CONTENT_FIELD;
+		this.fileNameField = IndexFieldNames.FILE_PATH_FIELD;
 		this.indexDirectory = FSDirectory.open(indexDir);
-		this.maxHits = maxHits;
+		this.maxHits = 100;
 	}
 
 	public SearchResult searchKey(String queryString) throws IOException,
@@ -49,6 +48,12 @@ public class ResumeSearchEngine {
 		long endTime = System.currentTimeMillis();
 		return new SearchResult(extractHits(hits), collector.getTotalHits(),
 				endTime - startTime, queryString);
+	}
+
+	public SearchResult searchKey(String queryString, int maxHits)
+			throws IOException, ParseException {
+		this.maxHits = maxHits;
+		return searchKey(queryString);
 	}
 
 	private List<String> extractHits(ScoreDoc[] hits) throws IOException {

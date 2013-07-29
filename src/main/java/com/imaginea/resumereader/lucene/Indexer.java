@@ -17,21 +17,16 @@ import org.apache.lucene.util.Version;
 public class Indexer {
 	private final FSDirectory indexDir;
 	private IndexWriter indexWriter;
-	private final String contentField;
-	private final String pathField;
 
-	public Indexer(File indexDirFile, String resumeContentField,
-			String resumePathField) throws IOException {
+	public Indexer(File indexDirFile) throws IOException {
 		this.indexDir = FSDirectory.open(indexDirFile);
-		this.contentField = resumeContentField;
-		this.pathField = resumePathField;
 		this.indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(
 				Version.LUCENE_43, new StandardAnalyzer(Version.LUCENE_43)));
 	}
 
 	protected void index(String content, String path) throws IOException {
-		indexWriter.updateDocument(new Term(pathField, path),
-				convertToDoc(content, path));
+		indexWriter.updateDocument(new Term(IndexFieldNames.FILE_PATH_FIELD,
+				path), convertToDoc(content, path));
 	}
 
 	protected void commitAndCloseIndexer() throws IOException {
@@ -41,9 +36,10 @@ public class Indexer {
 
 	private Document convertToDoc(String fileContent, String filePath) {
 		Document doc = new Document();
-		doc.add(new TextField(this.contentField, fileContent,
+		doc.add(new TextField(IndexFieldNames.CONTENT_FIELD, fileContent,
 				Field.Store.YES));
-		doc.add(new StringField(this.pathField, filePath, Field.Store.YES));
+		doc.add(new StringField(IndexFieldNames.FILE_PATH_FIELD, filePath,
+				Field.Store.YES));
 		return doc;
 	}
 

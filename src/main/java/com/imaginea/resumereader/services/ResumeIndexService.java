@@ -11,24 +11,21 @@ import com.imaginea.resumereader.lucene.FileIndexer;
 import com.imaginea.resumereader.lucene.FileValidator;
 
 public class ResumeIndexService {
-	private String RESUME_CONTENT_FIELD = "content";
-	private String RESUME_FILE_PATH_FIELD = "filename";
-
 	public ResumeIndexService() throws IOException {
 	}
 
-	public int updateIndex(String indexDirPath, String resumeDirPath, long prevTimeStamp) throws IOException, FileDirectoryEmptyException,
-			IndexDirectoryEmptyException, ParseException {
+	public int updateIndex(String indexDirPath, String resumeDirPath,
+			long prevTimeStamp) throws IOException,
+			FileDirectoryEmptyException, IndexDirectoryEmptyException,
+			ParseException {
 		int resumeDirPathLength = resumeDirPath.length();
 		if (!resumeDirPath.endsWith("/")) {
 			resumeDirPathLength++;
 		}
-		FileValidator fileValidator = new FileValidator(new File(indexDirPath),
-				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD);
+		FileValidator fileValidator = new FileValidator(new File(indexDirPath));
 		List<File> filesToIndex = fileValidator.hashFiles(new File(
 				resumeDirPath), prevTimeStamp, resumeDirPathLength);
-		FileIndexer fileIndexer = new FileIndexer(new File(indexDirPath),
-				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD);
+		FileIndexer fileIndexer = new FileIndexer(new File(indexDirPath));
 		fileIndexer.indexFiles(filesToIndex, resumeDirPathLength);
 		return filesToIndex.size();
 	}

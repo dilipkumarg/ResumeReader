@@ -22,14 +22,16 @@ import org.apache.lucene.util.Version;
 public class ResumeSearchEngine {
 	private String defaultField;
 	private String fileNameField;
+	private String personNameField;
 	private Directory indexDirectory;
 	private int maxHits;
 	private IndexSearcher searcher;
 
 	public ResumeSearchEngine(String defaultField, String fileNameField,
-			File indexDir, int maxHits) throws IOException {
+			String personNameField, File indexDir, int maxHits) throws IOException {
 		this.defaultField = defaultField;
 		this.fileNameField = fileNameField;
+		this.personNameField = personNameField;
 		this.indexDirectory = FSDirectory.open(indexDir);
 		this.maxHits = maxHits;
 	}
@@ -56,7 +58,7 @@ public class ResumeSearchEngine {
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			hitList.add(d.getField(fileNameField).stringValue());
+			hitList.add(d.getField(personNameField).stringValue());
 		}
 		return hitList;
 	}

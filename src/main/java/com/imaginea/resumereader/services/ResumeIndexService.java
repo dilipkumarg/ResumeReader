@@ -14,12 +14,13 @@ import com.imaginea.resumereader.lucene.FileValidator;
 public class ResumeIndexService {
 	private String RESUME_CONTENT_FIELD = "content";
 	private String RESUME_FILE_PATH_FIELD = "filename";
+	private String RESUME_FILE_NAME_FIELD = "personname";
 
 	public ResumeIndexService() throws IOException {
 	}
 
 	public int updateIndex(String indexDirPath, String resumeDirPath,
-			long prevTimeStamp, Map<String, String> filePathMap)
+			long prevTimeStamp)
 			throws IOException, FileDirectoryEmptyException,
 			IndexDirectoryEmptyException, ParseException {
 		int resumeDirPathLength = resumeDirPath.length();
@@ -31,8 +32,8 @@ public class ResumeIndexService {
 		List<File> filesToIndex = fileValidator.hashFiles(new File(
 				resumeDirPath), prevTimeStamp, resumeDirPathLength);
 		FileIndexer fileIndexer = new FileIndexer(new File(indexDirPath),
-				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD);
-		fileIndexer.indexFiles(filesToIndex, resumeDirPathLength, filePathMap);
+				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD, RESUME_FILE_NAME_FIELD);
+		fileIndexer.indexFiles(filesToIndex, resumeDirPathLength);
 		return filesToIndex.size();
 	}
 

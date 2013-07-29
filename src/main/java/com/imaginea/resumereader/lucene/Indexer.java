@@ -19,19 +19,21 @@ public class Indexer {
 	private IndexWriter indexWriter;
 	private final String contentField;
 	private final String pathField;
-
+	private final String nameField;
+	
 	public Indexer(File indexDirFile, String resumeContentField,
-			String resumePathField) throws IOException {
+			String resumePathField, String resumeNameField) throws IOException {
 		this.indexDir = FSDirectory.open(indexDirFile);
 		this.contentField = resumeContentField;
 		this.pathField = resumePathField;
+		this.nameField = resumeNameField;
 		this.indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(
 				Version.LUCENE_43, new StandardAnalyzer(Version.LUCENE_43)));
 	}
 
-	protected void index(String content, String path) throws IOException {
+	protected void index(String content, String path, String name) throws IOException {
 		indexWriter.updateDocument(new Term(pathField, path),
-				convertToDoc(content, path));
+				convertToDoc(content, path, name));
 	}
 
 	protected void commitAndCloseIndexer() throws IOException {
@@ -39,11 +41,12 @@ public class Indexer {
 		indexWriter.close();
 	}
 
-	private Document convertToDoc(String fileContent, String filePath) {
+	private Document convertToDoc(String fileContent, String filePath, String name) {
 		Document doc = new Document();
 		doc.add(new TextField(this.contentField, fileContent,
 				Field.Store.YES));
 		doc.add(new StringField(this.pathField, filePath, Field.Store.YES));
+		doc.add(new StringField(this.nameField, name, Field.Store.YES));
 		return doc;
 	}
 

@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,12 +25,12 @@ public class FileIndexer extends Indexer {
 			.getName());
 	private List<String> dictionary;
 	public FileIndexer(File indexDirFile, String resumeContentField,
-			String resumePathField) throws IOException {
-		super(indexDirFile, resumeContentField, resumePathField);
+			String resumePathField, String resumeNameField) throws IOException {
+		super(indexDirFile, resumeContentField, resumePathField, resumeNameField);
 		dictionary = this.getDictionary();
 	}
 
-	public void indexFiles(List<File> filesToIndex, int pathLength, Map<String, String> filePathMap) throws IOException {
+	public void indexFiles(List<File> filesToIndex, int pathLength) throws IOException {
 		String absoluteFilePath, relativeFilePath, fileContent, name;
 		for (File file : filesToIndex) {
 			absoluteFilePath = file.getCanonicalPath();
@@ -39,8 +38,7 @@ public class FileIndexer extends Indexer {
 			try {
 				fileContent = getTextContent(absoluteFilePath);
 				name = getPersonName(fileContent, dictionary);
-				filePathMap.put(relativeFilePath, name);
-				this.index(fileContent, relativeFilePath);
+				this.index(fileContent, relativeFilePath, name);
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());
 			} catch (TikaException te) {

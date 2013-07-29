@@ -15,39 +15,35 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 public class Indexer {
-	private final FSDirectory indexDir;
-	private IndexWriter indexWriter;
-	private final String contentField;
-	private final String pathField;
-	private final String nameField;
-	
-	public Indexer(File indexDirFile, String resumeContentField,
-			String resumePathField, String resumeNameField) throws IOException {
-		this.indexDir = FSDirectory.open(indexDirFile);
-		this.contentField = resumeContentField;
-		this.pathField = resumePathField;
-		this.nameField = resumeNameField;
-		this.indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(
-				Version.LUCENE_43, new StandardAnalyzer(Version.LUCENE_43)));
-	}
+    private final FSDirectory indexDir;
+    private IndexWriter indexWriter;
 
-	protected void index(String content, String path, String name) throws IOException {
-		indexWriter.updateDocument(new Term(pathField, path),
-				convertToDoc(content, path, name));
-	}
+    public Indexer(File indexDirFile) throws IOException {
+        this.indexDir = FSDirectory.open(indexDirFile);
+        this.indexWriter = new IndexWriter(indexDir, new IndexWriterConfig(
+                Version.LUCENE_43, new StandardAnalyzer(Version.LUCENE_43)));
+    }
 
-	protected void commitAndCloseIndexer() throws IOException {
-		indexWriter.commit();
-		indexWriter.close();
-	}
 
-	private Document convertToDoc(String fileContent, String filePath, String name) {
-		Document doc = new Document();
-		doc.add(new TextField(this.contentField, fileContent,
-				Field.Store.YES));
-		doc.add(new StringField(this.pathField, filePath, Field.Store.YES));
-		doc.add(new StringField(this.nameField, name, Field.Store.YES));
-		return doc;
-	}
+    public void index(String content, String title, String summary, String path) throws IOException {
+        indexWriter.updateDocument(new Term(IndexFieldNames.FILE_PATH_FIELD,
+                path), convertToDoc(content, title, summary, path));
+    }
+
+    protected void commitAndCloseIndexer() throws IOException {
+        indexWriter.commit();
+        indexWriter.close();
+    }
+
+    private Document convertToDoc(String fileContent, String filePath, String title, String summary) {
+        Document doc = new Document();
+        doc.add(new TextField(IndexFieldNames.CONTENT_FIELD, fileContent,
+                Field.Store.YES));
+        doc.add(new StringField(IndexFieldNames.FILE_PATH_FIELD, filePath,
+                Field.Store.YES));
+        doc.add(new StringField(IndexFieldNames.TITLE_FIELD, title, Field.Store.YES));
+        doc.add(new StringField(IndexFieldNames.SUMMARY_FIELD, summary, Field.Store.YES));
+        return doc;
+    }
 
 }

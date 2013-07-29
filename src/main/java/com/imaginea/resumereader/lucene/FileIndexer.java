@@ -24,21 +24,22 @@ public class FileIndexer extends Indexer {
 	private static final Logger LOGGER = Logger.getLogger(FileIndexer.class
 			.getName());
 	private List<String> dictionary;
-	public FileIndexer(File indexDirFile, String resumeContentField,
-			String resumePathField, String resumeNameField) throws IOException {
-		super(indexDirFile, resumeContentField, resumePathField, resumeNameField);
-		dictionary = this.getDictionary();
+
+	public FileIndexer(File indexDirFile) throws IOException {
+		super(indexDirFile);
+		this.initializeDictionary();
 	}
 
-	public void indexFiles(List<File> filesToIndex, int pathLength) throws IOException {
-		String absoluteFilePath, relativeFilePath, fileContent, name;
+	public void indexFiles(List<File> filesToIndex, int pathLength)
+			throws IOException {
+		String absoluteFilePath, relativeFilePath, fileContent;
 		for (File file : filesToIndex) {
 			absoluteFilePath = file.getCanonicalPath();
 			relativeFilePath = absoluteFilePath.substring(pathLength);
 			try {
 				fileContent = getTextContent(absoluteFilePath);
-				name = getPersonName(fileContent, dictionary);
-				this.index(fileContent, relativeFilePath, name);
+				this.index(fileContent, relativeFilePath, getPersonName(fileContent), "");
+                // TODO: add summary field
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());
 			} catch (TikaException te) {
@@ -60,33 +61,32 @@ public class FileIndexer extends Indexer {
 
 		return stringWriter.toString();
 	}
-	private String getPersonName(String body, List<String> dictionary)
-			throws IOException, TikaException {
+
+	private String getPersonName(String body) throws IOException, TikaException {
 		int i = 0;
 		StringBuffer Name = new StringBuffer();
 		for (String retval : body.split("\n")) {
 			if (!(retval.isEmpty() || retval.trim().equals("") || retval.trim()
 					.equals("\n")) && ++i <= 3 && retval.split(" ").length < 5) {
 				for (String word : retval.split(" ")) {
-					if(word.endsWith(".")){
-						word = word.substring(0,word.length()-1);
+					if (word.endsWith(".")) {
+						word = word.substring(0, word.length() - 1);
 					}
 					word = word.replaceAll("[^a-zA-Z]", "");
-					if (!dictionary.contains(word.toLowerCase()))
-						Name.append(word.trim()+" ");
+					if (!this.dictionary.contains(word.toLowerCase()))
+						Name.append(word.trim() + " ");
 				}
 			}
 		}
 		return Name.toString().trim();
 	}
 
-	private List<String> getDictionary() throws FileNotFoundException {
-		Scanner s = new Scanner(new File("/usr/share/dict/american-english"));
-		List<String> dictionary = new ArrayList<String>();
+	private void initializeDictionary() throws FileNotFoundException {
+		Scanner s = new Scanner(new File(this.getClass().getResource("american-english").getPath()));
+		this.dictionary = new ArrayList<String>();
 		while (s.hasNext()) {
-			dictionary.add(s.next());
+			this.dictionary.add(s.next());
 		}
 		s.close();
-		return dictionary;
 	}
 }

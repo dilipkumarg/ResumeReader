@@ -8,9 +8,12 @@ function search() {
 		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 	}
 	xmlhttp.onreadystatechange = function() {
-		if (xmlhttp.readyState == 4) {// && xmlhttp.status == 200) {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			printResult(xmlhttp.responseText);
+		} else if(xmlhttp.readyState == 4) {
+			document.getElementById("resultsDiv").innerHTML = xmlhttp.responseText;
 		}
+		
 	}
 	xmlhttp.open("GET", "resumereader/search?searchKey=" + searchQuery, true);
 	xmlhttp.send();

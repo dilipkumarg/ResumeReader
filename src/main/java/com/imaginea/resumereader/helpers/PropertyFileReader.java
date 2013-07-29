@@ -1,118 +1,95 @@
 package com.imaginea.resumereader.helpers;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
-import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
 
 public class PropertyFileReader {
-	private final Properties properties;
-	private final String FILE_NAME = "config.properties";
-	private final String INDEX_DIR_PATH = "indexDir";
-	private final String RESUME_DIR_PATH = "resumeDir";
-	private final String LAST_TIME_STAMP = "lastTimeStamp";
-	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
+    private final Properties propResumeDir, propTimeStamp;
+    private final String FILE_NAME = "config.properties";
+    private final String TIME_STAMP_NAME = "timestamp.properties";
+    private final String RESUME_DIR_PATH = "resumeDir";
+    private final String LAST_TIME_STAMP = "lastTimeStamp";
+    private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	public PropertyFileReader() throws IOException {
-		properties = new Properties();
-		try {
-			properties.load(new FileInputStream(FILE_NAME));
-		} catch (FileNotFoundException fne) {
-			LOGGER.log(Level.WARNING,
-					"Properties File not exists, creating new properties file with default values");
-			createDefaultPropertyFile();
-		} catch (IOException ie) {
-			LOGGER.log(Level.SEVERE,
-					"IOError occured. while reading property file\n ERROR:{0}",
-					new Object[] { ie.getMessage() });
-			throw new IOException(ie);
-		}
-	}
+    public PropertyFileReader() throws IOException {
+        propResumeDir = new Properties();
+        propTimeStamp = new Properties();
+        try {
+            propResumeDir.load(new FileInputStream(FILE_NAME));
+        } catch (FileNotFoundException fne) {
+            LOGGER.log(Level.WARNING,
+                    "Properties File not exists, creating new propResumeDir file with default values");
+            this.setResumeDirPath("Resumes");
+        }
+    }
 
-	private void createDefaultPropertyFile() throws IOException {
-		properties.setProperty(INDEX_DIR_PATH, "");
-		properties.setProperty(RESUME_DIR_PATH, "");
-		this.setLastTimeStamp(0);
-		properties.store(new FileOutputStream(FILE_NAME),
-				"Default property file");
-	}
+    /**
+     * returns index directory path
+     *
+     * @return indexDirPath
+     * @throws FileDirectoryEmptyException
+     */
+    public String getIndexDirPath() throws FileDirectoryEmptyException {
+        return getResumeDirPath() + File.separator + ".index";
+    }
 
-	private void setIndexDirPath(String indexDir) throws IOException {
-		properties.setProperty(INDEX_DIR_PATH, indexDir);
-		properties.store(new FileOutputStream(FILE_NAME),
-				"index Directory updated");
-	}
+    public void setResumeDirPath(String fileDir) throws IOException {
+        propResumeDir.setProperty(RESUME_DIR_PATH, fileDir);
+        propResumeDir.store(new FileOutputStream(FILE_NAME),
+                "Resume Directory updated");
+    }
 
-	/**
-	 * returns index directory path
-	 * 
-	 * @return indexDirPath
-	 * @throws FileDirectoryEmptyException
-	 */
-	public String getIndexDirPath() throws IndexDirectoryEmptyException {
-		String indexDirPath = properties.getProperty(INDEX_DIR_PATH).trim();
-		if (indexDirPath.isEmpty()) {
-			throw new IndexDirectoryEmptyException("Index Directory Path Empty");
-		}
-		return indexDirPath;
-	}
+    /**
+     * returns file directory path
+     *
+     * @return fileDirPath
+     * @throws FileDirectoryEmptyException
+     */
 
-	public void setResumeDirPath(String fileDir) throws IOException {
-		properties.setProperty(RESUME_DIR_PATH, fileDir);
-		if(fileDir.endsWith("/")){
-			setIndexDirPath(fileDir+".IndexDir/");
-		}else {
-			setIndexDirPath(fileDir+"/.IndexDir/");
-		}
-		properties.store(new FileOutputStream(FILE_NAME),
-				"Resume Directory updated");
-	}
+    public String getResumeDirPath() throws FileDirectoryEmptyException {
+        String fileDirPath = propResumeDir.getProperty(RESUME_DIR_PATH).trim();
+        if (fileDirPath.isEmpty()) {
+            throw new FileDirectoryEmptyException(
+                    "File Directory Path is Empty");
+        }
+        return fileDirPath;
+    }
 
-	/**
-	 * returns file directory path
-	 * 
-	 * @return fileDirPath
-	 * @throws FileDirectoryEmptyException
-	 */
+    private String getTImeStampFilePath() throws FileDirectoryEmptyException {
+        return getIndexDirPath() + File.separator + TIME_STAMP_NAME;
+    }
 
-	public String getResumeDirPath() throws FileDirectoryEmptyException {
-		String fileDirPath = properties.getProperty(RESUME_DIR_PATH).trim();
-		if (fileDirPath.isEmpty()) {
-			throw new FileDirectoryEmptyException(
-					"File Directory Path is Empty");
-		}
-		return fileDirPath;
-	}
+    public void setLastTimeStamp(long millSeconds)
+            throws FileNotFoundException, IOException, FileDirectoryEmptyException {
+        File indexDirectory = new File(getIndexDirPath());
+        if (!indexDirectory.exists()) {
+            indexDirectory.mkdirs();
+        }
+        propTimeStamp.setProperty(LAST_TIME_STAMP, Long.toString(millSeconds));
+        propTimeStamp.store(new FileOutputStream(getTImeStampFilePath()),
+                "Last TimeStamp updated");
 
-	public void setLastTimeStamp(long millSeconds)
-			throws FileNotFoundException, IOException {
-		properties.setProperty(LAST_TIME_STAMP, Long.toString(millSeconds));
-		properties.store(new FileOutputStream(FILE_NAME),
-				"Last TimeStamp updated");
+    }
 
-	}
-
-	/**
-	 * returns last time stamp
-	 * 
-	 * @return prevTimeStamp
-	 * @throws ParseException
-	 */
-	public long getLastTimeStamp() throws ParseException {
-		String dateString = properties.getProperty(LAST_TIME_STAMP);
-		long prevTimeStamp;
-		prevTimeStamp = Long.parseLong(dateString, 10);
-		return prevTimeStamp;
-	}
-
-	public void setToDefaultProperties() throws IOException {
-		this.createDefaultPropertyFile();
-	}
+    /**
+     * returns last time stamp
+     *
+     * @return prevTimeStamp
+     * @throws ParseException
+     */
+    public long getLastTimeStamp() throws FileDirectoryEmptyException, IOException {
+        try {
+            propTimeStamp.load(new FileInputStream(this.getTImeStampFilePath()));
+        } catch (FileNotFoundException fne) {
+            LOGGER.log(Level.INFO, "Time Stamp File not exists on the current resume directory. Creating default time stamp file");
+            this.setLastTimeStamp(0);
+        }
+        String dateString = propTimeStamp.getProperty(LAST_TIME_STAMP);
+        return Long.parseLong(dateString, 10);
+    }
 }

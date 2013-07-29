@@ -1,8 +1,13 @@
 package com.imaginea.resumereader.handlers;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 
+import com.imaginea.resumereader.lucene.FileInfo;
 import org.apache.lucene.index.IndexNotFoundException;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
@@ -22,7 +27,6 @@ public class CommandModeHandler extends Handler {
 
 	public void intialize() throws Exception {
 		String command = this.args[0];
-		JettyServer jServer = new JettyServer();
 		try {
 			if ("update".equalsIgnoreCase(command)) {
 				this.update();
@@ -33,13 +37,9 @@ public class CommandModeHandler extends Handler {
 			} else if ("search".equalsIgnoreCase(command)) {
 				this.search();
 			} else if ("start".equalsIgnoreCase(command)) {
-				if (!jServer.isStarted()) {
-					jServer.start();
-				}
+				this.startJetty();
 			} else if ("stop".equalsIgnoreCase(command)) {
-				if (!jServer.isStopped()) {
-					jServer.stop();
-				}
+				this.stopJetty();
 			} else {
 				throw new IllegalArgumentException("Command not found");
 			}
@@ -102,9 +102,23 @@ public class CommandModeHandler extends Handler {
 		System.out.println("Search Duration:"
 				+ searchResult.getSearchDuration() + "ms");
 		System.out.println("\n****TOP HITS***");
-		for (String Hit : searchResult.getTopHits()) {
-			System.out.println(Hit);
+		for (FileInfo Hit : searchResult.getTopHits()) {
+			System.out.println(Hit.toString());
 		}
+	}
+
+	private void startJetty() throws Exception {
+		JettyServer jServer = new JettyServer();
+		jServer.start();
+	}
+
+	private void stopJetty() throws UnknownHostException, IOException {
+		Socket s = new Socket(InetAddress.getByName("127.0.0.1"), 7407);
+		OutputStream out = s.getOutputStream();
+		System.out.println("*** sending jetty stop request");
+		out.write(("\r\n").getBytes());
+		out.flush();
+		s.close();
 	}
 
 }

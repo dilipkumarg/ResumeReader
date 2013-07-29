@@ -3,7 +3,6 @@ package com.imaginea.resumereader.lucene;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +22,7 @@ public class FileIndexer extends Indexer {
 		this.factory = new DocumentExtractorFactory();
 	}
 
-	public void indexFiles(List<File> filesToIndex, int pathLength, Map<String, String> filePathMap) throws IOException {
+	public void indexFiles(List<File> filesToIndex, int pathLength) throws IOException {
 		String absoluteFilePath, relativeFilePath, fileContent;
 		for (File file : filesToIndex) {
 			absoluteFilePath = file.getCanonicalPath();

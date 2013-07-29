@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
@@ -19,7 +18,7 @@ public class ResumeIndexService {
 	}
 
 	public int updateIndex(String indexDirPath, String resumeDirPath,
-			long prevTimeStamp, Map<String, String> filePathMap)
+			long prevTimeStamp)
 			throws IOException, FileDirectoryEmptyException,
 			IndexDirectoryEmptyException, ParseException {
 		int resumeDirPathLength = resumeDirPath.length();
@@ -32,7 +31,7 @@ public class ResumeIndexService {
 				resumeDirPath), prevTimeStamp, resumeDirPathLength);
 		FileIndexer fileIndexer = new FileIndexer(new File(indexDirPath),
 				RESUME_CONTENT_FIELD, RESUME_FILE_PATH_FIELD);
-		fileIndexer.indexFiles(filesToIndex, resumeDirPathLength, filePathMap);
+		fileIndexer.indexFiles(filesToIndex, resumeDirPathLength);
 		return filesToIndex.size();
 	}
 

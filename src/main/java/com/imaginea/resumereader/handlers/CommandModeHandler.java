@@ -1,7 +1,12 @@
 package com.imaginea.resumereader.handlers;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.lucene.index.IndexNotFoundException;
 
@@ -15,8 +20,10 @@ import com.imaginea.resumereader.servlet.JettyServer;
 
 public class CommandModeHandler extends Handler {
 	private PropertyFileReader properties;
+	private Map<String, String> filePathMap;
 	public CommandModeHandler(String[] args) throws IOException {
 		super(args);
+		filePathMap = new HashMap<String, String>();
 		properties = new PropertyFileReader();
 	}
 
@@ -63,8 +70,12 @@ public class CommandModeHandler extends Handler {
 		ResumeIndexService resumeIndexService = new ResumeIndexService();
 		numOfupdates = resumeIndexService.updateIndex(
 				properties.getIndexDirPath(), properties.getResumeDirPath(),
-				properties.getLastTimeStamp());
+				properties.getLastTimeStamp(), filePathMap);
 		properties.setLastTimeStamp(System.currentTimeMillis());
+		properties.setLastTimeStamp(System.currentTimeMillis());
+		Properties propertiesFilePath = new Properties();
+		propertiesFilePath.putAll(filePathMap);
+		propertiesFilePath.store(new FileOutputStream("filePathMap.properties"), null);
 		System.out.println("Resume Index Updated successfully");
 		System.out.println("Number of new files added to the index are:"
 				+ numOfupdates);
@@ -93,7 +104,12 @@ public class CommandModeHandler extends Handler {
 			throw new IllegalArgumentException(
 					"Need one more parameter to perform this operation");
 		}
+		Properties propertiesFile = new Properties();
+		propertiesFile.load(new FileInputStream("filePathMap.properties"));
 		ResumeSearchService resumeSearchService = new ResumeSearchService();
+		for (String key : propertiesFile.stringPropertyNames()) {
+			filePathMap.put(key, propertiesFile.get(key).toString());
+			}
 		SearchResult searchResult = null;
 		searchResult = resumeSearchService.search(this.args[1],
 				properties.getIndexDirPath());
@@ -102,7 +118,7 @@ public class CommandModeHandler extends Handler {
 				+ searchResult.getSearchDuration() + "ms");
 		System.out.println("\n****TOP HITS***");
 		for (String Hit : searchResult.getTopHits()) {
-			System.out.println(Hit);
+			System.out.println(filePathMap.get(Hit));
 		}
 	}
 

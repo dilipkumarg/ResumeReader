@@ -2,6 +2,8 @@ package com.imaginea.resumereader.handlers;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.lucene.index.IndexNotFoundException;
 
@@ -15,9 +17,10 @@ import com.imaginea.resumereader.servlet.JettyServer;
 
 public class CommandModeHandler extends Handler {
 	private PropertyFileReader properties;
-
+	private Map<String, String> filePathMap;
 	public CommandModeHandler(String[] args) throws IOException {
 		super(args);
+		filePathMap = new HashMap<String, String>();
 		properties = new PropertyFileReader();
 	}
 

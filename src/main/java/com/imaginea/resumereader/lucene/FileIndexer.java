@@ -79,7 +79,7 @@ public class FileIndexer extends Indexer {
 				}
 			}
 		}
-		return Name.toString();
+		return Name.toString().trim();
 	}
 
 	private List<String> getDictionary() throws FileNotFoundException {

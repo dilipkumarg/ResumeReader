@@ -38,8 +38,9 @@ public class FileIndexer extends Indexer {
 			relativeFilePath = absoluteFilePath.substring(pathLength);
 			try {
 				fileContent = getTextContent(absoluteFilePath);
-				this.index(fileContent, relativeFilePath, getPersonName(fileContent), "");
-                // TODO: add summary field
+				this.index(fileContent, relativeFilePath,
+						getPersonName(fileContent), getTextPreview(fileContent));
+				// TODO: add summary field
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());
 			} catch (TikaException te) {
@@ -47,6 +48,22 @@ public class FileIndexer extends Indexer {
 			}
 		}
 		this.commitAndCloseIndexer();
+	}
+
+	private String getTextPreview(String body) throws IOException, TikaException {
+		int i = -1;
+		String lineSeparator = System.getProperty("line.separator");
+		String[] paragraphs = body.split(lineSeparator);
+		if(paragraphs !=null){
+			for(String para : paragraphs){
+				i++;
+				if(para.split(" ").length>5){
+					break;
+				}
+			}
+			
+		}
+		return paragraphs[i];
 	}
 
 	private String getTextContent(String filePath) throws IOException,
@@ -82,7 +99,8 @@ public class FileIndexer extends Indexer {
 	}
 
 	private void initializeDictionary() throws FileNotFoundException {
-		Scanner s = new Scanner(new File(this.getClass().getResource("american-english").getPath()));
+		Scanner s = new Scanner(new File(this.getClass()
+				.getResource("american-english").getPath()));
 		this.dictionary = new ArrayList<String>();
 		while (s.hasNext()) {
 			this.dictionary.add(s.next());

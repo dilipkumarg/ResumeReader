@@ -25,9 +25,9 @@ public class Indexer {
     }
 
 
-    public void index(String content, String title, String summary, String path) throws IOException {
+    public void index(String content, String path, String title, String summary) throws IOException {
         indexWriter.updateDocument(new Term(IndexFieldNames.FILE_PATH_FIELD,
-                path), convertToDoc(content, title, summary, path));
+                path), convertToDoc(content, path, title, summary));
     }
 
     protected void commitAndCloseIndexer() throws IOException {

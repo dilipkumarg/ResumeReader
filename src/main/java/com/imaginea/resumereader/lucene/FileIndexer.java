@@ -32,14 +32,15 @@ public class FileIndexer extends Indexer {
 
 	public void indexFiles(List<File> filesToIndex, int pathLength)
 			throws IOException {
-		String absoluteFilePath, relativeFilePath, fileContent;
+		String absoluteFilePath, relativeFilePath, fileContent, personName;
 		for (File file : filesToIndex) {
 			absoluteFilePath = file.getCanonicalPath();
 			relativeFilePath = absoluteFilePath.substring(pathLength);
 			try {
 				fileContent = getTextContent(absoluteFilePath);
-				this.index(fileContent, relativeFilePath,
-						getPersonName(fileContent), getTextPreview(fileContent));
+				personName = getPersonName(fileContent);
+				this.index(fileContent, relativeFilePath, personName,
+						getTextPreview(fileContent, personName));
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());
 			} catch (TikaException te) {
@@ -49,22 +50,18 @@ public class FileIndexer extends Indexer {
 		this.commitAndCloseIndexer();
 	}
 
-	private String getTextPreview(String body) throws IOException,
+	private String getTextPreview(String body, String key) throws IOException,
 			TikaException {
-		int i = -1;
 		String lineSeparator = System.getProperty("line.separator");
 		String[] paragraphs = body.split(lineSeparator);
-		if (paragraphs != null) {
-			for (String para : paragraphs) {
-				i++;
-				if (para.split(" ").length > 5) {
-					break;
-				}
+		for (int i = 0; i < paragraphs.length; i++) {
+			if ((paragraphs[i].split(" ").length > 5 && !paragraphs[i]
+					.contains("\uFFFD") && paragraphs[i].trim().length()!=1)
+					|| paragraphs[i].contains("years")) {
+				return paragraphs[i];
 			}
-			return paragraphs[i];
-		} else {
-			return "";
 		}
+		return "";
 	}
 
 	private String getTextContent(String filePath) throws IOException,

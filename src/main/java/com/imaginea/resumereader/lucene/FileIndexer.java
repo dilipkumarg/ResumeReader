@@ -63,7 +63,7 @@ public class FileIndexer extends Indexer {
 			}
 			return paragraphs[i];
 		} else {
-			return null;
+			return "";
 		}
 	}
 

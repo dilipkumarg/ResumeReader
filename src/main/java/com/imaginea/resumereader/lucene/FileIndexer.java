@@ -32,20 +32,15 @@ public class FileIndexer extends Indexer {
 
 	public void indexFiles(List<File> filesToIndex, int pathLength)
 			throws IOException {
-		String absoluteFilePath, relativeFilePath, fileContent, personName, TextPreview;
+		String absoluteFilePath, relativeFilePath, fileContent, personName;
 		for (File file : filesToIndex) {
 			absoluteFilePath = file.getCanonicalPath();
 			relativeFilePath = absoluteFilePath.substring(pathLength);
 			try {
 				fileContent = getTextContent(absoluteFilePath);
 				personName = getPersonName(fileContent);
-				TextPreview = getTextPreview(fileContent, personName);
-				if ("".equals(personName)) {
-					personName = TextPreview.substring(0,
-							TextPreview.indexOf(" "));
-				}
 				this.index(fileContent, relativeFilePath, personName,
-						getTextPreview(fileContent, personName));
+						getTextPreview(fileContent));
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());
 			} catch (TikaException te) {
@@ -55,7 +50,7 @@ public class FileIndexer extends Indexer {
 		this.commitAndCloseIndexer();
 	}
 
-	private String getTextPreview(String body, String key) throws IOException,
+	private String getTextPreview(String body) throws IOException,
 			TikaException {
 		String lineSeparator = System.getProperty("line.separator");
 		String[] paragraphs = body.split(lineSeparator);
@@ -87,7 +82,7 @@ public class FileIndexer extends Indexer {
 		StringBuffer Name = new StringBuffer();
 		for (String retval : body.split("\n")) {
 			if (!(retval.isEmpty() || retval.trim().equals("") || retval.trim()
-					.equals("\n")) && ++i <= 3 && retval.split(" ").length < 5) {
+					.equals("\n")) && ++i <= 3 && retval.split(" ").length < 7) {
 				for (String word : retval.split(" ")) {
 					if (word.endsWith(".")) {
 						word = word.substring(0, word.length() - 1);

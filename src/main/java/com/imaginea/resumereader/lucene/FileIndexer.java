@@ -98,7 +98,7 @@ public class FileIndexer extends Indexer {
 
 	private void initializeDictionary() throws FileNotFoundException {
 		Scanner s = new Scanner(new File(this.getClass()
-				.getResource("american-english").getPath()));
+				.getResource("/american-english").getPath()));
 		this.dictionary = new ArrayList<String>();
 		while (s.hasNext()) {
 			this.dictionary.add(s.next());

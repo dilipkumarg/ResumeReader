@@ -2,3 +2,35 @@
 	margin-left: auto;
 	margin-right: auto;
 }
+
+.resultListElement {
+	line-height: 30px;
+}
+
+.itemHeader {
+	border: 1px ridge grey;
+	border-radius: 4px 4px 4px 4px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+.itemHeader:hover {
+	background: none repeat scroll 0 0 snow;
+}
+
+.summaryDiv {
+	background: none repeat scroll 0 0 whitesmoke;
+	border: 2px ridge darkgrey;
+	border-radius: 4px 4px 20px 20px;
+	color: lightslategrey;
+	font-family: DejaVu Sans;
+	font-size: small;
+	padding-left: 20px;
+	padding-right: 10px;
+	text-align: justify;
+	text-indent: 40px;
+}
+
+.titleLabel {
+	font-family: sans-serif;
+	font-size: 16px;
+}

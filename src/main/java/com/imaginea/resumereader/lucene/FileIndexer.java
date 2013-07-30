@@ -32,13 +32,18 @@ public class FileIndexer extends Indexer {
 
 	public void indexFiles(List<File> filesToIndex, int pathLength)
 			throws IOException {
-		String absoluteFilePath, relativeFilePath, fileContent, personName;
+		String absoluteFilePath, relativeFilePath, fileContent, personName, TextPreview;
 		for (File file : filesToIndex) {
 			absoluteFilePath = file.getCanonicalPath();
 			relativeFilePath = absoluteFilePath.substring(pathLength);
 			try {
 				fileContent = getTextContent(absoluteFilePath);
 				personName = getPersonName(fileContent);
+				TextPreview = getTextPreview(fileContent, personName);
+				if ("".equals(personName)) {
+					personName = TextPreview.substring(0,
+							TextPreview.indexOf(" "));
+				}
 				this.index(fileContent, relativeFilePath, personName,
 						getTextPreview(fileContent, personName));
 			} catch (SAXException sae) {
@@ -55,9 +60,9 @@ public class FileIndexer extends Indexer {
 		String lineSeparator = System.getProperty("line.separator");
 		String[] paragraphs = body.split(lineSeparator);
 		for (int i = 0; i < paragraphs.length; i++) {
-			if ((paragraphs[i].split(" ").length > 5 && !paragraphs[i]
-					.contains("\uFFFD") && paragraphs[i].trim().length()!=1)
-					|| paragraphs[i].contains("years")) {
+			if ((paragraphs[i].split(" ").length > 5
+					&& !paragraphs[i].contains("\uFFFD") && paragraphs[i]
+					.trim().length() != 1) || paragraphs[i].contains("years")) {
 				return paragraphs[i];
 			}
 		}

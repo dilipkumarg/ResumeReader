@@ -56,6 +56,8 @@ public class FileIndexer extends Indexer {
 		String[] paragraphs = body.split(lineSeparator);
 		for (int i = 0; i < paragraphs.length; i++) {
 			if ((paragraphs[i].split(" ").length > 5
+			// check for REPLACEMENT CHARACTER(\uFFFD) which is used to replace an incoming
+			// character whose value is unknown or unrepresentable in Unicode
 					&& !paragraphs[i].contains("\uFFFD") && paragraphs[i]
 					.trim().length() != 1) || paragraphs[i].contains("years")) {
 				return paragraphs[i];

@@ -40,7 +40,7 @@ public class FileIndexer extends Indexer {
 				fileContent = getTextContent(absoluteFilePath);
 				personName = getPersonName(fileContent);
 				this.index(fileContent, relativeFilePath, personName,
-						getTextPreview(fileContent, personName));
+						getTextPreview(fileContent));
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());
 			} catch (TikaException te) {
@@ -50,14 +50,16 @@ public class FileIndexer extends Indexer {
 		this.commitAndCloseIndexer();
 	}
 
-	private String getTextPreview(String body, String key) throws IOException,
+	private String getTextPreview(String body) throws IOException,
 			TikaException {
 		String lineSeparator = System.getProperty("line.separator");
 		String[] paragraphs = body.split(lineSeparator);
 		for (int i = 0; i < paragraphs.length; i++) {
-			if ((paragraphs[i].split(" ").length > 5 && !paragraphs[i]
-					.contains("\uFFFD") && paragraphs[i].trim().length()!=1)
-					|| paragraphs[i].contains("years")) {
+			if ((paragraphs[i].split(" ").length > 5
+			// check for REPLACEMENT CHARACTER(\uFFFD) which is used to replace an incoming
+			// character whose value is unknown or unrepresentable in Unicode
+					&& !paragraphs[i].contains("\uFFFD") && paragraphs[i]
+					.trim().length() != 1) || paragraphs[i].contains("years")) {
 				return paragraphs[i];
 			}
 		}
@@ -82,7 +84,7 @@ public class FileIndexer extends Indexer {
 		StringBuffer Name = new StringBuffer();
 		for (String retval : body.split("\n")) {
 			if (!(retval.isEmpty() || retval.trim().equals("") || retval.trim()
-					.equals("\n")) && ++i <= 3 && retval.split(" ").length < 5) {
+					.equals("\n")) && ++i <= 3 && retval.split(" ").length < 7) {
 				for (String word : retval.split(" ")) {
 					if (word.endsWith(".")) {
 						word = word.substring(0, word.length() - 1);

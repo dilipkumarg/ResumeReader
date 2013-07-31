@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -128,6 +129,7 @@ public class ResumeMetaExtractor {
 	private boolean isValidSentence(String sentence) {
 		return !sentence.trim().isEmpty()
 				|| (sentence.split(" ").length > 8 ? false : true);
+
 	}
 
 	// lazy initialization of dictionary

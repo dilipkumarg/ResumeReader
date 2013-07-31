@@ -3,8 +3,8 @@ package com.imaginea.resumereader.services;
 import java.io.File;
 import java.io.IOException;
 
+import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.lucene.ResumeSearchEngine;
-import com.imaginea.resumereader.lucene.SearchResult;
 
 public class ResumeSearchService {
 

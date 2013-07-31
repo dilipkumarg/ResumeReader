@@ -11,10 +11,10 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import com.imaginea.resumereader.entities.FileInfo;
+import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
-import com.imaginea.resumereader.lucene.FileInfo;
-import com.imaginea.resumereader.lucene.SearchResult;
 import com.imaginea.resumereader.services.ResumeSearchService;
 
 public class SearchServlet extends HttpServlet {

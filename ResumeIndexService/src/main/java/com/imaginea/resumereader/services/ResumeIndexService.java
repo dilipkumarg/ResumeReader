@@ -6,27 +6,21 @@ import java.text.ParseException;
 import java.util.List;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
-import com.imaginea.resumereader.exceptions.IndexDirectoryEmptyException;
 import com.imaginea.resumereader.lucene.FileIndexer;
 import com.imaginea.resumereader.lucene.FileValidator;
 
 public class ResumeIndexService {
-	public ResumeIndexService() throws IOException {
+	public ResumeIndexService() {
 	}
 
 	public int updateIndex(String indexDirPath, String resumeDirPath,
 			long prevTimeStamp) throws IOException,
-			FileDirectoryEmptyException, IndexDirectoryEmptyException,
-			ParseException {
-		int resumeDirPathLength = resumeDirPath.length();
-		if (!resumeDirPath.endsWith("/")) {
-			resumeDirPathLength++;
-		}
+			FileDirectoryEmptyException, ParseException {
 		FileValidator fileValidator = new FileValidator(new File(indexDirPath));
 		List<File> filesToIndex = fileValidator.hashFiles(new File(
-				resumeDirPath), prevTimeStamp, resumeDirPathLength);
+				resumeDirPath), prevTimeStamp);
 		FileIndexer fileIndexer = new FileIndexer(new File(indexDirPath));
-		fileIndexer.indexFiles(filesToIndex, resumeDirPathLength);
+		fileIndexer.indexFiles(filesToIndex);
 		return filesToIndex.size();
 	}
 

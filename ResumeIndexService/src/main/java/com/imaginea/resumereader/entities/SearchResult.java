@@ -1,6 +1,7 @@
-package com.imaginea.resumereader.lucene;
+package com.imaginea.resumereader.entities;
 
 import java.util.List;
+
 
 public class SearchResult {
     private final List<FileInfo> topHits;

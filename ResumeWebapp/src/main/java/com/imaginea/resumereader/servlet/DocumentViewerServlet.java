@@ -1,6 +1,5 @@
 package com.imaginea.resumereader.servlet;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,14 +11,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.ToHTMLContentHandler;
+import org.xml.sax.SAXException;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
-import com.imaginea.resumereader.helpers.PropertyFileReader;
+import com.imaginea.resumereader.helpers.FilePathHelper;
 
 public class DocumentViewerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -32,9 +33,13 @@ public class DocumentViewerServlet extends HttpServlet {
 		String filePath = req.getParameter("filename");
 		String resumePath = "";
 		try {
-			resumePath = getResumeCananicalPath(filePath);
-		} catch (FileDirectoryEmptyException e) {
-			return;
+			resumePath = new FilePathHelper().getCanonicalPath(filePath);
+			LOGGER.log(Level.INFO, "viewing document: " + filePath
+					+ "\n ResumePath:" + resumePath);
+		} catch (FileDirectoryEmptyException fe) {
+			LOGGER.log(Level.SEVERE, fe.getMessage());
+			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+					fe.getMessage());
 		}
 		PrintWriter printWriter = res.getWriter();
 
@@ -43,14 +48,18 @@ public class DocumentViewerServlet extends HttpServlet {
 		} catch (IOException ioe) {
 			LOGGER.log(Level.SEVERE, ioe.getMessage(), ioe);
 			res.sendError(HttpServletResponse.SC_NOT_FOUND, ioe.getMessage());
-		} catch (Exception ex) {
-			LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+		} catch (SAXException saex) {
+			LOGGER.log(Level.SEVERE, saex.getMessage(), saex);
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					ex.getMessage());
+					saex.getMessage());
+		} catch (TikaException tkex) {
+			LOGGER.log(Level.SEVERE, tkex.getMessage(), tkex);
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					tkex.getMessage());
 		}
 	}
 
-	public String getHtml(String filePath) throws IOException, Exception {
+	public String getHtml(String filePath) throws IOException, SAXException, TikaException {
 		InputStream inputStream = null;
 		String htmlContent = null;
 		try {
@@ -66,21 +75,5 @@ public class DocumentViewerServlet extends HttpServlet {
 			inputStream.close();
 		}
 		return htmlContent;
-	}
-
-	private String getResumeCananicalPath(String relPath) throws IOException,
-			FileDirectoryEmptyException {
-		PropertyFileReader propReader = new PropertyFileReader();
-		String resumeDirPath = propReader.getResumeDirPath();
-		// removing /(slash) 's
-		if (resumeDirPath.endsWith(File.separator)) {
-			resumeDirPath = resumeDirPath.substring(0,
-					resumeDirPath.length() - 2);
-		}
-		if (relPath.startsWith(File.separator)) {
-			relPath = relPath.substring(1);
-		}
-		// appending file path with resume directory
-		return resumeDirPath.concat(File.separator + relPath);
 	}
 }

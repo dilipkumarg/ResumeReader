@@ -1,4 +1,4 @@
-package com.imaginea.resumereader.lucene;
+package com.imaginea.resumereader.entities;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,6 +31,6 @@ public class FileInfo {
     }
 
     public String toString() {
-        return "Title:" + this.title + "\n Summary: " + this.summary + "\n File Path" + this.filePath;
+        return "Title:" + this.title + "\n Summary: " + this.summary + "\n File Path: " + this.filePath;
     }
 }

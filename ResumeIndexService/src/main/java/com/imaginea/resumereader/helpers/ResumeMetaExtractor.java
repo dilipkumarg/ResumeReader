@@ -119,7 +119,7 @@ public class ResumeMetaExtractor {
 
 	private String getNamePatternFromScore(String scoreString) {
 		Pattern myPattern = Pattern
-				.compile("([3]|[12]*)?[4]+[0]?[4]*([3]|[12]*)?");
+				.compile("(([3]|([1]|[2])+)([0]?))?[4]+[0]?[4]*(([0]?)([3]|([1]|[2])+))?");
 		Matcher matcher = myPattern.matcher(scoreString);
 		String resultScoreString = "";
 		if (matcher.find()) {

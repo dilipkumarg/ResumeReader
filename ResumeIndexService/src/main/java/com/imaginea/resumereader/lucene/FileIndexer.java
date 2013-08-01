@@ -44,9 +44,11 @@ public class FileIndexer extends Indexer {
 			LOGGER.log(Level.INFO, "Indexing File:" + relativeFilePath);
 			try {
 				fileContent = getTextContent(canonicalFilePath);
-				personName = resumeMeta.getPersonName(fileContent);
+				personName = resumeMeta.extractPersonName(fileContent);
 				this.index(fileContent, relativeFilePath, personName,
 						resumeMeta.getResumeSummary(fileContent));
+				/*personName = resumeMeta.extractPersonName(fileContent);
+				System.out.println(personName);*/
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());
 			} catch (TikaException te) {

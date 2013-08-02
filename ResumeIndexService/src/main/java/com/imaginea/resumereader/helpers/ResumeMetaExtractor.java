@@ -34,32 +34,12 @@ public class ResumeMetaExtractor {
 		return "";
 	}
 
-	public String getPersonName(String body) throws IOException {
-		int i = 0;
-		this.initializeDictionary();
-		StringBuffer Name = new StringBuffer();
-		for (String retval : body.split("\n")) {
-			if (!(retval.isEmpty() || retval.trim().equals("") || retval.trim()
-					.equals("\n")) && ++i <= 3 && retval.split(" ").length < 7) {
-				for (String word : retval.split(" ")) {
-					if (word.endsWith(".")) {
-						word = word.substring(0, word.length() - 1);
-					}
-					word = word.replaceAll("[^a-zA-Z]", "");
-					if (!this.dictionary.contains(word.toLowerCase()))
-						Name.append(word.trim() + " ");
-				}
-			}
-		}
-		return Name.toString().trim();
-	}
-
 	public String extractPersonName(String text) throws FileNotFoundException {
 		this.initializeDictionary();
 		String personName = "PERSON_NAME";
 		for (String sentence : text.split("\n")) {
 			if (isValidSentence(sentence)) {
-				String[] words = sentence.split(" ");
+				String[] words = sentence.split("\\s+");
 				StringBuilder scoreString = new StringBuilder();
 				for (int i = 0; i < words.length; i++) {
 					scoreString.append(getWordScore(words[i]));
@@ -83,7 +63,8 @@ public class ResumeMetaExtractor {
 	/**
 	 * score is used to detect type of word. <br>
 	 * valid english word: 0 <br>
-	 * a-z : 1 a-z. : 2 <br>
+	 * a-z : 1 <br>
+	 * a-z. : 2 <br>
 	 * a-z++. : 3 <br>
 	 * non english word: 4
 	 * 
@@ -119,7 +100,7 @@ public class ResumeMetaExtractor {
 
 	private String getNamePatternFromScore(String scoreString) {
 		Pattern myPattern = Pattern
-				.compile("(([3]|([1]|[2])+)([0]?))?[4]+[0]?[4]*(([0]?)([3]|([1]|[2])+))?");
+				.compile("([3]|([1]|[2])+)?[0]?[4]+[0]?[4]*(([0]?)([3]|([1]|[2])+))?");
 		Matcher matcher = myPattern.matcher(scoreString);
 		String resultScoreString = "";
 		if (matcher.find()) {
@@ -160,6 +141,13 @@ public class ResumeMetaExtractor {
 				this.dictionary.add(s.next().toLowerCase());
 			}
 			s.close();
+			// adding tech abbrevations 
+			Scanner abbrev = new Scanner(this.getClass().getClassLoader()
+					.getResourceAsStream("abbrevations_tech.txt"));
+			while (abbrev.hasNext()) {
+				this.dictionary.add(abbrev.next().toLowerCase());
+			}
+			abbrev.close();
 			addCustomWordsToDictionary();
 		}
 	}

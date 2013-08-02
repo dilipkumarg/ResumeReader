@@ -5,12 +5,11 @@ import java.text.ParseException;
 
 import org.apache.lucene.index.IndexNotFoundException;
 
+import com.imaginea.resumereader.base.ResumeIndexSearcher;
 import com.imaginea.resumereader.entities.FileInfo;
 import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
-import com.imaginea.resumereader.services.ResumeIndexService;
-import com.imaginea.resumereader.services.ResumeSearchService;
 
 public class CommandModeHandler extends Handler {
 	private PropertyFileReader properties;
@@ -46,7 +45,7 @@ public class CommandModeHandler extends Handler {
 	private void update() throws IOException, ParseException,
 			FileDirectoryEmptyException {
 		int numOfupdates = 0;
-		ResumeIndexService resumeIndexService = new ResumeIndexService();
+		ResumeIndexSearcher resumeIndexService = new ResumeIndexSearcher();
 		numOfupdates = resumeIndexService.updateIndex(
 				properties.getIndexDirPath(), properties.getResumeDirPath(),
 				properties.getLastTimeStamp());
@@ -72,7 +71,7 @@ public class CommandModeHandler extends Handler {
 			throw new IllegalArgumentException(
 					"Need one more parameter to perform this operation");
 		}
-		ResumeSearchService resumeSearchService = new ResumeSearchService();
+		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
 		searchResult = resumeSearchService.search(this.args[1],
 				properties.getIndexDirPath());

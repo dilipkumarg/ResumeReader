@@ -37,7 +37,7 @@ public class ResumeSearchEngine {
 		this.personNameField = IndexFieldNames.TITLE_FIELD;
 		this.summaryField = IndexFieldNames.SUMMARY_FIELD;
 		this.indexDirectory = FSDirectory.open(indexDir);
-		this.maxHits = 100;
+		this.maxHits = 1000;
 	}
 
 	public SearchResult searchKey(String queryString) throws IOException,
@@ -45,24 +45,24 @@ public class ResumeSearchEngine {
 		long startTime = System.currentTimeMillis();
 		IndexReader indexReader = DirectoryReader.open(indexDirectory);
 		searcher = new IndexSearcher(indexReader);
-		Query query;
-		query = new QueryParser(Version.LUCENE_43, defaultField,
+		Query query = new QueryParser(Version.LUCENE_43, defaultField,
 				new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				this.maxHits, true);
 		searcher.search(query, collector);
+		int totalHits = collector.getTotalHits();
+		// ensuring all results are in collector
+		if (totalHits > this.maxHits) {
+			collector = TopScoreDocCollector.create(totalHits, true);
+			searcher.search(query, collector);
+		}
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		long endTime = System.currentTimeMillis();
 		return new SearchResult(extractHits(hits), collector.getTotalHits(),
 				endTime - startTime, queryString);
 	}
 
-	public SearchResult searchKey(String queryString, int maxHits)
-			throws IOException, ParseException {
-		this.maxHits = maxHits;
-		return searchKey(queryString);
-	}
-
+	// converting hits in SocreDoc to List of FileInfo Objects
 	private List<FileInfo> extractHits(ScoreDoc[] hits) throws IOException {
 		List<FileInfo> hitList = new ArrayList<FileInfo>();
 		for (int i = 0; i < hits.length; i++) {

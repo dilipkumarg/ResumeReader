@@ -11,7 +11,6 @@ import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 
-
 public class CommandModeHandler extends Handler {
 	private PropertyFileReader properties;
 

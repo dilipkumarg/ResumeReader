@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Welcome to Resume Search Engine</title>
-<script type="text/javascript" src="scripts/search.js"></script>
-<link type="text/css" rel="stylesheet" href="styles/bootstrap.css">
-<link type="text/css" rel="stylesheet" href="styles/custom_styles.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Welcome to Resume Search Engine</title>
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="styles/custom_styles.css">
 </head>
 <body>
-	<div class="well well-large container">
-		<div id="searchDiv" class="text-center">
-			<div id="headerDiv" class="row page-header">
-				<h1 id="heading">Resume Search Engine</h1>
-			</div>
-			<div id="searchForm">
-				<form class="form-search" action="javascript:search();">
-					<div class="input-append">
-						<input id="queryText" class="span6" type="text"
-							placeholder="Search Query Here!" required="required">
-						<button type="submit" class="btn">
-							<i class="icon-search"></i>
-						</button>
-					</div>
-				</form>
-			</div>
-		</div>
-		<div id="resultsDiv"></div>
-	</div>
+<div class="well well-large container">
+    <div id="searchDiv" class="text-center">
+        <div id="headerDiv" class="row page-header">
+            <h1 id="heading">Resume Search Engine</h1>
+        </div>
+        <div id="searchForm">
+            <form class="form-search" action="javascript:searchQuery();">
+                <div class="input-append">
+                    <input id="queryText" class="span6" type="text"
+                           placeholder="Search Query Here!" required="required">
+                    <button type="submit" class="btn">
+                        <i class="icon-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="resultsDiv"></div>
+</div>
+<script type="text/javascript" src="scripts/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="scripts/bootstrap.js"></script>
+<script type="text/javascript" src="scripts/namespace.js"></script>
+<script type="text/javascript" src="scripts/ElementCreator.js"></script>
+<script type="text/javascript" src="scripts/ListGenerator.js"></script>
+<script type="text/javascript" src="scripts/ResultHeaderCreator.js"></script>
+<script type="text/javascript" src="scripts/search.js"></script>
 </body>
 </html>

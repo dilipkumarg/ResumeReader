@@ -77,7 +77,7 @@ public class CommandModeHandler extends Handler {
 		searchResult = resumeSearchService.search(this.args[1],
 				properties.getIndexDirPath());
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
-		resumeSegregator.segregate(searchResult.getTopHits());
+		resumeSegregator.findMaxSimilarity(searchResult.getTopHits());
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
 		System.out.println("Search Duration:"
 				+ searchResult.getSearchDuration() + "ms");

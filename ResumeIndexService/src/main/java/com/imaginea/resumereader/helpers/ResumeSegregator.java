@@ -18,13 +18,12 @@ public class ResumeSegregator {
 
 	}
 
-	public void segregate(List<FileInfo> personNames) throws IOException {
+	public void findMaxSimilarity(List<FileInfo> personNames) throws IOException {
 		PersonNameMatcher nameMatcher = new PersonNameMatcher();
 		String a;
 		FileInfo employee;
 		List<String> employeeNames = new ArrayList<String>();
 		ExcelReader excelReader = new ExcelReader();
-		excelReader.setInputFile();
 		excelReader.read(employeeNames);
 		Iterator<FileInfo> personIterator = personNames.iterator();
 		while (personIterator.hasNext()) {
@@ -39,17 +38,20 @@ public class ResumeSegregator {
 					similarity = jaro;
 				}
 			}
-			System.out.println(employee +" : "+ similarity);
-			if (similarity >= 0.95) {
-				activeEmployees.add(employee);
-			} else if (similarity >= 0.85 && similarity < 0.95) {
-				probableActiveEmployess.add(employee);
-			} else {
-				inactiveEmployees.add(employee);
-			}
+			segregate(similarity, employee);
 		}
 	}
 
+	private void segregate(double similarity, FileInfo employee){
+		if (similarity >= 0.95) {
+			activeEmployees.add(employee);
+		} else if (similarity >= 0.85 && similarity < 0.95) {
+			probableActiveEmployess.add(employee);
+		} else {
+			inactiveEmployees.add(employee);
+		}
+		
+	}
 	public List<FileInfo> getActiveEmployees() {
 		return activeEmployees;
 	}

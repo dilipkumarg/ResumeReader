@@ -16,12 +16,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelReader {
 	private String inputFile;
 
-	public void setInputFile(String inputFile) {
+	public ExcelReader(String inputFile) {
 		this.inputFile = inputFile;
 	}
 
-	public void setInputFile() {
-		setInputFile("/home/ashwin/Downloads/Book1.xlsx");
+	public ExcelReader() {
+		/*StringWriter writer = new StringWriter();
+		IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("Book1.xlsx"), writer);*/
+		this("/home/ashwin/Downloads/Book1.xlsx");
 	}
 
 	/*

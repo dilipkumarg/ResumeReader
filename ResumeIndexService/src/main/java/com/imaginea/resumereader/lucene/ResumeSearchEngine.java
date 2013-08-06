@@ -3,7 +3,9 @@ package com.imaginea.resumereader.lucene;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -40,7 +42,7 @@ public class ResumeSearchEngine {
 		this.maxHits = 1000;
 	}
 
-	public SearchResult searchKey(String queryString) throws IOException,
+	public SearchResult searchKey(String queryString, Boolean allowDuplicates) throws IOException,
 			ParseException {
 		long startTime = System.currentTimeMillis();
 		IndexReader indexReader = DirectoryReader.open(indexDirectory);
@@ -58,19 +60,26 @@ public class ResumeSearchEngine {
 		}
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		long endTime = System.currentTimeMillis();
-		return new SearchResult(extractHits(hits), collector.getTotalHits(),
+		return new SearchResult(extractHits(hits, allowDuplicates), collector.getTotalHits(),
 				endTime - startTime, queryString);
 	}
 
 	// converting hits in SocreDoc to List of FileInfo Objects
-	private List<FileInfo> extractHits(ScoreDoc[] hits) throws IOException {
+	private List<FileInfo> extractHits(ScoreDoc[] hits, Boolean allowDuplicates) throws IOException {
 		List<FileInfo> hitList = new ArrayList<FileInfo>();
+		Set<String> personNames = new HashSet<String>();
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
 			Document d = searcher.doc(docId);
-			hitList.add(new FileInfo(d.getField(this.fileNameField)
-					.stringValue(), d.getField(this.personNameField)
-					.stringValue(), d.getField(this.summaryField).stringValue()));
+			// allowDuplicates is a boolean which specifies whether the user is
+			// interested in looking for duplicate Resumes
+			if (allowDuplicates ? true : personNames.add(d.getField(
+					this.personNameField).stringValue())) {
+				hitList.add(new FileInfo(d.getField(this.fileNameField)
+						.stringValue(), d.getField(this.personNameField)
+						.stringValue(), d.getField(this.summaryField)
+						.stringValue()));
+			}
 		}
 		return hitList;
 	}

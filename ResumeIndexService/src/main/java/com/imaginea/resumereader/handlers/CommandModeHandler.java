@@ -10,6 +10,7 @@ import com.imaginea.resumereader.entities.FileInfo;
 import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
+import com.imaginea.resumereader.helpers.ResumeSegregator;
 
 public class CommandModeHandler extends Handler {
 	private PropertyFileReader properties;
@@ -75,12 +76,22 @@ public class CommandModeHandler extends Handler {
 		SearchResult searchResult = null;
 		searchResult = resumeSearchService.search(this.args[1],
 				properties.getIndexDirPath());
+		ResumeSegregator resumeSegregator = new ResumeSegregator();
+		resumeSegregator.segregate(searchResult.getTopHits());
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
 		System.out.println("Search Duration:"
 				+ searchResult.getSearchDuration() + "ms");
-		System.out.println("\n****TOP HITS***");
-		for (FileInfo Hit : searchResult.getTopHits()) {
-			System.out.println(Hit.toString());
+		System.out.println("\n****TOP ACTIVE HITS***");
+		for (FileInfo activeHit : resumeSegregator.getActiveEmployees()) {
+			System.out.println(activeHit.toString());
+		}
+		System.out.println("\n****TOP PROBABLE ACTIVE HITS***");
+		for (FileInfo activeHit : resumeSegregator.getProbableActiveEmployess()) {
+			System.out.println(activeHit.toString());
+		}
+		System.out.println("\n****TOP INACTIVE HITS***");
+		for (FileInfo inactiveHit : resumeSegregator.getActiveEmployees()) {
+			System.out.println(inactiveHit.toString());
 		}
 	}
 

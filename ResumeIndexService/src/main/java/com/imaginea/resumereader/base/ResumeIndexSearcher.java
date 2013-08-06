@@ -31,7 +31,7 @@ public class ResumeIndexSearcher {
 			org.apache.lucene.queryparser.classic.ParseException {
 		ResumeSearchEngine searchEngine = new ResumeSearchEngine(new File(
 				indexDirPath));
-		SearchResult searchResult = searchEngine.searchKey(query);
+		SearchResult searchResult = searchEngine.searchKey(query, false);
 		return searchResult;
 	}
 

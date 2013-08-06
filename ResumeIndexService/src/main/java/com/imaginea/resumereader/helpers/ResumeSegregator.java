@@ -20,8 +20,8 @@ public class ResumeSegregator {
 
 	public void findMaxSimilarity(List<FileInfo> personNames) throws IOException {
 		PersonNameMatcher nameMatcher = new PersonNameMatcher();
-		String a;
-		FileInfo employee;
+		String personName;
+		FileInfo person;
 		List<String> employeeNames = new ArrayList<String>();
 		ExcelReader excelReader = new ExcelReader();
 		excelReader.read(employeeNames);
@@ -29,16 +29,16 @@ public class ResumeSegregator {
 		while (personIterator.hasNext()) {
 			Iterator<String> employeeIterator = employeeNames.iterator();
 			double similarity = 0.0, jaro;
-			employee = personIterator.next();
-			a = employee.getTitle();
+			person = personIterator.next();
+			personName = person.getTitle();
 			while (employeeIterator.hasNext()) {
-				String string = employeeIterator.next();
-				jaro = nameMatcher.compare(a, string);
+				String employeeName = employeeIterator.next();
+				jaro = nameMatcher.compare(personName, employeeName);
 				if (jaro > similarity) {
 					similarity = jaro;
 				}
 			}
-			segregate(similarity, employee);
+			segregate(similarity, person);
 		}
 	}
 

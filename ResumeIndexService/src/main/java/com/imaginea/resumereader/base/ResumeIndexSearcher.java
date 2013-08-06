@@ -29,9 +29,15 @@ public class ResumeIndexSearcher {
 	public SearchResult search(String query, String indexDirPath)
 			throws IOException,
 			org.apache.lucene.queryparser.classic.ParseException {
+		return search(query, indexDirPath, false);
+	}
+	
+	public SearchResult search(String query, String indexDirPath, Boolean allowDuplicates)
+			throws IOException,
+			org.apache.lucene.queryparser.classic.ParseException {
 		ResumeSearchEngine searchEngine = new ResumeSearchEngine(new File(
 				indexDirPath));
-		SearchResult searchResult = searchEngine.searchKey(query, false);
+		SearchResult searchResult = searchEngine.searchKey(query, allowDuplicates);
 		return searchResult;
 	}
 

@@ -18,7 +18,8 @@ public class ResumeSegregator {
 
 	}
 
-	public void findMaxSimilarity(List<FileInfo> personNames) throws IOException {
+	public void findMaxSimilarity(List<FileInfo> personNames)
+			throws IOException {
 		PersonNameMatcher nameMatcher = new PersonNameMatcher();
 		String personName;
 		FileInfo person;
@@ -42,7 +43,9 @@ public class ResumeSegregator {
 		}
 	}
 
-	private void segregate(double similarity, FileInfo employee){
+	private void segregate(double similarity, FileInfo employee) {
+		// 0.95 would confirm the right match barring few character
+		// displacements/removals eg : apurb for apurba
 		if (similarity >= 0.95) {
 			activeEmployees.add(employee);
 		} else if (similarity >= 0.85 && similarity < 0.95) {
@@ -50,8 +53,9 @@ public class ResumeSegregator {
 		} else {
 			inactiveEmployees.add(employee);
 		}
-		
+
 	}
+
 	public List<FileInfo> getActiveEmployees() {
 		return activeEmployees;
 	}

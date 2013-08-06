@@ -90,7 +90,7 @@ public class CommandModeHandler extends Handler {
 			System.out.println(activeHit.toString());
 		}
 		System.out.println("\n****TOP INACTIVE HITS***");
-		for (FileInfo inactiveHit : resumeSegregator.getActiveEmployees()) {
+		for (FileInfo inactiveHit : resumeSegregator.getInactiveEmployees()) {
 			System.out.println(inactiveHit.toString());
 		}
 	}

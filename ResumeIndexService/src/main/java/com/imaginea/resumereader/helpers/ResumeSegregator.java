@@ -39,6 +39,7 @@ public class ResumeSegregator {
 					similarity = jaro;
 				}
 			}
+			System.out.println(employee +" : "+ similarity);
 			if (similarity >= 0.95) {
 				activeEmployees.add(employee);
 			} else if (similarity >= 0.85 && similarity < 0.95) {

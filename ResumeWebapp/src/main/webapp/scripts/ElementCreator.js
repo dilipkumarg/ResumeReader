@@ -19,5 +19,5 @@ resumeReader.ElementCreator = function() {
         createDomEle : function(type, id, eleClass, value) {
             return createDomEle(type, id, eleClass, value);
         }
-    }
-}
+    };
+}();

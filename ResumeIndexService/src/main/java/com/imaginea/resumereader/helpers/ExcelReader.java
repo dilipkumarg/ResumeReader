@@ -21,9 +21,13 @@ public class ExcelReader {
 	}
 
 	public ExcelReader() {
-		/*StringWriter writer = new StringWriter();
-		IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("Book1.xlsx"), writer);*/
-		this("/home/ashwin/Downloads/Book1.xlsx");
+		/*
+		 * StringWriter writer = new StringWriter();
+		 * IOUtils.copy(this.getClass()
+		 * .getClassLoader().getResourceAsStream("Book1.xlsx"), writer);
+		 */
+		this(ExcelReader.class.getClassLoader().getResource("Book1.xlsx")
+				.getPath());
 	}
 
 	/*

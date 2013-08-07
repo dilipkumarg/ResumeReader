@@ -1,9 +1,21 @@
 var resumeReader = {
     ids : {
         queryTextBox : "queryText",
-        resultsDiv : "resultsDiv"
+        resultsDiv : "resultsDiv",
+        resultHeaderDiv: "resultHeaderDiv",
+        queryLabel: "queryLabel",
+        hitsLabel: "hitsLabel",
+        timeTakenLabel: "timeTakenLabel",
+        resultList : "resultsList"
     },
-    idsPrefix: {},
+    idsPrefix: {
+        itemSummary: "itemSummary",
+        activeList : "Active",
+        inactiveList: "Inactive",
+        itemDiv: "itemDiv",
+        itemCollapseIcon : "itemCollapseIcon"
+
+    },
     url : {
         search : "resumereader/search",
         view : "resumereader/view"
@@ -17,20 +29,17 @@ var resumeReader = {
     Searcher : {}
 };
 
-function $(id) {
-    return document.getElementById(id);
-}
 
 function searchQuery() {
-    var searchQuery = $(resumeReader.ids.queryTextBox).value;
+    var searchQuery = $("#" + resumeReader.ids.queryTextBox).val();
     resumeReader.Searcher.searchAndPrint(searchQuery);
 }
 function toggleSummary(itemId) {
-    var summaryDiv = $(itemId);
-
-    if (summaryDiv.style.display == "none") {
-        summaryDiv.style.display = "inline-block";
+    /*var summaryDiv = $("#" + itemId);
+    if (summaryDiv.css("display") == "none") {
+        summaryDiv.css({"display":"inline-block"});
     } else {
-        summaryDiv.style.display = "none";
-    }
+        summaryDiv.css({"display" : "none"});
+    }*/
+    $("#" + itemId).slideToggle("slow");
 }

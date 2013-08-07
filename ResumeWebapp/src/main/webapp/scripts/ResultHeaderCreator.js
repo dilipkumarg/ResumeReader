@@ -8,14 +8,15 @@
 
 resumeReader.ResultHeaderCreator = function() {
     var domEle = resumeReader.ElementCreator;
+    "use strict";
     function createResultHeaderDiv(searchKey, totalHits, timeTaken) {
-        "use strict";
-        var headerDiv = domEle.createDomEle("div", "resultHeaderDiv", "navbar", ""),
-            queryLabel = domEle.createDomEle("span", "queryLabel", "label label-info",
+        var ids = resumeReader.ids,
+            headerDiv = domEle.createDomEle("div", ids.resultHeaderDiv, "navbar", ""),
+            queryLabel = domEle.createDomEle("span", ids.queryLabel, "label label-info",
                 "Search Key: " + searchKey),
-            totalHitsLabel = domEle.createDomEle("span", "hitsLabel",
+            totalHitsLabel = domEle.createDomEle("span", ids.hitsLabel,
                 "label label-info offset1 pull-right", "Total Hits: " + totalHits),
-            timeTakenLabel = domEle.createDomEle("span", "timeTakenLabel",
+            timeTakenLabel = domEle.createDomEle("span", ids.timeTakenLabel,
                 "label label-info pull-right", "Search Duration: " + timeTaken + "ms");
         headerDiv.appendChild(queryLabel);
         headerDiv.appendChild(totalHitsLabel);
@@ -26,5 +27,5 @@ resumeReader.ResultHeaderCreator = function() {
         createResultHeaderDiv : function(searchKey, totalHits, timeTaken) {
             return createResultHeaderDiv(searchKey, totalHits, timeTaken);
         }
-    }
-}
+    };
+}();

@@ -74,7 +74,7 @@ public class ResumeSearchEngine {
 			// allowDuplicates is a boolean which specifies whether the user is
 			// interested in looking for duplicate Resumes
 			if (allowDuplicates ? true : personNames.add(d.getField(
-					this.personNameField).stringValue())) {
+					this.personNameField).stringValue().toLowerCase())) {
 				hitList.add(new FileInfo(d.getField(this.fileNameField)
 						.stringValue(), d.getField(this.personNameField)
 						.stringValue(), d.getField(this.summaryField)

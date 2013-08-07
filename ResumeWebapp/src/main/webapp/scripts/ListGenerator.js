@@ -52,7 +52,7 @@ resumeReader.ListGenerator = function () {
             viewLink = domEle.createDomEle("a", "", "offset1 pull-right", "View"),
             expandButton = domEle.createDomEle("a", "", "expandSummary offset1 pull-right",
                 "<i id='" + idsPrefix.itemCollapseIcon + id + "' class = 'icon-chevron-down'></i>");
-        viewLink.href = resumeReader.url.search + "?filename=" + path;
+        viewLink.href = resumeReader.url.view + "?filename=" + path;
         viewLink.target = "_blank";
         expandButton.href = "#";
         expandButton.onclick = function (e) {

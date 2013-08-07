@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.imaginea.resumereader.helpers.ResumeSegregator;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -32,7 +33,7 @@ public class SearchServlet extends HttpServlet {
 		SearchResult searchResult = null;
 		try {
 			searchResult = resumeSearchService.search(searchKey,
-					properties.getIndexDirPath());
+					properties.getIndexDirPath(), false);
 		} catch (FileDirectoryEmptyException e) {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"Index Directory Not Set");
@@ -40,39 +41,37 @@ public class SearchServlet extends HttpServlet {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"ParseException Occured <br> Error:" + e.getMessage());
 		}
-		searchResult.setTopHits(removeDuplicates(searchResult.getTopHits()));
-		printWriter.print(toJsonString(searchResult));
-	}
-
-	private List<FileInfo> removeDuplicates(List<FileInfo> listOfFiles) {
-		List<String> names = new ArrayList<String>();
-		for (FileInfo fileInfo : listOfFiles) {
-			if (names.contains(fileInfo.getTitle())) {
-				listOfFiles.remove(fileInfo);
-			} else {
-				names.add(fileInfo.getTitle());
-			}
-		}
-		return listOfFiles;
+		//searchResult.setTopHits(removeDuplicates(searchResult.getTopHits()));
+        ResumeSegregator resumeSegregator = new ResumeSegregator();
+        resumeSegregator.findMaxSimilarity(searchResult.getTopHits());
+        printWriter.print(toJsonString(searchResult,resumeSegregator));
 	}
 
 	@SuppressWarnings("unchecked")
-	private JSONObject toJsonString(SearchResult searchResult) {
+	private JSONObject toJsonString(SearchResult searchResult, ResumeSegregator resumeSegregator) {
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("totalHits", searchResult.getTotalHitCount());
 		jsonObj.put("uniqueResults", searchResult.getTopHits().size());
 		jsonObj.put("searchDuration", searchResult.getSearchDuration());
 		jsonObj.put("searchKey", searchResult.getQuery());
 
-		JSONArray topHits = new JSONArray();
-		for (FileInfo hit : searchResult.getTopHits()) {
-			JSONObject fileObj = new JSONObject();
-			fileObj.put("title", hit.getTitle());
-			fileObj.put("summary", hit.getSummary());
-			fileObj.put("filepath", hit.getFilePath());
-			topHits.add(fileObj);
-		}
-		jsonObj.put("topHits", topHits);
-		return jsonObj;
+		jsonObj.put("activeHits", hitsToJson(resumeSegregator.getActiveEmployees()));
+        jsonObj.put("inActiveHits", hitsToJson(resumeSegregator.getInactiveEmployees()));
+        jsonObj.put("probableHits", hitsToJson(resumeSegregator.getProbableActiveEmployess()));
+
+        return jsonObj;
 	}
+
+    @SuppressWarnings("unchecked")
+    private JSONArray hitsToJson(List<FileInfo> hits) {
+        JSONArray hitsJSON = new JSONArray();
+        for (FileInfo hit : hits) {
+            JSONObject fileObj = new JSONObject();
+            fileObj.put("title", hit.getTitle());
+            fileObj.put("summary", hit.getSummary());
+            fileObj.put("filepath", hit.getFilePath());
+            hitsJSON.add(fileObj);
+        }
+        return hitsJSON;
+    }
 }

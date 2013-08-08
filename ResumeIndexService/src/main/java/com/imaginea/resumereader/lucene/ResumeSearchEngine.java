@@ -16,6 +16,9 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -49,18 +52,20 @@ public class ResumeSearchEngine {
 		searcher = new IndexSearcher(indexReader);
 		Query query = new QueryParser(Version.LUCENE_43, defaultField,
 				new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
+		TopDocs docs = searcher.search(query, this.maxHits, new Sort(new SortField("title", SortField.Type.STRING)));
+		ScoreDoc[] scoreDocList = docs.scoreDocs;
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				this.maxHits, true);
-		searcher.search(query, collector);
+		//searcher.search(query, collector);
 		int totalHits = collector.getTotalHits();
 		// ensuring all results are in collector
 		if (totalHits > this.maxHits) {
 			collector = TopScoreDocCollector.create(totalHits, true);
-			searcher.search(query, collector);
+			searcher.search(query, this.maxHits, new Sort(new SortField("title", SortField.Type.STRING)));
 		}
-		ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		//ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		long endTime = System.currentTimeMillis();
-		return new SearchResult(extractHits(hits, allowDuplicates), collector.getTotalHits(),
+		return new SearchResult(extractHits(scoreDocList, allowDuplicates), collector.getTotalHits(),
 				endTime - startTime, queryString);
 	}
 

@@ -2,14 +2,12 @@ package com.imaginea.resumereader.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.imaginea.resumereader.helpers.ResumeSegregator;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -19,6 +17,7 @@ import com.imaginea.resumereader.entities.FileInfo;
 import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
+import com.imaginea.resumereader.helpers.ResumeSegregator;
 
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;

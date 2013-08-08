@@ -41,7 +41,8 @@ public class Indexer {
                 Field.Store.YES));
         doc.add(new StringField(IndexFieldNames.FILE_PATH_FIELD, filePath,
                 Field.Store.YES));
-        doc.add(new StringField(IndexFieldNames.TITLE_FIELD, title, Field.Store.YES));
+        doc.add(new Field(IndexFieldNames.TITLE_FIELD, title, StringField.TYPE_STORED));
+        //doc.add(new StringField(IndexFieldNames.TITLE_FIELD, title, Field.Store.YES));
         doc.add(new StringField(IndexFieldNames.SUMMARY_FIELD, summary, Field.Store.YES));
         return doc;
     }

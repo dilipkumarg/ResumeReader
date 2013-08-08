@@ -5,29 +5,40 @@
 
 .resultListElement {
 	line-height: 30px;
+    background: none repeat scroll 0 0 #f5f5f5;
+    border-radius: 4px 4px 4px 4px;
+    border-bottom: 2px ridge grey;
+}
+body .modal {
+    /* new custom width */
+    width: 750px;
+    /* must be half of the width, minus scrollbar on the left (30px) */
+    margin-left: -375px;
 }
 
+#body {
+    /*border-radius: 4px 4px 4px 4px;
+    background-repeat: repeat;
+
+    background-image: url("../img/pat4.png");*/
+    box-shadow: 0px 0px 20px #888888;
+}
 .itemHeader {
-	border: 1px ridge grey;
-	border-radius: 4px 4px 4px 4px;
-	padding-left: 10px;
-	padding-right: 10px;
+	border: 0px ridge grey;
+    border-radius: 4px 4px 4px 4px;
+	padding: 5px 15px 5px 15px;
+    margin-top: 5px;
 }
 .itemHeader:hover {
-	background: none repeat scroll 0 0 snow;
+    background: none repeat scroll 0 0 lightgrey;
 }
 
 .summaryDiv {
-	background: none repeat scroll 0 0 whitesmoke;
-	border: 2px ridge darkgrey;
-	border-radius: 4px 4px 20px 20px;
-	color: lightslategrey;
-	font-family: DejaVu Sans;
 	font-size: small;
 	padding-left: 20px;
 	padding-right: 10px;
 	text-align: justify;
-	text-indent: 40px;
+	text-indent: 35px;
 }
 
 .titleLabel {

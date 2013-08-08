@@ -40,37 +40,40 @@ public class SearchServlet extends HttpServlet {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"ParseException Occured <br> Error:" + e.getMessage());
 		}
-		//searchResult.setTopHits(removeDuplicates(searchResult.getTopHits()));
-        ResumeSegregator resumeSegregator = new ResumeSegregator();
-        resumeSegregator.findMaxSimilarity(searchResult.getTopHits());
-        printWriter.print(toJsonString(searchResult,resumeSegregator));
+		// searchResult.setTopHits(removeDuplicates(searchResult.getTopHits()));
+		ResumeSegregator resumeSegregator = new ResumeSegregator();
+		resumeSegregator.findMaxSimilarity(searchResult.getTopHits());
+		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}
 
 	@SuppressWarnings("unchecked")
-	private JSONObject toJsonString(SearchResult searchResult, ResumeSegregator resumeSegregator) {
+	private JSONObject toJsonString(SearchResult searchResult,
+			ResumeSegregator resumeSegregator) {
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("totalHits", searchResult.getTotalHitCount());
-		jsonObj.put("uniqueResults", searchResult.getTopHits().size());
+		jsonObj.put("totalHits", searchResult.getTopHits().size());
 		jsonObj.put("searchDuration", searchResult.getSearchDuration());
 		jsonObj.put("searchKey", searchResult.getQuery());
 
-		jsonObj.put("activeHits", hitsToJson(resumeSegregator.getActiveEmployees()));
-        jsonObj.put("inActiveHits", hitsToJson(resumeSegregator.getInactiveEmployees()));
-        jsonObj.put("probableHits", hitsToJson(resumeSegregator.getProbableActiveEmployess()));
+		jsonObj.put("activeHits",
+				hitsToJson(resumeSegregator.getActiveEmployees()));
+		jsonObj.put("inActiveHits",
+				hitsToJson(resumeSegregator.getInactiveEmployees()));
+		jsonObj.put("probableHits",
+				hitsToJson(resumeSegregator.getProbableActiveEmployess()));
 
-        return jsonObj;
+		return jsonObj;
 	}
 
-    @SuppressWarnings("unchecked")
-    private JSONArray hitsToJson(List<FileInfo> hits) {
-        JSONArray hitsJSON = new JSONArray();
-        for (FileInfo hit : hits) {
-            JSONObject fileObj = new JSONObject();
-            fileObj.put("title", hit.getTitle());
-            fileObj.put("summary", hit.getSummary());
-            fileObj.put("filepath", hit.getFilePath());
-            hitsJSON.add(fileObj);
-        }
-        return hitsJSON;
-    }
+	@SuppressWarnings("unchecked")
+	private JSONArray hitsToJson(List<FileInfo> hits) {
+		JSONArray hitsJSON = new JSONArray();
+		for (FileInfo hit : hits) {
+			JSONObject fileObj = new JSONObject();
+			fileObj.put("title", hit.getTitle());
+			fileObj.put("summary", hit.getSummary());
+			fileObj.put("filepath", hit.getFilePath());
+			hitsJSON.add(fileObj);
+		}
+		return hitsJSON;
+	}
 }

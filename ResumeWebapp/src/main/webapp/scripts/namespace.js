@@ -12,6 +12,7 @@ var resumeReader = {
         itemSummary: "itemSummary",
         activeList : "Active",
         inactiveList: "Inactive",
+        probableList: "Probable",
         itemDiv: "itemDiv",
         itemCollapseIcon : "itemCollapseIcon"
 

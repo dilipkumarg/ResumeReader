@@ -1,8 +1,9 @@
 package com.imaginea.resumereader.helpers;
 
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,10 +15,14 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcelReader {
-	private String inputFile;
+	private final InputStream fileIS;
 
-	public ExcelReader(String inputFile) {
-		this.inputFile = inputFile;
+	public ExcelReader(String inputFile) throws FileNotFoundException {
+		this.fileIS = new FileInputStream(inputFile);
+	}
+
+	public ExcelReader(FileInputStream fileIS) {
+		this.fileIS = fileIS;
 	}
 
 	public ExcelReader() {
@@ -26,8 +31,8 @@ public class ExcelReader {
 		 * IOUtils.copy(this.getClass()
 		 * .getClassLoader().getResourceAsStream("Book1.xlsx"), writer);
 		 */
-		this(ExcelReader.class.getClassLoader().getResource("Book1.xlsx")
-				.getPath());
+		this.fileIS = ExcelReader.class.getClassLoader().getResourceAsStream(
+				("Book1.xlsx"));
 	}
 
 	/*
@@ -37,22 +42,19 @@ public class ExcelReader {
 	 */
 
 	public void read(List<String> data) throws IOException {
-		File inputWorkbook = new File(inputFile);
 		//
 		// Create an ArrayList to store the data read from excel sheet.
 		//
-		FileInputStream fis = null;
 		try {
 			//
 			// Create a FileInputStream that will be use to read the
 			// excel file.
 			//
-			fis = new FileInputStream(inputWorkbook);
 
 			//
 			// Create an excel workbook from the file system.
 			//
-			XSSFWorkbook workbook = new XSSFWorkbook(fis);
+			XSSFWorkbook workbook = new XSSFWorkbook(this.fileIS);
 			//
 			// Get the first sheet on the workbook.
 			//
@@ -79,8 +81,8 @@ public class ExcelReader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (fis != null) {
-				fis.close();
+			if (this.fileIS != null) {
+				this.fileIS.close();
 			}
 		}
 

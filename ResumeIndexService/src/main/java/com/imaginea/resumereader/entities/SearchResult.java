@@ -3,7 +3,7 @@ package com.imaginea.resumereader.entities;
 import java.util.List;
 
 public class SearchResult {
-	private List<FileInfo> topHits;
+	private final List<FileInfo> topHits;
 	private final int totalHitCount;
 	private final long searchDuration;
 	private final String query;
@@ -30,10 +30,6 @@ public class SearchResult {
 
 	public String getQuery() {
 		return this.query;
-	}
-
-	public void setTopHits(List<FileInfo> topHits) {
-		this.topHits = topHits;
 	}
 
 	public String toString() {

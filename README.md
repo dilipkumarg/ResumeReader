@@ -16,8 +16,7 @@ Presently we support following three document formats for indexing resumes.
 
 ###Libraries Used: 
  * Apache Lucene: For indexing and searching the resumes.
- * Apache Poi: For reading doc and docx files.
- * Itextpdf: For reading pdf files.
+ * Apache Tika: For reading the above supported document files.
   
 ###Installation:
 This project uses maven build, which takes care of libraries and classpaths.

@@ -10,7 +10,7 @@ Presently we support following three document formats for indexing resumes.
 
 ###Commands (All commands are NOT Case Sensitive):
  * <strong>`indexdir <Path>` :</strong> This is used to set the index directory path.
- * <strong>`resumedir <Path>` :</strong> This is used to set the resume directory path.
+ * <strong>`employeefile <Path>` :</strong> This is used to set the Employee Excel File path.
  * <strong>`update` :</strong> This is used to update the index, it reads all the newly added files in the `<resumedir>` folder, and adds to the index i.e `<indexdir>`.
  * <strong>`search <Search key>`:</strong> This is used to search the resumes for a given search key. Use quotes when the search key contains spaces.
 

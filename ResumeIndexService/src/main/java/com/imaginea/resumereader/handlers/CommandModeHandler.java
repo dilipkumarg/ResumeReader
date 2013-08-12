@@ -27,7 +27,7 @@ public class CommandModeHandler extends Handler {
 		try {
 			if ("update".equalsIgnoreCase(command)) {
 				this.update();
-			} else if ("cleaneandupdate".equalsIgnoreCase(command)) {
+			} else if ("cleanandupdate".equalsIgnoreCase(command)) {
 				this.cleanAndUpdate();
 			} else if ("resumedir".equalsIgnoreCase(command)) {
 				this.setResumeDirPath();

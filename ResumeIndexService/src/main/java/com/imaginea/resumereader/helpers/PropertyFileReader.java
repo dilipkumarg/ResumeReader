@@ -75,8 +75,8 @@ public class PropertyFileReader {
      */
 
     public String getEmployeeExcelPath() throws FileNotFoundException {
-        String employeeExcelPath = propResumeDir.getProperty(EMPLOYEE_EXCEL).trim();
-        if (employeeExcelPath.isEmpty()) {
+        String employeeExcelPath = propResumeDir.getProperty(EMPLOYEE_EXCEL);
+        if (employeeExcelPath != null && employeeExcelPath.isEmpty()) {
             throw new FileNotFoundException(
                     "File Directory Path is Empty");
         }

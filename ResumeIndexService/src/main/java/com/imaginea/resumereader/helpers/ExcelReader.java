@@ -26,31 +26,13 @@ public class ExcelReader {
 	}
 
 	public ExcelReader() {
-		/*
-		 * StringWriter writer = new StringWriter();
-		 * IOUtils.copy(this.getClass()
-		 * .getClassLoader().getResourceAsStream("Book1.xlsx"), writer);
-		 */
 		this.fileIS = ExcelReader.class.getClassLoader().getResourceAsStream(
 				("Book1.xlsx"));
 	}
 
-	/*
-	 * public static void main(String[] args) throws Exception { ExcelReader
-	 * test = new ExcelReader();
-	 * test.setInputFile("/home/ashwin/Downloads/Book1.xlsx"); test.read(); }
-	 */
-
 	public void read(List<String> data) throws IOException {
-		//
 		// Create an ArrayList to store the data read from excel sheet.
-		//
 		try {
-			//
-			// Create a FileInputStream that will be use to read the
-			// excel file.
-			//
-
 			//
 			// Create an excel workbook from the file system.
 			//
@@ -59,13 +41,10 @@ public class ExcelReader {
 			// Get the first sheet on the workbook.
 			//
 			XSSFSheet sheet = workbook.getSheetAt(0);
-
 			//
-			// When we have a sheet object in hand we can iterator on
+			// When we have a sheet object in hand we can iterate on
 			// each sheet's rows and on each row's cells. We store the
-			// data read on an ArrayList so that we can printed the
-			// content of the excel to the console.
-			//
+			// data read in an ArrayList
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext()) {
 				XSSFRow row = (XSSFRow) rows.next();
@@ -76,7 +55,6 @@ public class ExcelReader {
 					data.add(cell.toString());
 					break;
 				}
-
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

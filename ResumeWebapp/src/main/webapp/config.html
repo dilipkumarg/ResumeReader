@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Search Service Configuration</title>
+    <link rel='stylesheet' href='styles/bootstrap.css'>
+    <script type="text/javascript" src='scripts/jquery-1.10.2.js'></script>
+    <script type="text/javascript" src='scripts/bootstrap.js'></script>
+    <script type="text/javascript" src="scripts/namespace.js"></script>
+    <script type="text/javascript" src="scripts/configScript.js"></script>
+</head>
+<body>
+    <div id='body' class="well container">
+
+        <div id="pageHeader" class="page-header text-center">
+            <h2>
+                Resume Search Engine Configuration
+            </h2>
+        </div>
+
+        <div id='configProperties' class="span6">
+            <form>
+                <fieldset>
+                    <legend>
+                        EDIT CONFIGURATION PROPERTIES
+                    </legend>
+                    <label>
+                        Resume Directory :
+                    </label>
+                    <input type="text" id="txtResumeDir" class="span5" placeholder="Resume Directory" disabled>
+                    <label>
+                        Employees List File :
+                    </label>
+                    <input type="text" id="txtEmployeeList" class="span5" placeholder="Employee List File" disabled>
+                    <span class="help-block">Double click to edit the text.</span>
+                    <button class="btn btn-primary" type="submit" disabled>Update Changes</button>
+                </fieldset>
+            </form>
+        </div>
+
+        <div id="updateIndex" class="span5">
+            <fieldset>
+                <legend>
+                    UPDATING INDEX
+                </legend>
+                <button class="btn btn-danger">
+                    CLEAN & UPDATE
+                </button>
+                <button class="btn btn-primary">
+                    UPDATE
+                </button>
+            </fieldset>
+        </div>
+    </div>
+</body>
+</html>

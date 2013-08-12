@@ -6,7 +6,9 @@ var resumeReader = {
         queryLabel: "queryLabel",
         hitsLabel: "hitsLabel",
         timeTakenLabel: "timeTakenLabel",
-        resultList : "resultsList"
+        resultList : "resultsList",
+        txtResumeDir : "txtResumeDir",
+        txtEmployeeList : "txtEmployeeList"
     },
     idsPrefix: {
         itemSummary: "itemSummary",
@@ -19,10 +21,15 @@ var resumeReader = {
     },
     url : {
         search : "resumereader/search",
-        view : "resumereader/view"
+        view : "resumereader/view",
+        config : "resumereader/config",
+        update : "resumereader/update"
     },
     urlParams : {
-        searchKey : "searchKey"
+        searchKey : "searchKey",
+        resumeDir: "resumeDir",
+        employeeFile : "employeeFile",
+        securityKey : "accessKey"
     },
     ElementCreator : {},
     ListGenerator: {},

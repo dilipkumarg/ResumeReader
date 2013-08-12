@@ -18,9 +18,9 @@ resumeReader.ListGenerator = function () {
             inactiveList = domEle.createDomEle("div", "inactive", "tab-pane", ""),
             probableList = domEle.createDomEle("div", "probable", "tab-pane", ""),
             navigationBar = domEle.createDomEle("ul", "", "nav nav-tabs nav-pills",
-                " <li class='active '> <a class='span2' href='#active' data-toggle='tab'>Active</a> </li>" +
-                    "<li><a class='span2' href='#probable' data-toggle='tab'>Probable</a></li>" +
-                    "<li><a class='span2' href='#inactive' data-toggle='tab'>Inactive</a></li>");
+                " <li class='active '> <a class='span2' href='#active' data-toggle='tab'>Active (" + activeHits.length +")</a> </li>" +
+                "<li><a class='span2' href='#probable' data-toggle='tab'>Probable (" + probableHits.length +")</a></li>" +
+                "<li><a class='span2' href='#inactive' data-toggle='tab'>Inactive (" + inactiveHits.length +")</a></li>");
 
         // creating active and inactive lists
         activeList.appendChild(createList(activeHits, idsPrefix.activeList));

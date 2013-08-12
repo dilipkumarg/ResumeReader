@@ -18,7 +18,13 @@ public class ExcelReader {
 	private final InputStream fileIS;
 
 	public ExcelReader(String inputFile) throws FileNotFoundException {
-		this.fileIS = new FileInputStream(inputFile);
+		if(inputFile=="" || inputFile == null){
+			this.fileIS = ExcelReader.class.getClassLoader().getResourceAsStream(
+					("Book1.xlsx"));
+		}else{
+			this.fileIS = new FileInputStream(inputFile);
+		}
+		
 	}
 
 	public ExcelReader(FileInputStream fileIS) {

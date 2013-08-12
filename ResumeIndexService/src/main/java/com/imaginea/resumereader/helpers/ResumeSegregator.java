@@ -27,20 +27,22 @@ public class ResumeSegregator {
 		List<String> employeeNames = new ArrayList<String>();
 		ExcelReader excelReader = new ExcelReader(new PropertyFileReader().getEmployeeExcelPath());
 		excelReader.read(employeeNames);
-		Iterator<FileInfo> personIterator = personNames.iterator();
-		while (personIterator.hasNext()) {
-			Iterator<String> employeeIterator = employeeNames.iterator();
-			double similarity = 0.0, jaro;
-			person = personIterator.next();
-			personName = person.getTitle();
-			while (employeeIterator.hasNext()) {
-				String employeeName = employeeIterator.next();
-				jaro = nameMatcher.compare(personName, employeeName);
-				if (jaro > similarity) {
-					similarity = jaro;
+		if (personNames != null) {
+			Iterator<FileInfo> personIterator = personNames.iterator();
+			while (personIterator.hasNext()) {
+				Iterator<String> employeeIterator = employeeNames.iterator();
+				double similarity = 0.0, jaro;
+				person = personIterator.next();
+				personName = person.getTitle();
+				while (employeeIterator.hasNext()) {
+					String employeeName = employeeIterator.next();
+					jaro = nameMatcher.compare(personName, employeeName);
+					if (jaro > similarity) {
+						similarity = jaro;
+					}
 				}
+				segregate(similarity, person);
 			}
-			segregate(similarity, person);
 		}
 	}
 

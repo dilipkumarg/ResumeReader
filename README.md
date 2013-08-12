@@ -9,15 +9,14 @@ Presently we support following three document formats for indexing resumes.
  * pdf.
 
 ###Commands (All commands are NOT Case Sensitive):
- * <strong>`indexdir <Path>` :</strong> This is used to set the index directory path.
  * <strong>`resumedir <Path>` :</strong> This is used to set the resume directory path.
+ * <strong>`employeefile <Path>` :</strong> This is used to set the employee excel file path.
  * <strong>`update` :</strong> This is used to update the index, it reads all the newly added files in the `<resumedir>` folder, and adds to the index i.e `<indexdir>`.
  * <strong>`search <Search key>`:</strong> This is used to search the resumes for a given search key. Use quotes when the search key contains spaces.
 
 ###Libraries Used: 
  * Apache Lucene: For indexing and searching the resumes.
- * Apache Poi: For reading doc and docx files.
- * Itextpdf: For reading pdf files.
+ * Apache Tika: For reading the above supported document files.
   
 ###Installation:
 This project uses maven build, which takes care of libraries and classpaths.

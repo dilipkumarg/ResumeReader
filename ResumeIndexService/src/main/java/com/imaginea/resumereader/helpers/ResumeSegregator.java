@@ -1,5 +1,6 @@
 package com.imaginea.resumereader.helpers;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,12 +20,13 @@ public class ResumeSegregator {
 	}
 
 	public void findMaxSimilarity(List<FileInfo> personNames)
-			throws IOException {
+			throws IOException, FileNotFoundException {
+		PropertyFileReader properties = new PropertyFileReader();
 		PersonNameMatcher nameMatcher = new PersonNameMatcher();
 		String personName;
 		FileInfo person;
 		List<String> employeeNames = new ArrayList<String>();
-		ExcelReader excelReader = new ExcelReader();
+		ExcelReader excelReader = new ExcelReader(properties.getEmployeeExcelPath());
 		excelReader.read(employeeNames);
 		Iterator<FileInfo> personIterator = personNames.iterator();
 		while (personIterator.hasNext()) {

@@ -1,5 +1,6 @@
 package com.imaginea.resumereader.handlers;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -26,6 +27,8 @@ public class CommandModeHandler extends Handler {
 		try {
 			if ("update".equalsIgnoreCase(command)) {
 				this.update();
+			} else if ("cleaneandupdate".equalsIgnoreCase(command)) {
+				this.cleanAndUpdate();
 			} else if ("resumedir".equalsIgnoreCase(command)) {
 				this.setResumeDirPath();
 			} else if ("employeefile".equalsIgnoreCase(command)) {
@@ -45,6 +48,22 @@ public class CommandModeHandler extends Handler {
 		}
 	}
 
+	private void cleanAndUpdate() throws FileDirectoryEmptyException, IOException, ParseException {
+		File indexDir = new File(properties.getIndexDirPath());
+	    File[] files = indexDir.listFiles();
+	    if(files!=null) { 
+	        for(File f: files) {
+	            if(f.isDirectory()) {
+	            	cleanAndUpdate();
+	            } else {
+	                f.delete();
+	            }
+	        }
+	    }
+	    indexDir.delete();
+	    this.update();
+	}
+	
 	private void update() throws IOException, ParseException,
 			FileDirectoryEmptyException {
 		int numOfupdates = 0;
@@ -52,7 +71,6 @@ public class CommandModeHandler extends Handler {
 		numOfupdates = resumeIndexService.updateIndex(
 				properties.getIndexDirPath(), properties.getResumeDirPath(),
 				properties.getLastTimeStamp());
-		properties.setLastTimeStamp(System.currentTimeMillis());
 		properties.setLastTimeStamp(System.currentTimeMillis());
 		System.out.println("Resume Index Updated successfully");
 		System.out.println("Number of new files added to the index are:"

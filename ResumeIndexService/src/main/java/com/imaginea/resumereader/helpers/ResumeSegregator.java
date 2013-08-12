@@ -21,12 +21,11 @@ public class ResumeSegregator {
 
 	public void findMaxSimilarity(List<FileInfo> personNames)
 			throws IOException, FileNotFoundException {
-		PropertyFileReader properties = new PropertyFileReader();
 		PersonNameMatcher nameMatcher = new PersonNameMatcher();
 		String personName;
 		FileInfo person;
 		List<String> employeeNames = new ArrayList<String>();
-		ExcelReader excelReader = new ExcelReader(properties.getEmployeeExcelPath());
+		ExcelReader excelReader = new ExcelReader(new PropertyFileReader().getEmployeeExcelPath());
 		excelReader.read(employeeNames);
 		Iterator<FileInfo> personIterator = personNames.iterator();
 		while (personIterator.hasNext()) {

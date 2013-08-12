@@ -16,23 +16,19 @@ import com.imaginea.resumereader.base.ResumeIndexSearcher;
 import com.imaginea.resumereader.entities.FileInfo;
 import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
-import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.helpers.ResumeSegregator;
 
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private PropertyFileReader properties;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		properties = new PropertyFileReader();
 		String searchKey = req.getParameter("searchKey");
 		PrintWriter printWriter = res.getWriter();
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
 		try {
-			searchResult = resumeSearchService.search(searchKey,
-					properties.getIndexDirPath(), false);
+			searchResult = resumeSearchService.search(searchKey, false);
 		} catch (FileDirectoryEmptyException e) {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"Index Directory Not Set");

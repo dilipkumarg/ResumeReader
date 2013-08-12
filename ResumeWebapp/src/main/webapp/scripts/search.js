@@ -10,7 +10,7 @@ resumeReader.Searcher = function () {
                 printResult(response);
             },
             error: function (xhr) {
-                $("#" + ids.resultsDiv).text(xhr);
+                $("#" + ids.resultsDiv).html("An error occured:" + xhr.status + "<br>" + xhr.statusText);
             }});
     }
 

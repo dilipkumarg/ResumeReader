@@ -13,6 +13,9 @@
     <div id="searchDiv" class="text-center">
         <div id="headerDiv" class="row page-header">
             <h1 id="heading">Resume Search Engine</h1>
+            <span class="pull-right">
+                <a class="muted" href="config.html">Cofigure</a>
+            </span>
         </div>
         <div id="searchForm">
             <form class="form-search" action="javascript:searchQuery();">
@@ -28,7 +31,8 @@
     </div>
     <div id="resultsDiv"></div>
     <!-- Modal -->
-    <div id="myModal" class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="myModal" class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="myModalLabel">Resume Content</h3>
@@ -40,7 +44,7 @@
 </div>
 <script>
     // this code is for dynamically loading different resumes on the modal
-    $('#myModal').on('hidden',  function () {
+    $('#myModal').on('hidden', function () {
         $(this).removeData('modal');
     });
 </script>

@@ -20,4 +20,20 @@
     <servlet-name>View</servlet-name>
     <url-pattern>/resumereader/view</url-pattern>
   </servlet-mapping> 
+  <servlet>
+    <servlet-name>Config</servlet-name>
+    <servlet-class>com.imaginea.resumereader.servlet.PropertiesConfigurationServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Config</servlet-name>
+    <url-pattern>/resumereader/config</url-pattern>
+  </servlet-mapping> 
+  <servlet>
+    <servlet-name>Update</servlet-name>
+    <servlet-class>com.imaginea.resumereader.servlet.IndexUpdateServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Update</servlet-name>
+    <url-pattern>/resumereader/update</url-pattern>
+  </servlet-mapping> 
 </web-app>

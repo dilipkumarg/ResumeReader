@@ -1,6 +1,5 @@
 package com.imaginea.resumereader.handlers;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -48,29 +47,21 @@ public class CommandModeHandler extends Handler {
 		}
 	}
 
-	private void cleanAndUpdate() throws FileDirectoryEmptyException, IOException, ParseException {
-		File indexDir = new File(properties.getIndexDirPath());
-	    File[] files = indexDir.listFiles();
-	    if(files!=null) { 
-	        for(File f: files) {
-	            if(f.isDirectory()) {
-	            	cleanAndUpdate();
-	            } else {
-	                f.delete();
-	            }
-	        }
-	    }
-	    indexDir.delete();
-	    this.update();
+	private void cleanAndUpdate() throws FileDirectoryEmptyException,
+			IOException, ParseException {
+		int numOfupdates = 0;
+		ResumeIndexSearcher resumeIndexService = new ResumeIndexSearcher();
+		numOfupdates = resumeIndexService.CleanAndIndex();
+		System.out.println("Resume Index Updated successfully");
+		System.out.println("Number of files added to the index are:"
+				+ numOfupdates);
 	}
-	
+
 	private void update() throws IOException, ParseException,
 			FileDirectoryEmptyException {
 		int numOfupdates = 0;
 		ResumeIndexSearcher resumeIndexService = new ResumeIndexSearcher();
-		numOfupdates = resumeIndexService.updateIndex(
-				properties.getIndexDirPath(), properties.getResumeDirPath(),
-				properties.getLastTimeStamp());
+		numOfupdates = resumeIndexService.updateIndex();
 		properties.setLastTimeStamp(System.currentTimeMillis());
 		System.out.println("Resume Index Updated successfully");
 		System.out.println("Number of new files added to the index are:"
@@ -84,7 +75,7 @@ public class CommandModeHandler extends Handler {
 		}
 		properties.setResumeDirPath(this.args[1]);
 	}
-	
+
 	private void setEmployeeFilePath() throws IOException {
 		if (this.args.length < 2) {
 			throw new IllegalArgumentException(
@@ -102,8 +93,7 @@ public class CommandModeHandler extends Handler {
 		}
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
-		searchResult = resumeSearchService.search(this.args[1],
-				properties.getIndexDirPath());
+		searchResult = resumeSearchService.search(this.args[1]);
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
 		resumeSegregator.findMaxSimilarity(searchResult.getTopHits());
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());

@@ -14,6 +14,7 @@ public class PropertyFileReader {
     private final String TIME_STAMP_NAME = "timestamp.properties";
     private final String RESUME_DIR_PATH = "resumeDir";
     private final String LAST_TIME_STAMP = "lastTimeStamp";
+    private final String EMPLOYEE_EXCEL = "EmployeeExcel";
     private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
     public PropertyFileReader() throws IOException {
@@ -43,6 +44,12 @@ public class PropertyFileReader {
         propResumeDir.store(new FileOutputStream(FILE_NAME),
                 "Resume Directory updated");
     }
+    
+    public void setEmployeeExcelPath(String employeeExcelFile) throws IOException {
+        propResumeDir.setProperty(EMPLOYEE_EXCEL, employeeExcelFile);
+        propResumeDir.store(new FileOutputStream(FILE_NAME),
+                "Resume Directory updated");
+    }
 
     /**
      * returns file directory path
@@ -60,6 +67,22 @@ public class PropertyFileReader {
         return fileDirPath;
     }
 
+    /**
+     * returns Employee Excel path
+     *
+     * @return EmployeeExcelPath
+     * @throws FileDirectoryEmptyException
+     */
+
+    public String getEmployeeExcelPath() throws FileNotFoundException {
+        String employeeExcelPath = propResumeDir.getProperty(EMPLOYEE_EXCEL).trim();
+        if (employeeExcelPath.isEmpty()) {
+            throw new FileNotFoundException(
+                    "File Directory Path is Empty");
+        }
+        return employeeExcelPath;
+    }
+    
     private String getTImeStampFilePath() throws FileDirectoryEmptyException {
         return getIndexDirPath() + File.separator + TIME_STAMP_NAME;
     }

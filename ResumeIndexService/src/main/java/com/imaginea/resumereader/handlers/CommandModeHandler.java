@@ -28,6 +28,8 @@ public class CommandModeHandler extends Handler {
 				this.update();
 			} else if ("resumedir".equalsIgnoreCase(command)) {
 				this.setResumeDirPath();
+			} else if ("employeefile".equalsIgnoreCase(command)) {
+				this.setEmployeeFilePath();
 			} else if ("search".equalsIgnoreCase(command)) {
 				this.search();
 			} else {
@@ -63,6 +65,14 @@ public class CommandModeHandler extends Handler {
 					"Need one more parameter to perform this operation");
 		}
 		properties.setResumeDirPath(this.args[1]);
+	}
+	
+	private void setEmployeeFilePath() throws IOException {
+		if (this.args.length < 2) {
+			throw new IllegalArgumentException(
+					"Need one more parameter to perform this operation");
+		}
+		properties.setEmployeeExcelPath(this.args[1]);
 	}
 
 	private void search() throws IOException,

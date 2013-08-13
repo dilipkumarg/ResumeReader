@@ -79,12 +79,11 @@ public class PropertyFileReader {
 	}
 
 	public String getEmployeeExcelPath() throws FileNotFoundException {
-		String employeeExcelPath = propResumeDir.getProperty(EMPLOYEE_EXCEL)
-				.trim();
-		if (employeeExcelPath.isEmpty()) {
+		String employeeExcelPath = propResumeDir.getProperty(EMPLOYEE_EXCEL);
+		if (employeeExcelPath != null && employeeExcelPath.isEmpty()) {
 			throw new FileNotFoundException("Employee List File Path is Empty");
 		}
-		return employeeExcelPath;
+		return (employeeExcelPath != null ? employeeExcelPath.trim():employeeExcelPath);
 	}
 
 	private String getTImeStampFilePath() throws FileDirectoryEmptyException {

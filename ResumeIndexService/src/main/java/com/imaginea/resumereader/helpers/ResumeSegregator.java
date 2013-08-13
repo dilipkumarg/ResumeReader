@@ -36,7 +36,7 @@ public class ResumeSegregator {
 				personName = person.getTitle();
 				while (employeeIterator.hasNext()) {
 					String employeeName = employeeIterator.next();
-					jaro = nameMatcher.compare(personName, employeeName);
+					jaro = nameMatcher.compare(personName.toLowerCase(), employeeName.toLowerCase());
 					if (jaro > similarity) {
 						similarity = jaro;
 					}

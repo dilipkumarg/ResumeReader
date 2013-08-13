@@ -18,8 +18,11 @@ public class ResumeSegregatorTest {
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
 		List<FileInfo> personNames = new ArrayList<FileInfo>();
 		personNames.add(new FileInfo(null, "Apurba Nath", null));
+		personNames.add(new FileInfo(null, "Apurba nath", null));
 		resumeSegregator.findMaxSimilarity(personNames);
-		assertTrue("as", 1 == resumeSegregator.getActiveEmployees().size());
+		assertTrue("as", 2 == resumeSegregator.getActiveEmployees().size());
+		assertTrue("as", 0 == resumeSegregator.getProbableActiveEmployess().size());
+		assertTrue("as", 0 == resumeSegregator.getInactiveEmployees().size());
 		resumeSegregator.getActiveEmployees();
 	}
 

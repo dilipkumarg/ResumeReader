@@ -47,10 +47,14 @@ public class PropertiesConfigurationServlet extends HttpServlet {
 					e.getMessage());
 			return;
 		}
-
-		prop.setResumeDirPath(req.getParameter("resumeDir"));
-		prop.setEmployeeExcelPath(req.getParameter("employeeFile"));
-
-		res.getWriter().print("Successfully updated");
+		if (req.getParameter("securityKey").trim()
+				.equals(prop.getSecurityKey())) {
+			prop.setResumeDirPath(req.getParameter("resumeDir"));
+			prop.setEmployeeExcelPath(req.getParameter("employeeFile"));
+			res.getWriter().print("Successfully updated");
+		} else {
+			res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+					"Security Key not matched");
+		}
 	}
 }

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.imaginea.resumereader.base.ResumeIndexSearcher;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
+import com.imaginea.resumereader.helpers.PropertyFileReader;
 
 public class IndexUpdateServlet extends HttpServlet {
 
@@ -16,34 +17,43 @@ public class IndexUpdateServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		boolean cleanUpdate = Boolean.parseBoolean(req
-				.getParameter("cleanUpdate"));
-		ResumeIndexSearcher resumeIndexer = null;
 		try {
-			resumeIndexer = new ResumeIndexSearcher();
-		} catch (IOException e) {
+			if (isAutorizedUser(req.getParameter("securityKey"))) {
+				boolean cleanUpdate = Boolean.parseBoolean(req
+						.getParameter("cleanUpdate"));
+				ResumeIndexSearcher resumeIndexer = new ResumeIndexSearcher();
+
+				int numOfUpdated = 0;
+
+				if (cleanUpdate) {
+					// performing clean & index
+					numOfUpdated = resumeIndexer.CleanAndIndex();
+
+				} else {
+					// performing only updating index
+					numOfUpdated = resumeIndexer.updateIndex();
+				}
+
+				res.getWriter().print(
+						"Number of Files added to the index: " + numOfUpdated);
+			} else {
+				res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+						"Security Key Not matched");
+			}
+		} catch (IOException | FileDirectoryEmptyException | ParseException e) {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					e.getMessage());
+			return;
 		}
-		int numOfUpdated = 0;
-		if (cleanUpdate) {
-			// performing clean & index
-			try {
-				numOfUpdated = resumeIndexer.CleanAndIndex();
-			} catch (IOException | FileDirectoryEmptyException | ParseException e) {
-				res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						e.getMessage());
-			}
-		} else {
-			// performing only updating index
-			try {
-				numOfUpdated = resumeIndexer.updateIndex();
-			} catch (IOException | FileDirectoryEmptyException | ParseException e) {
-				res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						e.getMessage());
-			}
+
+	}
+
+	private boolean isAutorizedUser(String securityKey) throws IOException {
+		PropertyFileReader prop = null;
+		prop = new PropertyFileReader();
+		if (securityKey.trim().equals(prop.getSecurityKey())) {
+			return true;
 		}
-		res.getWriter().print(
-				"Number of Files added to the index: " + numOfUpdated);
+		return false;
 	}
 }

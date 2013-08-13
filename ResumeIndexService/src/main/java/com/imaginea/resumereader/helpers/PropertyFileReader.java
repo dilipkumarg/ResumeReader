@@ -15,6 +15,7 @@ public class PropertyFileReader {
 	private final String RESUME_DIR_PATH = "resumeDir";
 	private final String LAST_TIME_STAMP = "lastTimeStamp";
 	private final String EMPLOYEE_EXCEL = "EmployeeExcel";
+	private final String SECURITY_KEY = "securityKey";
 	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
 	public PropertyFileReader() throws IOException {
@@ -28,6 +29,7 @@ public class PropertyFileReader {
 					"Properties File not exists, creating new propResumeDir file with default values");
 			this.setResumeDirPath("Resumes");
 			this.setEmployeeExcelPath("Resumes/Book1.xlsx");
+			this.setSecurityKey("pramati123");
 		}
 	}
 
@@ -120,5 +122,17 @@ public class PropertyFileReader {
 		}
 		String dateString = propTimeStamp.getProperty(LAST_TIME_STAMP);
 		return Long.parseLong(dateString, 10);
+	}
+
+	public String getSecurityKey() {
+		String key = propResumeDir.getProperty(SECURITY_KEY);
+		return ((key == null || key.trim().isEmpty()) ? "pramati123" : key);
+	}
+
+	public void setSecurityKey(String key) throws FileNotFoundException,
+			IOException {
+		propResumeDir.setProperty(SECURITY_KEY, key);
+		propResumeDir.store(new FileOutputStream(FILE_NAME),
+				"Security Key Updated");
 	}
 }

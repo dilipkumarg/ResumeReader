@@ -34,20 +34,15 @@ var resumeReader = {
     ElementCreator : {},
     ListGenerator: {},
     ResultHeaderCreator: {},
-    Searcher : {}
+    Searcher : {},
+    Configuration: {}
 };
 
 
 function searchQuery() {
-    var searchQuery = $("#" + resumeReader.ids.queryTextBox).val();
-    resumeReader.Searcher.searchAndPrint(searchQuery);
-}
-function toggleSummary(itemId) {
-    /*var summaryDiv = $("#" + itemId);
-    if (summaryDiv.css("display") == "none") {
-        summaryDiv.css({"display":"inline-block"});
-    } else {
-        summaryDiv.css({"display" : "none"});
-    }*/
-    $("#" + itemId).slideToggle("slow");
+    "use strict";
+    var query = $("#" + resumeReader.ids.queryTextBox).val();
+    resumeReader.Searcher.searchAndPrint(query);
+    // changing url
+    window.location.hash = "q=" + query;
 }

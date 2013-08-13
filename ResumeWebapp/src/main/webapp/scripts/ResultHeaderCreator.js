@@ -6,9 +6,10 @@
  * To change this template use File | Settings | File Templates.
  */
 
-resumeReader.ResultHeaderCreator = function() {
-    var domEle = resumeReader.ElementCreator;
+resumeReader.ResultHeaderCreator = function () {
     "use strict";
+    var domEle = resumeReader.ElementCreator;
+
     function createResultHeaderDiv(searchKey, totalHits, timeTaken) {
         var ids = resumeReader.ids,
             headerDiv = domEle.createDomEle("div", ids.resultHeaderDiv, "navbar", ""),
@@ -23,8 +24,9 @@ resumeReader.ResultHeaderCreator = function() {
         headerDiv.appendChild(timeTakenLabel);
         return headerDiv;
     }
+
     return {
-        createResultHeaderDiv : function(searchKey, totalHits, timeTaken) {
+        createResultHeaderDiv: function (searchKey, totalHits, timeTaken) {
             return createResultHeaderDiv(searchKey, totalHits, timeTaken);
         }
     };

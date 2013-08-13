@@ -5,9 +5,9 @@
  * Time: 12:06 PM
  * To change this template use File | Settings | File Templates.
  */
-resumeReader.ElementCreator = function() {
+resumeReader.ElementCreator = function () {
+    "use strict";
     function createDomEle(type, id, eleClass, value) {
-        "use strict";
         var domEle = document.createElement(type);
         domEle.id = id;
         domEle.className = eleClass;
@@ -16,7 +16,7 @@ resumeReader.ElementCreator = function() {
     }
 
     return {
-        createDomEle : function(type, id, eleClass, value) {
+        createDomEle: function (type, id, eleClass, value) {
             return createDomEle(type, id, eleClass, value);
         }
     };

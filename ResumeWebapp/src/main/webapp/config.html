@@ -7,6 +7,9 @@
     <script type="text/javascript" src='scripts/bootstrap.js'></script>
     <script type="text/javascript" src="scripts/namespace.js"></script>
     <script type="text/javascript" src="scripts/configScript.js"></script>
+    <script type="text/javascript">
+        $(document).ready(resumeReader.Configuration.loadConfigValues());
+    </script>
 </head>
 <body>
 <div id='body' class="well container">
@@ -20,7 +23,7 @@
 
     <div class="row">
         <div id='configProperties' class="span6">
-            <form action="javascript:updateConfiguration();">
+            <form action="javascript:resumeReader.Configuration.updateConfiguration();">
                 <fieldset>
                     <legend>
                         EDIT CONFIGURATION PROPERTIES
@@ -53,11 +56,11 @@
                     UPDATING INDEX
                 </legend>
                 <button class="btn btn-danger"
-                        onclick="javascript:updateIndex(event,true)">
+                        onclick="resumeReader.Configuration.updateIndex(event,true)">
                     CLEAN & INDEX
                 </button>
                 <button class="btn btn-primary"
-                        onclick="javascript:updateIndex(event,false)">
+                        onclick="resumeReader.Configuration.updateIndex(event,false)">
                     UPDATE
                 </button>
             </fieldset>
@@ -69,7 +72,7 @@
     </div>
 
     <div id="alertBox" class="alert hide text-center">
-        <button type="button" class="close" data-dismiss="alert"><i class="icon-eye-close"></i></button>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
         <span id="alertText"> Here status will be shown</span>
     </div>
 </div>

@@ -7,6 +7,21 @@
     <script type="text/javascript" src="scripts/bootstrap.js"></script>
     <link type="text/css" rel="stylesheet" href="styles/bootstrap.css">
     <link type="text/css" rel="stylesheet" href="styles/custom_styles.css">
+    <script type="text/javascript">
+        // loading hash based page
+        $(function () {
+            var hashString = window.location.hash.trim();
+            if (hashString.length > 0) {
+                var res = hashString.search("q="),
+                        key = hashString.substr(res + 2).trim();
+                resumeReader.Searcher.searchAndPrint(key);
+            }
+
+            // attaching help text for search box
+            $("#" + resumeReader.ids.queryTextBox).popover({trigger: 'focus',
+                placement: 'bottom'});
+        });
+    </script>
 </head>
 <body>
 <div id="body" class="well well-large container">
@@ -20,13 +35,19 @@
         <div id="searchForm">
             <form class="form-search" action="javascript:searchQuery();">
                 <div class="input-append">
-                    <input id="queryText" class="span6" type="text"
+                    <input id="queryText" class="span6" type="text" data-toggle="popover" data-placement="top"
+                           data-content='Use double quotes for strings like "java script"' title=""
+                           data-original-title="Hint!"
                            placeholder="Search Query Here!" required="required">
                     <button type="submit" class="btn">
                         <i class="icon-search"></i>
                     </button>
                 </div>
             </form>
+            <div id="searchHint" class="alert alert-info invisible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Hint!</strong> use quotes for strings like "java script".
+            </div>
         </div>
     </div>
     <div id="resultsDiv"></div>
@@ -40,6 +61,10 @@
         <div class="modal-body">
             <p>Resume Content</p>
         </div>
+    </div>
+    <div id="alertBox" class="alert hide text-center">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span id="alertText"> Here status will be shown</span>
     </div>
 </div>
 <script>

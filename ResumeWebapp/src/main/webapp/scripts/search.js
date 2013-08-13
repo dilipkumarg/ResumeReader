@@ -1,33 +1,41 @@
 resumeReader.Searcher = function () {
-    function searchAndPrint(searchQuery) {
-        "use strict";
-        var ids = resumeReader.ids;
-
-        $.ajax({type: "get",
-            url: resumeReader.url.search,
-            data: resumeReader.urlParams.searchKey + "=" + searchQuery,
-            success: function (response) {
-                printResult(response);
-            },
-            error: function (xhr) {
-                $("#" + ids.resultsDiv).html("An error occured:" + xhr.status + "<br>" + xhr.statusText);
-            }});
+    "use strict";
+    function printError(xhr) {
+        $("#alertText").html(xhr.responseText);
+        var alertBox = $("#alertBox");
+        alertBox.removeClass("hide");
+        alertBox.addClass("alert-error");
     }
 
     function printResult(responseText) {
-        "use strict";
         var resultObj = JSON.parse(responseText),
             resultDiv = $("#" + resumeReader.ids.resultsDiv),
             resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(resultObj.searchKey,
                 resultObj.totalHits, resultObj.searchDuration),
             resultsList = resumeReader.ListGenerator.createResultsList(resultObj.activeHits, resultObj.inActiveHits,
-                                resultObj.probableHits);
+                resultObj.probableHits);
 
         resultDiv.empty();
 
         resultDiv.append(resultHeaderDiv);
         resultDiv.append(resultsList);
     }
+    function searchAndPrint(searchQuery) {
+        if (searchQuery.trim().length > 0) {
+            $.ajax({type: "get",
+                url: resumeReader.url.search,
+                data: resumeReader.urlParams.searchKey + "=" + searchQuery,
+                success: function (response) {
+                    $("#alertBox").addClass("hide");
+                    printResult(response);
+                },
+                error: function (xhr) {
+                    $("#" + resumeReader.ids.resultsDiv).empty();
+                    printError(xhr);
+                }});
+        }
+    }
+
 
     return {
         searchAndPrint: function (searchQuery) {
@@ -35,6 +43,3 @@ resumeReader.Searcher = function () {
         }
     };
 }();
-
-
-

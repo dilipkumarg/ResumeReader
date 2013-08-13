@@ -27,11 +27,6 @@ public class MainClass {
 			FileDirectoryEmptyException,
 			org.apache.lucene.queryparser.classic.ParseException {
 		MainClass mainClass = new MainClass();
-		// Handler handler;
-		/*
-		 * if (args.length < 1) { handler = new NormalModeHandler(args); } else
-		 * { handler = new CommandModeHandler(args); }
-		 */
 		try {
 			mainClass.intialize(args);
 		} catch (IllegalArgumentException iae) {
@@ -51,10 +46,10 @@ public class MainClass {
 			org.apache.lucene.queryparser.classic.ParseException {
 		String command = args[0];
 		try {
-			if ("update".equalsIgnoreCase(command)) {
-				this.update();
-			} else if ("cleanandupdate".equalsIgnoreCase(command)) {
-				this.cleanAndUpdate();
+			if ("index".equalsIgnoreCase(command)) {
+				this.index();
+			} else if ("cleanandindex".equalsIgnoreCase(command)) {
+				this.cleanAndIndex();
 			} else if ("resumedir".equalsIgnoreCase(command)) {
 				this.setResumeDirPath(args);
 			} else if ("employeefile".equalsIgnoreCase(command)) {
@@ -74,7 +69,7 @@ public class MainClass {
 		}
 	}
 
-	private void cleanAndUpdate() throws FileDirectoryEmptyException,
+	private void cleanAndIndex() throws FileDirectoryEmptyException,
 			IOException, ParseException {
 		int numOfupdates = 0;
 		ResumeIndexSearcher resumeIndexService = new ResumeIndexSearcher();
@@ -84,7 +79,7 @@ public class MainClass {
 				+ numOfupdates);
 	}
 
-	private void update() throws IOException, ParseException,
+	private void index() throws IOException, ParseException,
 			FileDirectoryEmptyException {
 		int numOfupdates = 0;
 		ResumeIndexSearcher resumeIndexService = new ResumeIndexSearcher();

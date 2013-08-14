@@ -25,9 +25,19 @@ resumeReader.Searcher = function () {
             $.ajax({type: "get",
                 url: resumeReader.url.search,
                 data: resumeReader.urlParams.searchKey + "=" + searchQuery,
+                beforeSend: function() {
+                    $('#myModal').off('shown');
+                },
                 success: function (response) {
                     $("#alertBox").addClass("hide");
                     printResult(response);
+                    // for highlighting
+                    $('#myModal').on('shown', function () {
+                        $('#myModal').find(".modal-body").wrapInTag({
+                            word: searchQuery.trim(),
+                            tag: '<span>'
+                        });
+                    });
                 },
                 error: function (xhr) {
                     $("#" + resumeReader.ids.resultsDiv).empty();

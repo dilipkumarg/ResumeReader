@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -45,7 +46,7 @@ public class FileIndexer extends Indexer {
 			try {
 				fileContent = getTextContent(canonicalFilePath);
 				personName = resumeMeta.extractPersonName(fileContent);
-				this.index(fileContent, relativeFilePath, personName,
+				this.index(fileContent, relativeFilePath, WordUtils.capitalizeFully(personName),
 						resumeMeta.getResumeSummary(fileContent));
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());

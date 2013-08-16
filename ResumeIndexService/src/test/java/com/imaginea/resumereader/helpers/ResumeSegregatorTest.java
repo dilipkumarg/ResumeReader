@@ -17,9 +17,10 @@ public class ResumeSegregatorTest {
 	public void findMaxSimilarity() throws FileNotFoundException, IOException {
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
 		List<FileInfo> personNames = new ArrayList<FileInfo>();
+		ExcelReader excelReader = new ExcelReader(new PropertyFileReader().getEmployeeExcelPath());
 		personNames.add(new FileInfo(null, "Apurba Nath", null));
 		personNames.add(new FileInfo(null, "Apurba nath", null));
-		resumeSegregator.findMaxSimilarity(personNames);
+		resumeSegregator.findMaxSimilarity(personNames, excelReader.read());
 		assertTrue("as", 2 == resumeSegregator.getActiveEmployees().size());
 		assertTrue("as", 0 == resumeSegregator.getProbableActiveEmployess().size());
 		assertTrue("as", 0 == resumeSegregator.getInactiveEmployees().size());

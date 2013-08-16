@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,13 +19,13 @@ public class ExcelReader {
 	private final InputStream fileIS;
 
 	public ExcelReader(String inputFile) throws FileNotFoundException {
-		if(inputFile=="" || inputFile == null){
-			this.fileIS = ExcelReader.class.getClassLoader().getResourceAsStream(
-					("Book1.xlsx"));
-		}else{
+		if (inputFile == "" || inputFile == null) {
+			this.fileIS = ExcelReader.class.getClassLoader()
+					.getResourceAsStream(("Book1.xlsx"));
+		} else {
 			this.fileIS = new FileInputStream(inputFile);
 		}
-		
+
 	}
 
 	public ExcelReader(FileInputStream fileIS) {
@@ -36,8 +37,9 @@ public class ExcelReader {
 				("Book1.xlsx"));
 	}
 
-	public void read(List<String> data) throws IOException {
+	public List<String> read() throws IOException {
 		// Create an ArrayList to store the data read from excel sheet.
+		List<String> data = new ArrayList<String>();
 		try {
 			//
 			// Create an excel workbook from the file system.
@@ -69,6 +71,6 @@ public class ExcelReader {
 				this.fileIS.close();
 			}
 		}
-
+		return data;
 	}
 }

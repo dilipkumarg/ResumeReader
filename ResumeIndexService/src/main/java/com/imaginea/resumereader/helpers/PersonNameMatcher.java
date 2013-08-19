@@ -3,9 +3,6 @@ package com.imaginea.resumereader.helpers;
  * An implementation of the Jaro-Winkler string similarity measure.
  */
 public class PersonNameMatcher {
-	public static void main(String[] args) {
-		System.out.println(similarity("ashwin kumar sangem", "sangem"));
-	}
 	public double compare(String s1, String s2) {
 	    return similarity(s1, s2);
 	  }

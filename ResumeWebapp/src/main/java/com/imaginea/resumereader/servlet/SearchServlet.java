@@ -29,6 +29,8 @@ public class SearchServlet extends HttpServlet {
 		PrintWriter printWriter = res.getWriter();
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
+		ExcelReader excelReader = new ExcelReader(
+				new PropertyFileReader().getEmployeeExcelPath());
 		try {
 			searchResult = resumeSearchService.search(searchKey, false);
 		} catch (FileDirectoryEmptyException e) {
@@ -40,9 +42,9 @@ public class SearchServlet extends HttpServlet {
 		}
 		// searchResult.setTopHits(removeDuplicates(searchResult.getTopHits()));
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
-		resumeSegregator
-				.findMaxSimilarity(searchResult.getTopHits(), new ExcelReader(
-						new PropertyFileReader().getEmployeeExcelPath()).read());
+
+		resumeSegregator.findMaxSimilarity(searchResult.getTopHits(),
+				excelReader.read());
 		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}
 

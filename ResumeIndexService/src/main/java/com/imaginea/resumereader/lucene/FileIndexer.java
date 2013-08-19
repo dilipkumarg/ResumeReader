@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,15 +22,17 @@ import org.xml.sax.SAXException;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.FilePathHelper;
+import com.imaginea.resumereader.helpers.MyHtmlFormatter;
 import com.imaginea.resumereader.helpers.ResumeMetaExtractor;
 
 public class FileIndexer extends Indexer {
-	private static final Logger LOGGER = Logger.getLogger(FileIndexer.class
-			.getName());
+	private static final Logger LOGGER = Logger
+			.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	private FilePathHelper filePathHelper;
 	private ResumeMetaExtractor resumeMeta;
-
+	private FileHandler fileHTML;
+	private Formatter formatterHTML;
 	public FileIndexer(File indexDirFile) throws IOException,
 			FileDirectoryEmptyException {
 		super(indexDirFile);
@@ -38,6 +42,10 @@ public class FileIndexer extends Indexer {
 
 	public void indexFiles(List<File> filesToIndex) throws IOException {
 		String canonicalFilePath, relativeFilePath, fileContent, personName;
+		fileHTML = new FileHandler("Logging.html");
+		formatterHTML = new MyHtmlFormatter();
+		fileHTML.setFormatter(formatterHTML);
+		LOGGER.addHandler(fileHTML);
 		for (File file : filesToIndex) {
 			canonicalFilePath = file.getCanonicalPath();
 			relativeFilePath = filePathHelper
@@ -46,7 +54,8 @@ public class FileIndexer extends Indexer {
 			try {
 				fileContent = getTextContent(canonicalFilePath);
 				personName = resumeMeta.extractPersonName(fileContent);
-				this.index(fileContent, relativeFilePath, WordUtils.capitalizeFully(personName),
+				this.index(fileContent, relativeFilePath,
+						WordUtils.capitalizeFully(personName),
 						resumeMeta.getResumeSummary(fileContent));
 			} catch (SAXException sae) {
 				LOGGER.log(Level.INFO, sae.getMessage());

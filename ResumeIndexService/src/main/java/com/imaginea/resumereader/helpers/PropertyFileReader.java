@@ -3,6 +3,8 @@ package com.imaginea.resumereader.helpers;
 import java.io.*;
 import java.text.ParseException;
 import java.util.Properties;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,11 +18,16 @@ public class PropertyFileReader {
 	private final String LAST_TIME_STAMP = "lastTimeStamp";
 	private final String EMPLOYEE_EXCEL = "EmployeeExcel";
 	private final String SECURITY_KEY = "securityKey";
-	private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
-
+	private final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private FileHandler fileHTML;
+	private Formatter formatterHTML;
 	public PropertyFileReader() throws IOException {
 		propResumeDir = new Properties();
 		propTimeStamp = new Properties();
+		fileHTML = new FileHandler("Logging.html");
+		formatterHTML = new MyHtmlFormatter();
+		fileHTML.setFormatter(formatterHTML);
+		LOGGER.addHandler(fileHTML);
 		try {
 			propResumeDir.load(new FileInputStream(FILE_NAME));
 		} catch (FileNotFoundException fne) {

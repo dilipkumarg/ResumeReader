@@ -20,6 +20,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.postingshighlight.PostingsHighlighter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -50,9 +51,11 @@ public class ResumeSearchEngine {
 		long startTime = System.currentTimeMillis();
 		IndexReader indexReader = DirectoryReader.open(indexDirectory);
 		searcher = new IndexSearcher(indexReader);
+		PostingsHighlighter highlighter = new PostingsHighlighter();
 		Query query = new QueryParser(Version.LUCENE_43, defaultField,
 				new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
 		TopDocs docs = searcher.search(query, this.maxHits, new Sort(new SortField("title", SortField.Type.STRING)));
+		highlighter.highlight(IndexFieldNames.CONTENT_FIELD, query, searcher, docs);
 		ScoreDoc[] scoreDocList = docs.scoreDocs;
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				this.maxHits, true);

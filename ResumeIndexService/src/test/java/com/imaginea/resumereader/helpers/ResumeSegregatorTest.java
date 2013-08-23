@@ -19,8 +19,8 @@ public class ResumeSegregatorTest {
 		List<FileInfo> personNames = new ArrayList<FileInfo>();
 		// ExcelReader excelReader = new ExcelReader(new
 		// PropertyFileReader().getEmployeeExcelPath());
-		personNames.add(new FileInfo(null, "Apurba Nath", null));
-		personNames.add(new FileInfo(null, "Apurba nath", null));
+		personNames.add(new FileInfo(null, "Apurba Nath", null, null));
+		personNames.add(new FileInfo(null, "Apurba nath", null, null));
 		List<String> employeeNames = new ArrayList<String>();
 		employeeNames.add("Apurba Nath");
 		resumeSegregator.findMaxSimilarity(personNames, employeeNames);

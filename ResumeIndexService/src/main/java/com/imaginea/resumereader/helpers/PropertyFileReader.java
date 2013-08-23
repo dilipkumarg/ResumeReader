@@ -1,12 +1,15 @@
 package com.imaginea.resumereader.helpers;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Properties;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 
@@ -18,21 +21,16 @@ public class PropertyFileReader {
 	private final String LAST_TIME_STAMP = "lastTimeStamp";
 	private final String EMPLOYEE_EXCEL = "EmployeeExcel";
 	private final String SECURITY_KEY = "securityKey";
-	private final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	private FileHandler fileHTML;
-	private Formatter formatterHTML;
+	private final Logger LOGGER = Logger.getLogger(this.getClass());
+
 	public PropertyFileReader() throws IOException {
 		propResumeDir = new Properties();
 		propTimeStamp = new Properties();
-		fileHTML = new FileHandler("Logging.html");
-		formatterHTML = new MyHtmlFormatter();
-		fileHTML.setFormatter(formatterHTML);
-		LOGGER.addHandler(fileHTML);
 		try {
 			propResumeDir.load(new FileInputStream(FILE_NAME));
 		} catch (FileNotFoundException fne) {
 			LOGGER.log(
-					Level.WARNING,
+					Level.INFO,
 					"Properties File not exists, creating new propResumeDir file with default values");
 			this.setResumeDirPath("Resumes");
 			this.setEmployeeExcelPath("Resumes/Book1.xlsx");
@@ -90,7 +88,8 @@ public class PropertyFileReader {
 		if (employeeExcelPath != null && employeeExcelPath.isEmpty()) {
 			throw new FileNotFoundException("Employee List File Path is Empty");
 		}
-		return (employeeExcelPath != null ? employeeExcelPath.trim():employeeExcelPath);
+		return (employeeExcelPath != null ? employeeExcelPath.trim()
+				: employeeExcelPath);
 	}
 
 	private String getTImeStampFilePath() throws FileDirectoryEmptyException {

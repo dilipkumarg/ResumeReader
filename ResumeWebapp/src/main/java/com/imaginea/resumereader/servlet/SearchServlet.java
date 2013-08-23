@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -19,13 +20,16 @@ import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.ExcelReader;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.helpers.ResumeSegregator;
+import com.imaginea.resumereader.helpers.StringHighlighter;
 
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private final Logger LOGGER = Logger.getLogger(this.getClass());
+	private String searchKey;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		String searchKey = req.getParameter("searchKey");
+		searchKey = req.getParameter("searchKey");
 		PrintWriter printWriter = res.getWriter();
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
@@ -34,9 +38,11 @@ public class SearchServlet extends HttpServlet {
 		try {
 			searchResult = resumeSearchService.search(searchKey, false);
 		} catch (FileDirectoryEmptyException e) {
+			LOGGER.error(e.getMessage());
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"Index Directory Not Set");
 		} catch (ParseException e) {
+			LOGGER.error(e.getMessage());
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"ParseException Occured <br> Error:" + e.getMessage());
 		}
@@ -69,11 +75,17 @@ public class SearchServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	private JSONArray hitsToJson(List<FileInfo> hits) {
 		JSONArray hitsJSON = new JSONArray();
+		StringHighlighter sh = new StringHighlighter(
+				"<span class='highlight'>", "</span>", 20);
 		for (FileInfo hit : hits) {
 			JSONObject fileObj = new JSONObject();
 			fileObj.put("title", hit.getTitle());
-			fileObj.put("summary", hit.getSummary());
+			// fileObj.put("summary", hit.getSummary());
 			fileObj.put("filepath", hit.getFilePath());
+			String hString = sh.getHighlightedString(hit.getContent(),
+					this.searchKey);
+			//System.out.println(hString);
+			fileObj.put("summary", hString);
 			hitsJSON.add(fileObj);
 		}
 		return hitsJSON;

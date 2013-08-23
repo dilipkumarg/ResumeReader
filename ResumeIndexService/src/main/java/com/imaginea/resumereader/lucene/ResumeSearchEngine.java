@@ -45,32 +45,35 @@ public class ResumeSearchEngine {
 		this.maxHits = 1000;
 	}
 
-	public SearchResult searchKey(String queryString, Boolean allowDuplicates) throws IOException,
-			ParseException {
+	public SearchResult searchKey(String queryString, Boolean allowDuplicates)
+			throws IOException, ParseException {
 		long startTime = System.currentTimeMillis();
 		IndexReader indexReader = DirectoryReader.open(indexDirectory);
 		searcher = new IndexSearcher(indexReader);
 		Query query = new QueryParser(Version.LUCENE_43, defaultField,
 				new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
-		TopDocs docs = searcher.search(query, this.maxHits, new Sort(new SortField("title", SortField.Type.STRING)));
+		TopDocs docs = searcher.search(query, this.maxHits, new Sort(
+				new SortField("title", SortField.Type.STRING)));
 		ScoreDoc[] scoreDocList = docs.scoreDocs;
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				this.maxHits, true);
-		//searcher.search(query, collector);
+		// searcher.search(query, collector);
 		int totalHits = collector.getTotalHits();
 		// ensuring all results are in collector
 		if (totalHits > this.maxHits) {
 			collector = TopScoreDocCollector.create(totalHits, true);
-			searcher.search(query, this.maxHits, new Sort(new SortField("title", SortField.Type.STRING)));
+			searcher.search(query, this.maxHits, new Sort(new SortField(
+					"title", SortField.Type.STRING)));
 		}
-		//ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		long endTime = System.currentTimeMillis();
-		return new SearchResult(extractHits(scoreDocList, allowDuplicates), collector.getTotalHits(),
-				endTime - startTime, queryString);
+		return new SearchResult(extractHits(scoreDocList, allowDuplicates),
+				collector.getTotalHits(), endTime - startTime, queryString);
 	}
 
 	// converting hits in SocreDoc to List of FileInfo Objects
-	private List<FileInfo> extractHits(ScoreDoc[] hits, Boolean allowDuplicates) throws IOException {
+	private List<FileInfo> extractHits(ScoreDoc[] hits, Boolean allowDuplicates)
+			throws IOException {
 		List<FileInfo> hitList = new ArrayList<FileInfo>();
 		Set<String> personNames = new HashSet<String>();
 		for (int i = 0; i < hits.length; i++) {
@@ -78,11 +81,13 @@ public class ResumeSearchEngine {
 			Document d = searcher.doc(docId);
 			// allowDuplicates is a boolean which specifies whether the user is
 			// interested in looking for duplicate Resumes
-			if (allowDuplicates ? true : personNames.add(d.getField(
-					this.personNameField).stringValue().toLowerCase().replaceAll("\\s",""))) {
+			if (allowDuplicates ? true : personNames.add(d
+					.getField(this.personNameField).stringValue().toLowerCase()
+					.replaceAll("\\s", ""))) {
 				hitList.add(new FileInfo(d.getField(this.fileNameField)
 						.stringValue(), d.getField(this.personNameField)
 						.stringValue(), d.getField(this.summaryField)
+						.stringValue(), d.getField(this.defaultField)
 						.stringValue()));
 			}
 		}

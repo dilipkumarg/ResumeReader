@@ -1,5 +1,8 @@
 resumeReader.Searcher = function () {
     "use strict";
+    // variable for holding results
+    var resultsObj = {};
+
     function printError(xhr) {
         $("#alertText").html(xhr.responseText);
         var alertBox = $("#alertBox");
@@ -7,34 +10,66 @@ resumeReader.Searcher = function () {
         alertBox.addClass("alert-error");
     }
 
-    function printResult(responseText) {
-        var resultObj = JSON.parse(responseText),
-            resultDiv = $("#" + resumeReader.ids.resultsDiv),
-            resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(resultObj.searchKey,
-                resultObj.totalHits, resultObj.searchDuration),
-            resultsList = resumeReader.ListGenerator.createResultsList(resultObj.activeHits, resultObj.inActiveHits,
-                resultObj.probableHits);
+    function printResult() {
+        var resultDiv = $("#" + resumeReader.ids.resultsDiv),
+            resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(resultsObj.searchKey,
+                resultsObj.totalHits, resultsObj.searchDuration),
+            resultsList = resumeReader.ListGenerator.createResultsList(resultsObj.activeHits, resultsObj.inActiveHits,
+                resultsObj.probableHits);
 
         resultDiv.empty();
 
         resultDiv.append(resultHeaderDiv);
         resultDiv.append(resultsList);
     }
+
+    function filterTitle(list, keyString) {
+        var resList = {};
+        for (var key in list) {
+            if (list.hasOwnProperty(key)) {
+                // if keyString not present in the key it returns -1
+                if (key.toLowerCase().indexOf(keyString.toLowerCase()) !== -1) {
+                    resList[key] = list[key];
+                }
+            }
+        }
+        return resList;
+    }
+
+    function filterResults(titleQuery) {
+        var resultDiv = document.getElementById(resumeReader.ids.resultsDiv),
+            resultsListDiv = $("#" + resumeReader.ids.resultsListDiv),
+            resultsList = resumeReader.ListGenerator.createResultsList(filterTitle(resultsObj.activeHits, titleQuery),
+                filterTitle(resultsObj.inActiveHits, titleQuery),
+                filterTitle(resultsObj.probableHits, titleQuery));
+        resultDiv.removeChild(document.getElementById(resumeReader.ids.resultsListDiv));
+        resultDiv.appendChild(resultsList);
+    }
+
     function searchAndPrint(searchQuery) {
         if (searchQuery.trim().length > 0) {
             $.ajax({type: "get",
                 url: resumeReader.url.search,
                 data: resumeReader.urlParams.searchKey + "=" + searchQuery,
-                beforeSend: function() {
+                beforeSend: function () {
+                    // removing previous highlight keyword event
                     $('#myModal').off('shown');
+                    // showing progress bar
+                    /*$('#progressBarModal').modal({
+                        show: true,
+                        keyboard: false,
+                        backdrop: 'static'
+                    });*/
                 },
                 success: function (response) {
                     $("#alertBox").addClass("hide");
-                    printResult(response);
+                    resultsObj = JSON.parse(response),
+                        printResult();
                     // for highlighting
                     $('#myModal').on('shown', function () {
+                        var queries = searchQuery.split(" AND ");
                         $('#myModal').find(".modal-body").wrapInTag({
-                            word: searchQuery.trim(),
+                            words: queries,
                             tag: '<span>'
                         });
                     });
@@ -42,6 +77,9 @@ resumeReader.Searcher = function () {
                 error: function (xhr) {
                     $("#" + resumeReader.ids.resultsDiv).empty();
                     printError(xhr);
+                },
+                complete: function () {
+//                    $('#progressBarModal').modal('hide');
                 }});
         }
     }
@@ -50,6 +88,9 @@ resumeReader.Searcher = function () {
     return {
         searchAndPrint: function (searchQuery) {
             return searchAndPrint(searchQuery);
+        },
+        filterResults: function (keyString) {
+            return filterResults(keyString);
         }
     };
 }();

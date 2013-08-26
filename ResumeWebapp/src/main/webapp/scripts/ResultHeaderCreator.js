@@ -8,21 +8,32 @@
 
 resumeReader.ResultHeaderCreator = function () {
     "use strict";
-    var domEle = resumeReader.ElementCreator;
+    var domEle = resumeReader.ElementCreator,
+        ids = resumeReader.ids;
 
     function createResultHeaderDiv(searchKey, totalHits, timeTaken) {
-        var ids = resumeReader.ids,
-            headerDiv = domEle.createDomEle("div", ids.resultHeaderDiv, "navbar", ""),
+        var headerDiv = domEle.createDomEle("div", ids.resultHeaderDiv, "navbar row container", ""),
             queryLabel = domEle.createDomEle("span", ids.queryLabel, "label label-info",
                 "Search Key: " + searchKey),
             totalHitsLabel = domEle.createDomEle("span", ids.hitsLabel,
-                "label label-info offset1 pull-right", "Total Hits: " + totalHits),
+                "label label-info offset1", "Total Hits: " + totalHits),
             timeTakenLabel = domEle.createDomEle("span", ids.timeTakenLabel,
-                "label label-info pull-right", "Search Duration: " + timeTaken + "ms");
+                "label label-info offset1", "Search Duration: " + timeTaken + "ms");
         headerDiv.appendChild(queryLabel);
-        headerDiv.appendChild(totalHitsLabel);
         headerDiv.appendChild(timeTakenLabel);
+        headerDiv.appendChild(totalHitsLabel);
+        headerDiv.appendChild(createTitleSearchBox());
         return headerDiv;
+    }
+
+    function createTitleSearchBox() {
+        var searchBox = domEle.createDomEle("input", ids.titleSearchBox, "input-medium search-query pull-right", "");
+        searchBox.setAttribute("type", "text");
+        searchBox.setAttribute("placeholder", "Search Name");
+        searchBox.onkeyup = function (e) {
+            filterResults();
+        };
+        return searchBox;
     }
 
     return {

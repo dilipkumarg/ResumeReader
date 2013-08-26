@@ -21,8 +21,10 @@ resumeReader.ListGenerator = function () {
                 "<i id='" + idsPrefix.itemCollapseIcon + id + "' class = 'icon-chevron-down'></i>");
         viewLink.href = encodeURI(resumeReader.url.view + "?filename=" + path);
         viewLink.setAttribute('data-toggle', "modal");
+        viewLink.setAttribute('title', "View Doc as Plain Text");
         viewLink.setAttribute('data-target', "#myModal");
         expandButton.href = "#";
+        expandButton.title = "Expand/Collapse Context";
         expandButton.onclick = function (e) {
             e.preventDefault();
             var summaryCollapseIcon = $("#" + idsPrefix.itemCollapseIcon + id);
@@ -49,10 +51,12 @@ resumeReader.ListGenerator = function () {
     function createList(hits, idPrefix) {
         var resultsList = domEle.createDomEle("ul", ids.resultList, "nav nav-tabs nav-stacked", ""),
             i = 0;
-        for (i = 0; i < hits.length; i = i + 1) {
+        var keys = Object.keys(hits);
+        keys.sort();
+        for (i = 0; i < keys.length; i++) {
             var listEle = domEle.createDomEle("li", "", "resultListElement", "");
-            listEle.appendChild(createListItemHeader(idPrefix + i, hits[i].title, hits[i].filepath));
-            listEle.appendChild(createListItemSummaryDiv(idPrefix + i, hits[i].summary));
+            listEle.appendChild(createListItemHeader(idPrefix + i, keys[i], hits[keys[i]].filepath));
+            listEle.appendChild(createListItemSummaryDiv(idPrefix + i, hits[keys[i]].summary));
             resultsList.insertBefore(listEle, null);
         }
         return resultsList;
@@ -60,15 +64,16 @@ resumeReader.ListGenerator = function () {
 
 
     function createResultsList(activeHits, inactiveHits, probableHits) {
-        var resultListContainer = domEle.createDomEle("div", "", "", ""),
+        var resultListContainer = domEle.createDomEle("div", ids.resultsListDiv, "", ""),
             tabContent = domEle.createDomEle("div", "", "tab-content", ""),
             activeList = domEle.createDomEle("div", "active", "tab-pane active", ""),
             inactiveList = domEle.createDomEle("div", "inactive", "tab-pane", ""),
             probableList = domEle.createDomEle("div", "probable", "tab-pane", ""),
             navigationBar = domEle.createDomEle("ul", "", "nav nav-tabs nav-pills",
-                " <li class='active '> <a class='span2' href='#active' data-toggle='tab'>Active (" + activeHits.length + ")</a> </li>" +
-                    "<li><a class='span2' href='#probable' data-toggle='tab'>Probable (" + probableHits.length + ")</a></li>" +
-                    "<li><a class='span2' href='#inactive' data-toggle='tab'>Inactive (" + inactiveHits.length + ")</a></li>");
+                " <li class='active '> <a class='span2' href='#active' data-toggle='tab'>Active (" + Object.keys(activeHits).length + ")</a> </li>" +
+                    "<li><a class='span2' href='#probable' data-toggle='tab'>Probable (" + Object.keys(probableHits).length + ")</a></li>" +
+                    "<li><a class='span2' href='#inactive' data-toggle='tab'>Inactive (" + Object.keys(inactiveHits).length + ")</a></li>" +
+                    "<li class='pull-right'><a href='javascript:toggleExpandAll();'><i title='Expand/Collapse all' id='expandAllIcon' class='icon-chevron-down'></i></a></li>");
 
         // creating active and inactive lists
         activeList.appendChild(createList(activeHits, idsPrefix.activeList));

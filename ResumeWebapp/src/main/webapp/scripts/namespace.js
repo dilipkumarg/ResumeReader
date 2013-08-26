@@ -3,12 +3,14 @@ var resumeReader = {
         queryTextBox : "queryText",
         resultsDiv : "resultsDiv",
         resultHeaderDiv: "resultHeaderDiv",
+        resultsListDiv : "resultsListDiv",
         queryLabel: "queryLabel",
         hitsLabel: "hitsLabel",
         timeTakenLabel: "timeTakenLabel",
         resultList : "resultsList",
         txtResumeDir : "txtResumeDir",
-        txtEmployeeList : "txtEmployeeList"
+        txtEmployeeList : "txtEmployeeList",
+        titleSearchBox : "txtTitleSearch"
     },
     idsPrefix: {
         itemSummary: "itemSummary",
@@ -45,4 +47,24 @@ function searchQuery() {
     resumeReader.Searcher.searchAndPrint(query);
     // changing url
     window.location.hash = "q=" + query;
+}
+
+function filterResults() {
+    "use strict";
+    var query = $("#" + resumeReader.ids.titleSearchBox).val();
+    resumeReader.Searcher.filterResults(query);
+
+}
+
+function toggleExpandAll() {
+    "use strict";
+    if($('#expandAllIcon').attr("class") == "icon-chevron-down") {
+        $('.summaryDiv').slideDown("slow", function() {
+            $('.icon-chevron-down').attr("class", "icon-chevron-up");
+        });
+    } else {
+        $('.summaryDiv').slideUp("slow", function() {
+            $('.icon-chevron-up').attr("class", "icon-chevron-down");
+        });
+    }
 }

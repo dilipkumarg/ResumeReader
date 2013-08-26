@@ -20,6 +20,15 @@
             // attaching help text for search box
             $("#" + resumeReader.ids.queryTextBox).popover({trigger: 'focus',
                 placement: 'bottom'});
+
+            // if Object.keys method not present creating new function
+            if (!Object.keys) Object.keys = function (o) {
+                if (o !== Object(o))
+                    throw new TypeError('Object.keys called on a non-object');
+                var k = [], p;
+                for (p in o) if (Object.prototype.hasOwnProperty.call(o, p)) k.push(p);
+                return k;
+            }
         });
     </script>
 </head>
@@ -50,7 +59,12 @@
             </div>
         </div>
     </div>
-    <div id="resultsDiv"></div>
+    <div>
+        <div class="loadingDiv">
+        </div>
+        <div id="resultsDiv"></div>
+    </div>
+
     <!-- Modal -->
     <div id="myModal" class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
@@ -61,6 +75,22 @@
         <div class="modal-body">
             <p>Resume Content</p>
         </div>
+    </div>
+    <!-- Modal for showing progress bar -->
+    <div id='progressBarModal' class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <span>Please wait.. we are fetching results..! </span>
+        </div>
+        <div class="modal-body">
+            <!--<div class="progress progress-striped active">-->
+            <!--<div class="bar" style="width: 100%;"></div>-->
+            <!--</div>-->
+            <div>
+                <img src="img/bar.gif">
+            </div>
+        </div>
+
     </div>
     <div id="alertBox" class="alert hide text-center">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

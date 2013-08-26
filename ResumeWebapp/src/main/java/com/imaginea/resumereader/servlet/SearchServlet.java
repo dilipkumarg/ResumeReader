@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.imaginea.resumereader.base.ResumeIndexSearcher;
@@ -25,11 +24,12 @@ import com.imaginea.resumereader.helpers.StringHighlighter;
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final Logger LOGGER = Logger.getLogger(this.getClass());
-	private String searchKey;
+	private String[] contextKeys;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		searchKey = req.getParameter("searchKey");
+		String searchKey = req.getParameter("searchKey");
+		contextKeys = searchKey.split(" ");
 		PrintWriter printWriter = res.getWriter();
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
@@ -73,20 +73,20 @@ public class SearchServlet extends HttpServlet {
 	}
 
 	@SuppressWarnings("unchecked")
-	private JSONArray hitsToJson(List<FileInfo> hits) {
-		JSONArray hitsJSON = new JSONArray();
+	private JSONObject hitsToJson(List<FileInfo> hits) {
+		JSONObject hitsJSON = new JSONObject();
 		StringHighlighter sh = new StringHighlighter(
 				"<span class='highlight'>", "</span>", 20);
 		for (FileInfo hit : hits) {
 			JSONObject fileObj = new JSONObject();
-			fileObj.put("title", hit.getTitle());
+			// fileObj.put("title", hit.getTitle());
 			// fileObj.put("summary", hit.getSummary());
 			fileObj.put("filepath", hit.getFilePath());
-			String hString = sh.getHighlightedString(hit.getContent(),
-					this.searchKey);
-			//System.out.println(hString);
+			String hString = sh.highlightFragment(hit.getContent(),
+					this.contextKeys);
+			// System.out.println(hString);
 			fileObj.put("summary", hString);
-			hitsJSON.add(fileObj);
+			hitsJSON.put(hit.getTitle(), fileObj);
 		}
 		return hitsJSON;
 	}

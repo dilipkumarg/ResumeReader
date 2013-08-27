@@ -73,7 +73,8 @@ public class ResumeSearchEngine {
 	}
 
 	// converting hits in SocreDoc to List of FileInfo Objects
-	private List<FileInfo> extractHits(ScoreDoc[] hits, Boolean allowDuplicates) throws IOException {
+	private List<FileInfo> extractHits(ScoreDoc[] hits, Boolean allowDuplicates)
+			throws IOException {
 		List<FileInfo> hitList = new ArrayList<FileInfo>();
 		Set<String> personNames = new HashSet<String>();
 		for (int i = 0; i < hits.length; i++) {
@@ -81,11 +82,13 @@ public class ResumeSearchEngine {
 			Document d = searcher.doc(docId);
 			// allowDuplicates is a boolean which specifies whether the user is
 			// interested in looking for duplicate Resumes
-			if (allowDuplicates ? true : personNames.add(d.getField(
-					this.personNameField).stringValue().toLowerCase().replaceAll("\\s",""))) {
+			if (allowDuplicates ? true : personNames.add(d
+					.getField(this.personNameField).stringValue().toLowerCase()
+					.replaceAll("\\s", ""))) {
 				hitList.add(new FileInfo(d.getField(this.fileNameField)
 						.stringValue(), d.getField(this.personNameField)
 						.stringValue(), d.getField(this.summaryField)
+						.stringValue(), d.getField(this.defaultField)
 						.stringValue()));
 			}
 		}

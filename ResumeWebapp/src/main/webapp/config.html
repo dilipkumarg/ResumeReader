@@ -3,8 +3,10 @@
 <head>
     <title>Resume Search Service Configuration</title>
     <link rel='stylesheet' href='styles/bootstrap.css'>
+    <link rel='stylesheet' href='styles/custom_styles.css'>
     <script type="text/javascript" src='scripts/jquery-1.10.2.js'></script>
     <script type="text/javascript" src='scripts/bootstrap.js'></script>
+    <script type="text/javascript" src='scripts/bootbox.js'></script>
     <script type="text/javascript" src="scripts/namespace.js"></script>
     <script type="text/javascript" src="scripts/configScript.js"></script>
     <script type="text/javascript">
@@ -17,7 +19,7 @@
     <div id="headerDiv" class="row page-header text-center">
         <h1 id="heading">Resume Search Engine Configuration</h1>
             <span class="pull-right">
-                <a class="muted" href="index.html">Search Engine</a>
+                <a class="muted" href="./">Search Engine</a>
             </span>
     </div>
 
@@ -31,20 +33,27 @@
                     <label>
                         Resumes Directory :
                     </label>
-                    <span class="enableTextDiv" target="#txtResumeDir">
-                    <input type="text" id="txtResumeDir" style="pointer-events:none;" class="span5 inputBox" placeholder="Resumes Directory"
-                           disabled>
-                    <!--<div class="enableTextDiv" data-toggle="txtResumeDir" style="position:absolute; left:0; right:0; top:0; bottom:0; cursor: pointer;"></div>-->
-                     </span>
+
+                    <div class="input-prepend">
+                        <button class="btn" type="button" id='btn-ResumeToggle' data-toggle="button"
+                                data-target="#txtResumeList"
+                                onclick="$('#txtResumeDir').toggleDisabled();"><i class="icon-edit"></i></button>
+                        <input type="text" id="txtResumeDir" class="span5 inputBox"
+                               placeholder="Resumes Directory" disabled>
+                    </div>
                     <label>
                         Employees List File (Excel File):
                     </label>
-                    <span class="enableTextDiv" target="#txtEmployeeList">
-                    <input type="text" id="txtEmployeeList" style="pointer-events:none;" class="span5 inputBox" placeholder="Employee List File"
-                           disabled>
-                    <!--<div class="enableTextDiv" data-toggle="txtEmployeeList" style="position:absolute; left:0; right:0; top:0; bottom:0; cursor: pointer;"></div>-->
-                    </span>
-                    <span class="help-block">Double click to edit the text.</span>
+
+                    <div class="input-prepend">
+                        <button class="btn" type="button" id='btn-EmployeeToggle' data-toggle="button"
+                                data-target="#txtEmployeeList"
+                                onclick="$('#txtEmployeeList').toggleDisabled(); "><i class="icon-edit"></i></button>
+                        <input type="text" id="txtEmployeeList" class="span5 inputBox"
+                               placeholder="Employee List File"
+                               disabled>
+                    </div>
+                    <span class="help-block">click on edit button to enable text box.</span>
                     <button id="btnConfigUpdate" class="btn btn-primary" type="submit" disabled>Update Changes</button>
                 </fieldset>
             </form>
@@ -55,12 +64,16 @@
                 <legend>
                     UPDATING INDEX
                 </legend>
-                <button class="btn btn-danger"
-                        onclick="resumeReader.Configuration.updateIndex(event,true)">
+                <button id='cleanUpdateBtn' data-value="true" class="btn btn-danger" data-loading-text="updating..."
+                        onclick="bootbox.prompt('Enter Security key', function(result) {
+                        resumeReader.Configuration.updateIndex(event,result);
+                        });">
                     CLEAN & INDEX
                 </button>
-                <button class="btn btn-primary"
-                        onclick="resumeReader.Configuration.updateIndex(event,false)">
+                <button id='updateBtn' data-value="false" class="btn btn-primary" data-loading-text="updating..."
+                        onclick="bootbox.prompt('Enter security key', function(result) {
+                        resumeReader.Configuration.updateIndex(event,result);
+                        });">
                     UPDATE
                 </button>
             </fieldset>
@@ -74,6 +87,31 @@
     <div id="alertBox" class="alert hide text-center">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         <span id="alertText"> Here status will be shown</span>
+    </div>
+
+    <!-- Modal -->
+    <div id="keyInputModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="myModalLabel">Authentication Required</h3>
+        </div>
+        <div class="modal-body">
+            <span class="offset1">
+                Security Key:
+            </span>
+            <input type="password" class="input-large" required="true" id='txtSecurityKey'>
+
+            <p>
+                <span class="help-block">This key is used to authenticate you as a authorized person to configure changes.
+                You can find the key in <code>config.properties</code> file.
+                Default key is: <code>pramati123</code></span>
+            </p>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn">Close</a>
+            <a href="#" class="btn btn-primary">Save changes</a>
+        </div>
     </div>
 </div>
 </body>

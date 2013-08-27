@@ -24,12 +24,11 @@ import com.imaginea.resumereader.helpers.StringHighlighter;
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final Logger LOGGER = Logger.getLogger(this.getClass());
-	private String[] contextKeys;
+	private String searchKey;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		String searchKey = req.getParameter("searchKey");
-		contextKeys = searchKey.split(" ");
+		searchKey = req.getParameter("searchKey");
 		PrintWriter printWriter = res.getWriter();
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
@@ -53,6 +52,16 @@ public class SearchServlet extends HttpServlet {
 				excelReader.read());
 		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}
+
+	/*
+	 * private String[] myCustomSplitter(String word) { String[] words = new
+	 * String(); Pattern p = Pattern.compile("(?:[^\\s\"]+|\"[^\"]*\")+");
+	 * Matcher m = p.matcher(word);
+	 * 
+	 * while(m.find()) { words[words.length] = m.group(); }
+	 * 
+	 * return words; }
+	 */
 
 	@SuppressWarnings("unchecked")
 	private JSONObject toJsonString(SearchResult searchResult,
@@ -82,8 +91,8 @@ public class SearchServlet extends HttpServlet {
 			// fileObj.put("title", hit.getTitle());
 			// fileObj.put("summary", hit.getSummary());
 			fileObj.put("filepath", hit.getFilePath());
-			String hString = sh.highlightFragment(hit.getContent(),
-					this.contextKeys);
+			String hString = sh.highlightFragments(hit.getContent(),
+					this.searchKey);
 			// System.out.println(hString);
 			fileObj.put("summary", hString);
 			hitsJSON.put(hit.getTitle(), fileObj);

@@ -10,6 +10,7 @@ $.fn.wrapInTag = function (opts) {
     var o = $.extend({
         words: [],
         tag: '<strong>',
+        ignoreWords: [],
         css: {
             color: "blue",
             backgroundColor: "yellow",
@@ -20,11 +21,14 @@ $.fn.wrapInTag = function (opts) {
 
     return this.each(function () {
         var html = $(this).html();
-        for (var i = 0; i < o.words.length; i = i+1) {
-            var str = o.words[i].replace(/"/g, ""),// deleting double quotes from word
-            // regular expression for selecting desired string.
-                re = new RegExp("([/\\s>])(" + str + "(\\([/\\w]+\\)){0,1}([-_.]*[/\\d]*)*)(([/\\W]){0,1}[/\\s<])", "gim");
-            html = html.replace(re, '$1' + o.tag.replace('>', ' class="highlight"> ') + '$2' + o.tag.replace('<', '</') + '$5 ');
+        for (var i = 0; i < o.words.length; i = i + 1) {
+            // highlighting if and only if word not in ignore list.
+            if (o.ignoreWords.indexOf(o.words[i].toLowerCase()) == -1) {
+                var str = o.words[i].replace(/"/g, "").trim(),// deleting double quotes from word
+                // regular expression for selecting desired string.
+                    re = new RegExp("([/\\s>])(" + str + "(\\([/\\w]+\\)){0,1}([-_.]*[/\\d]*)*)(([/\\W]){0,1}[/\\s<])", "gim");
+                html = html.replace(re, '$1' + o.tag.replace('>', ' class="highlight"> ') + '$2' + o.tag.replace('<', '</') + '$5 ');
+            }
         }
         $(this).html(html);
         $(this).find("span.highlight").css(o.css);

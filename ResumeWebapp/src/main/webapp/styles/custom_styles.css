@@ -16,21 +16,33 @@ span.highlight{
 }
 .loadingDiv {
     background:url('../img/bar.gif') center center no-repeat white;
-    position: relative;
-    height: 100%;
-    width: 100%;
+    position: absolute;
+   /* height: 100%;
+    width: 100%;*/
     top: 0;
+    bottom: 0;
     left: 0;
+    right: 0;
+
     border-radius:10px;
     zoom: 1;
     filter: alpha(opacity=50);
     opacity: 0.5;
 }
-body .modal {
+.centerPos {
+    width: 220px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#myModal.modal {
     /* new custom width */
     width: 750px;
     /* must be half of the width, minus scrollbar on the left (30px) */
     margin-left: -375px;
+}
+#progressBarModal.modal {
+    width: 300px;
+    margin-left: -150px;
 }
 
 #body {
@@ -65,5 +77,8 @@ body .modal {
 }
 
 .inputBox {
-    pointer-events:none;
+}
+
+.left-margin {
+    margin-left: 2%;
 }

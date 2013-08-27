@@ -1,7 +1,8 @@
 resumeReader.Searcher = function () {
     "use strict";
     // variable for holding results
-    var resultsObj = {};
+    var resultsObj = {},
+        queryObj = {};
 
     function printError(xhr) {
         $("#alertText").html(xhr.responseText);
@@ -11,8 +12,10 @@ resumeReader.Searcher = function () {
     }
 
     function printResult() {
-        var resultDiv = $("#" + resumeReader.ids.resultsDiv),
-            resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(resultsObj.searchKey,
+        // displaying query as the context if context is not there.
+        var context = ((queryObj.context !== "") ? queryObj.context : queryObj.query),
+            resultDiv = $("#" + resumeReader.ids.resultsDiv),
+            resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(queryObj.query,context,
                 resultsObj.totalHits, resultsObj.searchDuration),
             resultsList = resumeReader.ListGenerator.createResultsList(resultsObj.activeHits, resultsObj.inActiveHits,
                 resultsObj.probableHits);
@@ -46,7 +49,8 @@ resumeReader.Searcher = function () {
         resultDiv.appendChild(resultsList);
     }
 
-    function searchAndPrint(searchQuery) {
+    function searchAndPrint() {
+        var searchQuery = queryObj.query + ((queryObj.context !== "") ? " AND " + queryObj.context : "");
         if (searchQuery.trim().length > 0) {
             $.ajax({type: "get",
                 url: resumeReader.url.search,
@@ -55,22 +59,24 @@ resumeReader.Searcher = function () {
                     // removing previous highlight keyword event
                     $('#myModal').off('shown');
                     // showing progress bar
-                    /*$('#progressBarModal').modal({
+                    $('#progressBarModal').modal({
                         show: true,
                         keyboard: false,
                         backdrop: 'static'
-                    });*/
+                    });
                 },
                 success: function (response) {
                     $("#alertBox").addClass("hide");
-                    resultsObj = JSON.parse(response),
-                        printResult();
+                    resultsObj = JSON.parse(response);
+                    printResult();
                     // for highlighting
                     $('#myModal').on('shown', function () {
-                        var queries = searchQuery.split(" AND ");
+                        var queries = searchQuery.match(/(?:[^\s"]+|"[^"]*")+/g);
+                        // this code is for highlighting keywords
                         $('#myModal').find(".modal-body").wrapInTag({
                             words: queries,
-                            tag: '<span>'
+                            tag: '<span>',
+                            ignoreWords: resumeReader.stopWords
                         });
                     });
                 },
@@ -79,15 +85,17 @@ resumeReader.Searcher = function () {
                     printError(xhr);
                 },
                 complete: function () {
-//                    $('#progressBarModal').modal('hide');
+                    $('#progressBarModal').modal('hide');
                 }});
         }
     }
 
 
     return {
-        searchAndPrint: function (searchQuery) {
-            return searchAndPrint(searchQuery);
+        searchAndPrint: function (searchQuery, context) {
+            queryObj.query = searchQuery.trim();
+            queryObj.context = context.trim();
+            return searchAndPrint();
         },
         filterResults: function (keyString) {
             return filterResults(keyString);

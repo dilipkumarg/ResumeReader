@@ -11,15 +11,18 @@ resumeReader.ResultHeaderCreator = function () {
     var domEle = resumeReader.ElementCreator,
         ids = resumeReader.ids;
 
-    function createResultHeaderDiv(searchKey, totalHits, timeTaken) {
+    function createResultHeaderDiv(searchKey,context, totalHits, timeTaken) {
         var headerDiv = domEle.createDomEle("div", ids.resultHeaderDiv, "navbar row container", ""),
             queryLabel = domEle.createDomEle("span", ids.queryLabel, "label label-info",
                 "Search Key: " + searchKey),
+            contextLabel = domEle.createDomEle("span", ids.queryLabel, "label label-info left-margin",
+                "Context: " + context),
             totalHitsLabel = domEle.createDomEle("span", ids.hitsLabel,
-                "label label-info offset1", "Total Hits: " + totalHits),
+                "label label-info left-margin", "Total Hits: " + totalHits),
             timeTakenLabel = domEle.createDomEle("span", ids.timeTakenLabel,
-                "label label-info offset1", "Search Duration: " + timeTaken + "ms");
+                "label label-info left-margin", "Search Duration: " + timeTaken + "ms");
         headerDiv.appendChild(queryLabel);
+        headerDiv.appendChild(contextLabel);
         headerDiv.appendChild(timeTakenLabel);
         headerDiv.appendChild(totalHitsLabel);
         headerDiv.appendChild(createTitleSearchBox());
@@ -37,8 +40,8 @@ resumeReader.ResultHeaderCreator = function () {
     }
 
     return {
-        createResultHeaderDiv: function (searchKey, totalHits, timeTaken) {
-            return createResultHeaderDiv(searchKey, totalHits, timeTaken);
+        createResultHeaderDiv: function (searchKey, context, totalHits, timeTaken) {
+            return createResultHeaderDiv(searchKey, context, totalHits, timeTaken);
         }
     };
 }();

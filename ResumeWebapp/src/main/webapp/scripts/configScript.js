@@ -17,16 +17,12 @@ resumeReader.Configuration = function () {
                 $("#" + ids.txtResumeDir).val(values.resumeDir);
                 $("#" + ids.txtEmployeeList).val(values.employeeListFile);
 
-                // enabling text boxes
-                $(".enableTextDiv").dblclick(function (evt) {
-                    var target = this.getAttribute("target");
-                    $(target).prop("disabled", false).focus();
-                });
-
                 // enabling submit button
                 $(".inputBox").change(function () {
                     $("#btnConfigUpdate").prop("disabled", false);
                 });
+
+                //$("#keyInputModal").modal("show");
             },
             error: function (xhr) {
                 printErrorAlert(xhr);
@@ -58,6 +54,10 @@ resumeReader.Configuration = function () {
             prevText = btnUpdate.text(),
             resumeDir = $("#" + ids.txtResumeDir),
             employeeFile = $("#" + ids.txtEmployeeList);
+        // building data object, based on user requirements.
+        //var userData = {};
+        //alert($("#" + ids.btnResumeToggle).active);
+
         $.ajax({type: "post",
             url: resumeReader.url.config,
             data: { resumeDir: resumeDir.val(),
@@ -82,20 +82,25 @@ resumeReader.Configuration = function () {
         });
     }
 
-    function updateIndex(e, cleanUpdate) {
+    function updateIndex(e, securityKey) {
+        if (typeof securityKey == 'undefined' || securityKey == null ||securityKey === "") {
+            // doing nothing on empty security key.
+            return;
+        }
         var prevText = e.target.innerHTML,
             progressBarDiv = $("#progressBarDiv"),
-            progressBar = $("#progressBar");
+            progressBar = $("#progressBar"),
+            interval;
         $.ajax({type: "post",
             url: resumeReader.url.update,
-            data: { cleanUpdate: cleanUpdate,
-                securityKey: prompt("Please enter security key")
+            data: { cleanUpdate: $("#" + e.target.id).attr("data-value"),
+                securityKey: securityKey
             },
             beforeSend: function (xhr) {
-                e.target.innerHTML = "please wait..";
+                $("#" + e.target.id).button("loading");
                 progressBarDiv.removeClass("hide");
                 var i = 0;
-                setInterval(function () {
+                interval = setInterval(function () {
                     if (i < 90) {
                         progressBar.css("width", i + "%");
                         i++;
@@ -110,9 +115,13 @@ resumeReader.Configuration = function () {
             },
             complete: function (xhr, status) {
                 progressBar.css("width", "100%");
-                e.target.innerHTML = prevText;
-                progressBar.css("width", "0%");
-                progressBarDiv.addClass("hide");
+                clearInterval(interval);
+                $("#" + e.target.id).button("reset");
+                // closing progress bar after 1 sec
+                setTimeout(function () {
+                    progressBarDiv.addClass("hide");
+                    progressBar.css("width", "0%");
+                }, 1000);
             }
         });
     }

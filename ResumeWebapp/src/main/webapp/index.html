@@ -13,8 +13,14 @@
             var hashString = window.location.hash.trim();
             if (hashString.length > 0) {
                 var res = hashString.search("q="),
-                        key = hashString.substr(res + 2).trim();
-                resumeReader.Searcher.searchAndPrint(key);
+                        key = hashString.substr(res + 2).trim(),
+                        context = "",
+                        contextPos = key.indexOf("&c=");
+                if (contextPos !== -1) {
+                    context = key.substr(contextPos + 3);
+                    key = key.substr(0, contextPos);
+                }
+                resumeReader.Searcher.searchAndPrint(key, context);
             }
 
             // attaching help text for search box
@@ -60,8 +66,8 @@
         </div>
     </div>
     <div>
-        <div class="loadingDiv">
-        </div>
+        <!-- <div class="loadingDiv">
+         </div>-->
         <div id="resultsDiv"></div>
     </div>
 
@@ -79,15 +85,18 @@
     <!-- Modal for showing progress bar -->
     <div id='progressBarModal' class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
-        <div class="modal-header">
-            <span>Please wait.. we are fetching results..! </span>
+        <div class="modal-header text-center">
+            <span class="text-info">Please wait.. we are fetching results..! </span>
         </div>
         <div class="modal-body">
             <!--<div class="progress progress-striped active">-->
             <!--<div class="bar" style="width: 100%;"></div>-->
             <!--</div>-->
             <div>
-                <img src="img/bar.gif">
+                <!-- <img src="img/bar.gif">-->
+                <div class="centerPos">
+                    <img src="img/bar.gif">
+                </div>
             </div>
         </div>
 

@@ -4,8 +4,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,23 +21,16 @@ import org.xml.sax.SAXException;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.FilePathHelper;
-import com.imaginea.resumereader.helpers.MyHtmlFormatter;
 
 public class DocumentViewerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger LOGGER = Logger
 			.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	private FileHandler fileHTML;
-	private Formatter formatterHTML;
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
 		String filePath = req.getParameter("filename");
 		String resumePath = "";
-		fileHTML = new FileHandler("Logging.html");
-		formatterHTML = new MyHtmlFormatter();
-		fileHTML.setFormatter(formatterHTML);
-		LOGGER.addHandler(fileHTML);
 		try {
 			resumePath = new FilePathHelper().getCanonicalPath(filePath);
 			LOGGER.log(Level.INFO, "viewing document: " + filePath

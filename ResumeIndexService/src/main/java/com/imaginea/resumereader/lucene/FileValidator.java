@@ -4,14 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.FilePathHelper;
-import com.imaginea.resumereader.helpers.MyHtmlFormatter;
 
 public class FileValidator {
 	private final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -19,18 +16,12 @@ public class FileValidator {
 	private List<File> listOfFiles;
 	String[] suffix = { "docx", "doc", "pdf" };
 	private FilePathHelper filePathHelper;
-	private FileHandler fileHTML;
-	private Formatter formatterHTML;
 	
 	public FileValidator(File indexDirFile) throws IOException,
 			FileDirectoryEmptyException {
 		this.indexDir = indexDirFile;
 		this.listOfFiles = new ArrayList<File>();
 		this.filePathHelper = new FilePathHelper();
-		fileHTML = new FileHandler("Logging.html");
-		formatterHTML = new MyHtmlFormatter();
-		fileHTML.setFormatter(formatterHTML);
-		LOGGER.addHandler(fileHTML);
 	}
 
 	public List<File> hashFiles(File dataDir, long timeStamp)

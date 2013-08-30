@@ -17,8 +17,7 @@ resumeReader.Searcher = function () {
             resultDiv = $("#" + resumeReader.ids.resultsDiv),
             resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(queryObj.query, resultsObj.contextKey,
                 resultsObj.totalHits, resultsObj.searchDuration),
-            resultsList = resumeReader.ListGenerator.createResultsList(resultsObj.activeHits, resultsObj.inActiveHits,
-                resultsObj.probableHits);
+            resultsList = resumeReader.ListGenerator.createResultsList(resultsObj, "activeHits");
 
         resultDiv.empty();
 

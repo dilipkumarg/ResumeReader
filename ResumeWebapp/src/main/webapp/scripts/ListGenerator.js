@@ -71,30 +71,27 @@ resumeReader.ListGenerator = function () {
         return resultsList;
     }
 
+    function createListNav(hits, showSort) {
+        var navigationBar = domEle.createDomEle("ul", "", "nav nav-tabs nav-pills",
+            " <li class='active '> <a class='span2' href='#active' data-toggle='tab'>Active (" + Object.keys(hits).length + ")</a> </li>" +
+                "<li><a class='span2' href='#probable' data-toggle='tab'>Probable (" + Object.keys(hits).length + ")</a></li>" +
+                "<li><a class='span2' href='#inactive' data-toggle='tab'>Inactive (" + Object.keys(hits).length + ")</a></li>" +
+                "<li class='pull-right'><a href='javascript:toggleExpandAll();'>" +
+                "<span class=badge>" +
+                "<i title='Expand/Collapse all' id='expandAllIcon' class='icon-chevron-down'></i>" +
+                "</span></a></li>" +
+                "<li class='pull-right'></li>");
+        return navigationBar;
+    }
 
-    function createResultsList(activeHits, inactiveHits, probableHits) {
+
+    function createResultsList(hits, showList, showSort, sortByMatchRate) {
         var resultListContainer = domEle.createDomEle("div", ids.resultsListDiv, "", ""),
-            tabContent = domEle.createDomEle("div", "", "tab-content", ""),
-            activeList = domEle.createDomEle("div", "active", "tab-pane active", ""),
-            inactiveList = domEle.createDomEle("div", "inactive", "tab-pane", ""),
-            probableList = domEle.createDomEle("div", "probable", "tab-pane", ""),
-            navigationBar = domEle.createDomEle("ul", "", "nav nav-tabs nav-pills",
-                " <li class='active '> <a class='span2' href='#active' data-toggle='tab'>Active (" + Object.keys(activeHits).length + ")</a> </li>" +
-                    "<li><a class='span2' href='#probable' data-toggle='tab'>Probable (" + Object.keys(probableHits).length + ")</a></li>" +
-                    "<li><a class='span2' href='#inactive' data-toggle='tab'>Inactive (" + Object.keys(inactiveHits).length + ")</a></li>" +
-                    "<li class='pull-right'><a href='javascript:toggleExpandAll();'>" +
-                    "<span class=badge>" +
-                    "<i title='Expand/Collapse all' id='expandAllIcon' class='icon-chevron-down'></i>" +
-                    "</span></a></li>");
+            navigationBar = createListNav(hits, false),
+            tabContent = domEle.createDomEle("div", "", "", "");
 
-        // creating active and inactive lists
-        activeList.appendChild(createList(activeHits, idsPrefix.activeList));
-        probableList.appendChild(createList(probableHits, idsPrefix.probableList));
-        inactiveList.appendChild(createList(inactiveHits, idsPrefix.inactiveList));
+        tabContent.appendChild(createList(hits[showList], idsPrefix.activeList));
 
-        tabContent.appendChild(activeList);
-        tabContent.appendChild(probableList);
-        tabContent.appendChild(inactiveList);
 
         resultListContainer.appendChild(navigationBar);
         resultListContainer.appendChild(tabContent);
@@ -103,8 +100,8 @@ resumeReader.ListGenerator = function () {
     }
 
     return {
-        createResultsList: function (activeHits, inActiveHits, probableHits) {
-            return createResultsList(activeHits, inActiveHits, probableHits);
+        createResultsList: function (hits, showList) {
+            return createResultsList(hits, showList, false, false);
         }
     };
 }();

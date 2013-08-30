@@ -23,6 +23,11 @@ var resumeReader = {
         itemCollapseIcon: "itemCollapseIcon"
 
     },
+    keys: {
+        lsActive: "activeHits",
+        lsProbable: "probableHits",
+        lsInActive: "inActiveHits"
+    },
     url: {
         search: "resumereader/search",
         view: "resumereader/view",

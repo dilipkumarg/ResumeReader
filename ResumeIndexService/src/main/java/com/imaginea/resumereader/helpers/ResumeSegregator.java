@@ -3,7 +3,6 @@ package com.imaginea.resumereader.helpers;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.imaginea.resumereader.entities.FileInfo;
@@ -19,31 +18,53 @@ public class ResumeSegregator {
 
 	}
 
-	public void findMaxSimilarity(List<FileInfo> personNames, List<String> employeeNames)
-			throws IOException, FileNotFoundException {
-		PersonNameMatcher nameMatcher = new PersonNameMatcher();
-		String personName;
-		FileInfo person;
+	public void compareWithEmployeeList(List<FileInfo> personNames,
+			List<String> employeeNames) throws IOException,
+			FileNotFoundException {
 		if (personNames != null) {
-			Iterator<FileInfo> personIterator = personNames.iterator();
-			while (personIterator.hasNext()) {
-				Iterator<String> employeeIterator = employeeNames.iterator();
+			for (FileInfo person : personNames) {
 				double similarity = 0.0, jaro;
-				person = personIterator.next();
-				personName = person.getTitle();
-				while (employeeIterator.hasNext()) {
-					String employeeName = employeeIterator.next();
-					jaro = nameMatcher.compare(personName.toLowerCase(), employeeName.toLowerCase());
+				String closeMatch = "";
+				for (String employee : employeeNames) {
+					jaro = PersonNameMatcher.similarity(person.getTitle()
+							.toLowerCase(), employee.toLowerCase());
 					if (jaro > similarity) {
 						similarity = jaro;
+						closeMatch = employee;
 					}
 				}
-				segregate(similarity, person);
+				segregate(similarity, person, closeMatch);
 			}
 		}
 	}
 
-	private void segregate(double similarity, FileInfo employee) {
+	public List<FileInfo> removeDuplicates(List<FileInfo> employeeList) {
+		// taking copy of results for duplicate elimination
+		List<FileInfo> resultList = new ArrayList<FileInfo>();
+		for (FileInfo emp1 : employeeList) {
+			double similarity = 0.0, jaro = 0.0;
+			for (FileInfo emp2 : resultList) {
+				jaro = PersonNameMatcher.similarity(emp1.getTitle(),
+						emp2.getTitle());
+				if (jaro == 1.0) {
+					similarity = jaro;
+					break;
+				} else if (jaro > similarity) {
+					similarity = jaro;
+				}
+			}
+			if (similarity >= 0.92) {
+				continue;
+			} else {
+				resultList.add(emp1);
+			}
+		}
+		return resultList;
+	}
+
+	private void segregate(double similarity, FileInfo employee,
+			String closeMatch) {
+		employee.setCloseMatch(closeMatch + " : " + similarity);
 		// 0.95 would confirm the right match barring few character
 		// displacements/removals eg : apurb for apurba
 		if (similarity >= 0.95) {

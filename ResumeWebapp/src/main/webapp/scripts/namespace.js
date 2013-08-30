@@ -84,10 +84,12 @@ function filterResults() {
 function toggleExpandAll() {
     "use strict";
     if ($('#expandAllIcon').attr("class") == "icon-chevron-down") {
+        $('.itemHeader').addClass("background");
         $('.summaryDiv').slideDown("slow", function () {
             $('.icon-chevron-down').attr("class", "icon-chevron-up");
         });
     } else {
+        $('.itemHeader').removeClass("background");
         $('.summaryDiv').slideUp("slow", function () {
             $('.icon-chevron-up').attr("class", "icon-chevron-down");
         });

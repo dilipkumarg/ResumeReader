@@ -15,7 +15,7 @@ resumeReader.Searcher = function () {
         // displaying query as the context if context is not there.
         var context = ((queryObj.context !== "") ? queryObj.context : queryObj.query),
             resultDiv = $("#" + resumeReader.ids.resultsDiv),
-            resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(queryObj.query,context,
+            resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(queryObj.query, resultsObj.contextKey,
                 resultsObj.totalHits, resultsObj.searchDuration),
             resultsList = resumeReader.ListGenerator.createResultsList(resultsObj.activeHits, resultsObj.inActiveHits,
                 resultsObj.probableHits);
@@ -24,6 +24,10 @@ resumeReader.Searcher = function () {
 
         resultDiv.append(resultHeaderDiv);
         resultDiv.append(resultsList);
+        $(".itemHeader").popover({
+            trigger: 'hover',
+            placement: 'top'
+        });
     }
 
     function filterTitle(list, keyString) {
@@ -54,7 +58,7 @@ resumeReader.Searcher = function () {
         if (searchQuery.trim().length > 0) {
             $.ajax({type: "get",
                 url: resumeReader.url.search,
-                data: resumeReader.urlParams.searchKey + "=" + searchQuery,
+                data: resumeReader.urlParams.searchKey + "=" + searchQuery + "&contextKey=" + queryObj.context,
                 beforeSend: function () {
                     // removing previous highlight keyword event
                     $('#myModal').off('shown');

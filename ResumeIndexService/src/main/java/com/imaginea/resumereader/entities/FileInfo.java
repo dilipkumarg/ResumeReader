@@ -7,6 +7,7 @@ package com.imaginea.resumereader.entities;
 public class FileInfo {
 	private final String filePath;
 	private final String title;
+	private String closeMatch;
 	private final String summary;
 	private final String content;
 
@@ -16,6 +17,7 @@ public class FileInfo {
 		this.title = title;
 		this.summary = summary;
 		this.content = content;
+		this.closeMatch = "";
 	}
 
 	public String getFilePath() {
@@ -37,5 +39,13 @@ public class FileInfo {
 
 	public String getContent() {
 		return this.content;
+	}
+
+	public String getCloseMatch() {
+		return closeMatch;
+	}
+
+	public void setCloseMatch(String closeMatch) {
+		this.closeMatch = closeMatch;
 	}
 }

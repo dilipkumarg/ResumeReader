@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.imaginea.resumereader.base.ResumeIndexSearcher;
@@ -24,11 +25,14 @@ import com.imaginea.resumereader.helpers.StringHighlighter;
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final Logger LOGGER = Logger.getLogger(this.getClass());
-	private String searchKey;
+	private String contextKey;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		searchKey = req.getParameter("searchKey");
+		String searchKey = req.getParameter("searchKey");
+		contextKey = req.getParameter("contextKey");
+		// making context as search key if no context is present
+		contextKey = (contextKey.trim().isEmpty() ? searchKey : contextKey);
 		PrintWriter printWriter = res.getWriter();
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
@@ -48,7 +52,8 @@ public class SearchServlet extends HttpServlet {
 		// searchResult.setTopHits(removeDuplicates(searchResult.getTopHits()));
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
 
-		resumeSegregator.findMaxSimilarity(searchResult.getTopHits(),
+		resumeSegregator.compareWithEmployeeList(
+				resumeSegregator.removeDuplicates(searchResult.getTopHits()),
 				excelReader.read());
 		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}
@@ -70,6 +75,7 @@ public class SearchServlet extends HttpServlet {
 		jsonObj.put("totalHits", searchResult.getTopHits().size());
 		jsonObj.put("searchDuration", searchResult.getSearchDuration());
 		jsonObj.put("searchKey", searchResult.getQuery());
+		jsonObj.put("contextKey", contextKey);
 
 		jsonObj.put("activeHits",
 				hitsToJson(resumeSegregator.getActiveEmployees()));
@@ -88,13 +94,15 @@ public class SearchServlet extends HttpServlet {
 				"<span class='highlight'>", "</span>", 20);
 		for (FileInfo hit : hits) {
 			JSONObject fileObj = new JSONObject();
-			// fileObj.put("title", hit.getTitle());
-			// fileObj.put("summary", hit.getSummary());
+			JSONArray fragments = new JSONArray();
 			fileObj.put("filepath", hit.getFilePath());
-			String hString = sh.highlightFragments(hit.getContent(),
-					this.searchKey);
-			// System.out.println(hString);
-			fileObj.put("summary", hString);
+			fileObj.put("closematch", hit.getCloseMatch());
+			// highlighting the context and putting in array
+			for (String highFragment : sh.highlightFragments(hit.getContent(),
+					this.contextKey)) {
+				fragments.add(highFragment);
+			}
+			fileObj.put("summary", fragments);
 			hitsJSON.put(hit.getTitle(), fileObj);
 		}
 		return hitsJSON;

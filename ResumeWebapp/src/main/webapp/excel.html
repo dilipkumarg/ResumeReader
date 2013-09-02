@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Add Employee</title>
+<link rel='stylesheet' href='styles/bootstrap.css'>
+<script type="text/javascript" src='scripts/jquery-1.10.2.js'></script>
+<script type="text/javascript" src='scripts/bootstrap.js'></script>
+<script type="text/javascript" src="scripts/namespace.js"></script>
+<script type="text/javascript" src="scripts/configScript.js"></script>
+<script type="text/javascript">
+	$(document).ready(resumeReader.Configuration.loadConfigValues());
+</script>
+<script>
+	function loadXMLDoc() {
+		var xmlhttp;
+		if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+			xmlhttp = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				document.getElementById("myDiv").innerHTML = xmlhttp.responseText;
+			}
+		}
+		xmlhttp.open("POST", "resumereader/editemployee", true);
+		xmlhttp.setRequestHeader("Content-type",
+				"application/x-www-form-urlencoded");
+		var empName = $('#empName').val();
+		var empId = $('#empId').val();
+		var securityKey = prompt("Please enter security key");
+		xmlhttp.send("empName=" + empName + "&empId=" + empId + "&securityKey="
+				+ securityKey);
+	}
+</script>
+</head>
+<body>
+	<div id='body' class="well container">
+		<div id="headerDiv" class="row page-header text-center">
+			<h1 id="heading">Employee Excel Editor</h1>
+			<span class="pull-right"> <a class="muted" href="index.html">Search
+					Engine</a>
+			</span>
+		</div>
+		<div id='myDiv' class="span6">
+			<fieldset>
+				<legend> ADD EMPLOYEE TO EXCEL </legend>
+				<label> Employee Name : </label> <input type="text" id="empName"
+					class="span5 inputBox">
+				<!--<div class="enableTextDiv" data-toggle="txtResumeDir" style="position:absolute; left:0; right:0; top:0; bottom:0; cursor: pointer;"></div>-->
+				<label>Employees Id: </label> <input type="text" id="empId"
+					class="span5 inputBox">
+				<!--<div class="enableTextDiv" data-toggle="txtEmployeeList" style="position:absolute; left:0; right:0; top:0; bottom:0; cursor: pointer;"></div>-->
+				<button type="button" onclick="loadXMLDoc()">Add Employee</button>
+			</fieldset>
+		</div>
+	</div>
+</body>
+</html>

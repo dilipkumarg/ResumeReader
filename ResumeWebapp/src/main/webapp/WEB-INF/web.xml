@@ -36,4 +36,13 @@
     <servlet-name>Update</servlet-name>
     <url-pattern>/resumereader/update</url-pattern>
   </servlet-mapping> 
+  
+   <servlet>
+    <servlet-name>ExcelEdit</servlet-name>
+    <servlet-class>com.imaginea.resumereader.servlet.ExcelWriterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ExcelEdit</servlet-name>
+    <url-pattern>/resumereader/editemployee</url-pattern>
+  </servlet-mapping> 
 </web-app>

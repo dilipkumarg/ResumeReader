@@ -29,6 +29,16 @@ public class ExcelManager {
 		filePath = inputFile;
 
 	}
+/*public static void main(String[] args) throws IOException {
+	PropertyFileReader prop = new PropertyFileReader();
+	ExcelManager excelManager = new ExcelManager("/home/ashwin/Documents/Book1.xlsx");
+	excelManager.write("ashwin", 1234);
+}*/
+	/*public ExcelManager() {
+		this.fileIS = ExcelManager.class.getClassLoader().getResourceAsStream(
+				("Book1.xlsx"));
+		filePath = ExcelManager.class.getClassLoader().getResource("Book1.xlsx");
+	}*/
 
 	public List<String> read() throws IOException {
 		// Create an ArrayList to store the data read from excel sheet.
@@ -67,7 +77,7 @@ public class ExcelManager {
 		return data;
 	}
 
-	public void write(String employeeName, int employeeNameId)
+	public void write(String employeeName, int employeeId)
 			throws IOException {
 		// Get the Excel workbook
 		XSSFWorkbook workbook = new XSSFWorkbook(this.fileIS);
@@ -85,7 +95,7 @@ public class ExcelManager {
 		 */
 		Map<String, Object[]> data = new TreeMap<String, Object[]>();
 		data.put(Integer.toString(++i), new Object[] { employeeName,
-				employeeNameId });
+				employeeId });
 		/*
 		 * data.put(Integer.toString(++i), new Object[] {"Lokesh", 11425 });
 		 * data.put(Integer.toString(++i), new Object[] {"John", 11426 });

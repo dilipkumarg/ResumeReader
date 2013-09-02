@@ -29,9 +29,13 @@
 				"application/x-www-form-urlencoded");
 		var empName = $('#empName').val();
 		var empId = $('#empId').val();
-		var securityKey = prompt("Please enter security key");
-		xmlhttp.send("empName=" + empName + "&empId=" + empId + "&securityKey="
-				+ securityKey);
+		if(isNaN(empId)){
+			alert("Please enter a number for Employee Id");
+		}else{
+			var securityKey = prompt("Please enter security key");
+			xmlhttp.send("empName=" + empName + "&empId=" + empId + "&securityKey="
+					+ securityKey);
+		}
 	}
 </script>
 </head>

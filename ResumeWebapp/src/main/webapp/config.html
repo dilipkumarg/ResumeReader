@@ -4,13 +4,32 @@
     <title>Resume Search Service Configuration</title>
     <link rel='stylesheet' href='styles/bootstrap.css'>
     <link rel='stylesheet' href='styles/custom_styles.css'>
+    <link type="text/css" rel="stylesheet" href="styles/dropzone.css">
+
     <script type="text/javascript" src='scripts/jquery-1.10.2.js'></script>
     <script type="text/javascript" src='scripts/bootstrap.js'></script>
     <script type="text/javascript" src='scripts/bootbox.js'></script>
+    <script src="scripts/dropzone.js" type="text/javascript"></script>
     <script type="text/javascript" src="scripts/namespace.js"></script>
     <script type="text/javascript" src="scripts/configScript.js"></script>
     <script type="text/javascript">
-        $(document).ready(resumeReader.Configuration.loadConfigValues());
+        $(function () {
+            resumeReader.Configuration.loadConfigValues();
+            // setting dropzone properties
+            Dropzone.options.myAwesomeDropzone = {
+                acceptedFiles: "application/pdf,application/msword",
+                addRemoveLinks: true,
+                dictInvalidFileType: "Please upload only doc, docx and pdf files",
+                dictRemoveFile: "Clear file"
+
+            };
+            $("#myAwesomeDropzone").on("success", function (res) {
+                /* Maybe display some more file information on your page */
+                var spanAlert = $("#spanUploadResponse");
+                spanAlert.html(res);
+                spanAlert.removeClass("hide");
+            });
+        });
     </script>
 </head>
 <body>
@@ -78,7 +97,24 @@
                 </button>
             </fieldset>
         </div>
+        <div id="fileUploadDiv" class="span5">
+            <fieldset>
+                <legend>
+                    UPLOAD RESUMES
+                </legend>
+                <!--<form action="resumereader/upload"
+                      class="dropzone"
+                      id="my-awesome-dropzone"
+                      enctype="multipart/form-data">
+                    <div class="fallback">
+                        <input name="file" type="file"/>
+                    </div>
+                </form>-->
+                <button class="btn btn-info" onclick="$(fileUploadModal).modal('show');">Upload</button>
+            </fieldset>
+        </div>
     </div>
+
 
     <div id="progressBarDiv" class="progress progress-striped active hide">
         <div class="bar" id="progressBar" style="width: 0%;"></div>
@@ -113,6 +149,35 @@
             <a href="#" class="btn btn-primary">Save changes</a>
         </div>
     </div>
+    <!-- Modal -->
+    <div id="fileUploadModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="uploadModalLabel">Drag Files Here to Upload</h3>
+        </div>
+        <div class="modal-body">
+            <form action="resumereader/upload"
+                  class="dropzone"
+                  id="my-awesome-dropzone"
+                  enctype="multipart/form-data">
+                <div class="fallback">
+                    <input name="file" type="file"/>
+                </div>
+            </form>
+
+        </div>
+        <div class="modal-footer">
+            <div class="alert hide">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span id="spanUploadResponse">Response will be shown here</span>
+            </div>
+            <p>
+                <span class="help-block">After uploading documents, please update the index to reflect changes</span>
+            </p>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

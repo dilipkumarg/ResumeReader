@@ -38,7 +38,7 @@ span.highlight {
     margin-right: auto;
 }
 
-#myModal.modal {
+#myModal.modal, #fileUploadModal.modal {
     /* new custom width */
     width: 750px;
     /* must be half of the width, minus scrollbar on the left (30px) */
@@ -100,4 +100,8 @@ span.highlight {
 
 .left-margin {
     margin-left: 2%;
+}
+
+#fileUploadModal.dropzone {
+    min-height: 250px;
 }

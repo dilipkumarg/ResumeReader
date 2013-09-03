@@ -29,8 +29,8 @@
 				"application/x-www-form-urlencoded");
 		var empName = $('#empName').val();
 		var empId = $('#empId').val();
-		if(isNaN(empId)){
-			alert("Please enter a number for Employee Id");
+		if( isNaN(empId) || empId % 1 != 0){
+			alert("Please enter a integral value for Employee Id");
 		}else if(!isNaN(parseFloat(empName)) && isFinite(empName)){
 			alert("Please enter a String for Employee Name");
 		}else{

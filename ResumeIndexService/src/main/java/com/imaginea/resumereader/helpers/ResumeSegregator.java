@@ -2,6 +2,7 @@ package com.imaginea.resumereader.helpers;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +65,10 @@ public class ResumeSegregator {
 
 	private void segregate(double similarity, FileInfo employee,
 			String closeMatch) {
-		employee.setCloseMatch(closeMatch + " : " + similarity);
+		// attaching match details
+		DecimalFormat df = new DecimalFormat("0.00");
+		employee.setCloseMatch(closeMatch + " (" + df.format(similarity * 100)
+				+ "%)");
 		// 0.95 would confirm the right match barring few character
 		// displacements/removals eg : apurb for apurba
 		if (similarity >= 0.95) {

@@ -3,8 +3,10 @@ package com.imaginea.resumereader.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,14 +17,68 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
+import com.imaginea.resumereader.helpers.FilePathHelper;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 
 public class ResumeUploadServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private Logger LOGGER = Logger.getLogger(this.getClass());
+	private String indexDirPath = "";
+	private FilePathHelper pathHelper;
+
+	public void doGet(HttpServletRequest req, HttpServletResponse res)
+			throws IOException {
+		PropertyFileReader prop = null;
+		try {
+			prop = new PropertyFileReader();
+			pathHelper = new FilePathHelper();
+			File resumeDir = new File(prop.getResumeDirPath());
+			indexDirPath = new File(prop.getIndexDirPath()).getCanonicalPath();
+			Map<String, String> filesList = new HashMap<String, String>();
+
+			mapAllFiles(resumeDir, filesList);
+			// sending response as json
+			res.getWriter().print(toJson(filesList).toJSONString());
+
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					e.getMessage());
+			return;
+		} catch (FileDirectoryEmptyException e) {
+			LOGGER.error(e.getMessage(), e);
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					e.getMessage());
+			return;
+		}
+
+	}
+
+	private void mapAllFiles(File file, Map<String, String> filesList)
+			throws IOException {
+		for (File f : file.listFiles()) {
+			if (f.isDirectory()) {
+				if (!f.getCanonicalPath().equalsIgnoreCase(indexDirPath)) {
+					mapAllFiles(f, filesList);
+				}
+			} else {
+				String relPath = pathHelper.extractRelativePath(f
+						.getCanonicalPath());
+				filesList.put(relPath, f.getName());
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private JSONObject toJson(Map<String, String> files) {
+		JSONObject lFiles = new JSONObject();
+		lFiles.putAll(files);
+		return lFiles;
+	}
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
@@ -62,6 +118,7 @@ public class ResumeUploadServlet extends HttpServlet {
 		}
 	}
 
+	// this function is for writing files into the disk
 	private boolean writeToFile(String resumeDir, HttpServletRequest req)
 			throws Exception {
 		boolean status = false;
@@ -80,13 +137,10 @@ public class ResumeUploadServlet extends HttpServlet {
 				int i = 1;
 				// if file already exists appending suffix
 				while (file.exists()) {
-					String[] fileParts = fileName.split(".");
-					String newName = "";
-					if (fileParts.length > 1) {
-						newName = fileParts[fileParts.length - 2] + "_" + i++
-								+ "." + fileParts[fileParts.length - 1];
-					} else
-						newName = fileName + "_" + i++;
+					int j = fileName.lastIndexOf(".");
+					String newName = fileName.substring(0, j) + "_" + i++
+							+ fileName.substring(j);
+
 					file = new File(resumeDir + newName);
 				}
 				LOGGER.info("uploading new resume : " + fileItem.getName());

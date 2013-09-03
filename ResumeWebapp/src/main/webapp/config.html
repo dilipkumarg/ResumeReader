@@ -17,18 +17,32 @@
             resumeReader.Configuration.loadConfigValues();
             // setting dropzone properties
             Dropzone.options.myAwesomeDropzone = {
-                acceptedFiles: "application/pdf,application/msword",
+                autoProcessQueue: false,
+                acceptedFiles: ".pdf,.doc,.docx",
                 addRemoveLinks: true,
                 dictInvalidFileType: "Please upload only doc, docx and pdf files",
-                dictRemoveFile: "Clear file"
+                dictRemoveFile: "Clear file",
+                init: function () {
+                    var myDropZone = this;
+                    $("#btnUploadAll").click(function () {
+                        myDropZone.processQueue();
+                    });
+                }
 
             };
-            $("#myAwesomeDropzone").on("success", function (res) {
-                /* Maybe display some more file information on your page */
-                var spanAlert = $("#spanUploadResponse");
-                spanAlert.html(res);
-                spanAlert.removeClass("hide");
+
+            // binding events to the delete modals, to fetch file list from server
+            var deleteModal = $("#fileDeleteModal"),
+                    prevBodyTxt = deleteModal.find(".modal-body").html();
+            // loading data
+            deleteModal.on('show', function () {
+                resumeReader.Configuration.loadFileList(deleteModal.find(".modal-body"));
             });
+            // removing data for fresh copy
+            deleteModal.on('hide', function () {
+                deleteModal.find(".modal-body").html(prevBodyTxt);
+            });
+
         });
     </script>
 </head>
@@ -73,6 +87,7 @@
                                disabled>
                     </div>
                     <span class="help-block">click on edit button to enable text box.</span>
+                    <span class="help-block"><strong>Note:</strong>only enabled text box value will be updated.</span>
                     <button id="btnConfigUpdate" class="btn btn-primary" type="submit" disabled>Update Changes</button>
                 </fieldset>
             </form>
@@ -84,15 +99,11 @@
                     UPDATING INDEX
                 </legend>
                 <button id='cleanUpdateBtn' data-value="true" class="btn btn-danger" data-loading-text="updating..."
-                        onclick="bootbox.prompt('Enter Security key', function(result) {
-                        resumeReader.Configuration.updateIndex(event,result);
-                        });">
+                        onclick="resumeReader.Configuration.updateIndex(event);">
                     CLEAN & INDEX
                 </button>
                 <button id='updateBtn' data-value="false" class="btn btn-primary" data-loading-text="updating..."
-                        onclick="bootbox.prompt('Enter security key', function(result) {
-                        resumeReader.Configuration.updateIndex(event,result);
-                        });">
+                        onclick="resumeReader.Configuration.updateIndex(event);">
                     UPDATE
                 </button>
             </fieldset>
@@ -100,17 +111,10 @@
         <div id="fileUploadDiv" class="span5">
             <fieldset>
                 <legend>
-                    UPLOAD RESUMES
+                    UPDATE RESUMES
                 </legend>
-                <!--<form action="resumereader/upload"
-                      class="dropzone"
-                      id="my-awesome-dropzone"
-                      enctype="multipart/form-data">
-                    <div class="fallback">
-                        <input name="file" type="file"/>
-                    </div>
-                </form>-->
-                <button class="btn btn-info" onclick="$(fileUploadModal).modal('show');">Upload</button>
+                <button class="btn btn-info" onclick="$(fileUploadModal).modal('show');">Upload New Resumes</button>
+                <button class="btn btn-danger" onclick="$(fileDeleteModal).modal('show');">Delete Resumes</button>
             </fieldset>
         </div>
     </div>
@@ -125,36 +129,12 @@
         <span id="alertText"> Here status will be shown</span>
     </div>
 
-    <!-- Modal -->
-    <div id="keyInputModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="myModalLabel">Authentication Required</h3>
-        </div>
-        <div class="modal-body">
-            <span class="offset1">
-                Security Key:
-            </span>
-            <input type="password" class="input-large" required="true" id='txtSecurityKey'>
-
-            <p>
-                <span class="help-block">This key is used to authenticate you as a authorized person to configure changes.
-                You can find the key in <code>config.properties</code> file.
-                Default key is: <code>pramati123</code></span>
-            </p>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="btn">Close</a>
-            <a href="#" class="btn btn-primary">Save changes</a>
-        </div>
-    </div>
-    <!-- Modal -->
+    <!-- File Upload Modal -->
     <div id="fileUploadModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="uploadModalLabel">Drag Files Here to Upload</h3>
+            <h3 id="uploadModalLabel">Drop Files Here to Upload</h3>
         </div>
         <div class="modal-body">
             <form action="resumereader/upload"
@@ -165,18 +145,42 @@
                     <input name="file" type="file"/>
                 </div>
             </form>
-
         </div>
         <div class="modal-footer">
             <div class="alert hide">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span id="spanUploadResponse">Response will be shown here</span>
             </div>
-            <p>
-                <span class="help-block">After uploading documents, please update the index to reflect changes</span>
-            </p>
+            <span class="help-block">After uploading documents, please update the index to reflect changes</span>
+            <button id="btnUploadAll" class="btn btn-primary">Upload All
+            </button>
+            <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         </div>
     </div>
+
+    <!-- File Delete Modal -->
+    <div id="fileDeleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <div>
+                <h3 id="deleteModalLabel">Select files to delete</h3>
+                <input type="text" onkeyup="resumeReader.Configuration.filterByName($(this).val())"
+                       class="span2 search-query">
+            </div>
+        </div>
+        <div class="modal-body">Please wait.. fetching results</div>
+        <div class="modal-footer">
+            <div class="alert hide">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span id="spanDeleteResponse">Response will be shown here</span>
+            </div>
+            <span class="help-block">After deleting documents, please update the index to reflect changes</span>
+            <button id="btnDeletedAll" class="btn btn-danger">Delete Selected</button>
+            <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
+
 
 </div>
 </body>

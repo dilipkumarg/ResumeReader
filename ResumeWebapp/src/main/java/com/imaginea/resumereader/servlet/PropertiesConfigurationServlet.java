@@ -55,13 +55,25 @@ public class PropertiesConfigurationServlet extends HttpServlet {
 		}
 		if (req.getParameter("securityKey").trim()
 				.equals(prop.getSecurityKey())) {
-			prop.setResumeDirPath(req.getParameter("resumeDir"));
-			prop.setEmployeeExcelPath(req.getParameter("employeeFile"));
+			updateConfig(req, prop);
 			res.getWriter().print("Successfully updated");
 		} else {
 			LOGGER.warn("Security Key not matched");
 			res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
 					"Security Key not matched");
+		}
+	}
+
+	private void updateConfig(HttpServletRequest req, PropertyFileReader prop)
+			throws IOException {
+		String resumeDir = req.getParameter("resumeDir");
+		String employeeDir = req.getParameter("employeeFile");
+		// checking the input
+		if (resumeDir != null && resumeDir.length() > 1) {
+			prop.setResumeDirPath(resumeDir);
+		}
+		if (employeeDir != null && employeeDir.length() > 1) {
+			prop.setEmployeeExcelPath(employeeDir);
 		}
 	}
 }

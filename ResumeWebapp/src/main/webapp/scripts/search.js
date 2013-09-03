@@ -11,6 +11,18 @@ resumeReader.Searcher = function () {
         alertBox.addClass("alert-error");
     }
 
+    // adding popover for tool tips
+    function addPopOver() {
+        $(".itemHeader").popover({
+            trigger: 'hover',
+            placement: 'top'
+        });
+        $(".navTab").popover({
+            trigger: 'hover',
+            placement: 'top'
+        });
+    }
+
     function printResult() {
         // displaying query as the context if context is not there.
         var context = ((queryObj.context !== "") ? queryObj.context : queryObj.query),
@@ -24,10 +36,7 @@ resumeReader.Searcher = function () {
 
         resultDiv.append(resultHeaderDiv);
         resultDiv.append(resultsList);
-        $(".itemHeader").popover({
-            trigger: 'hover',
-            placement: 'top'
-        });
+        addPopOver();
     }
 
     function filterTitle(list, keyString) {
@@ -51,6 +60,7 @@ resumeReader.Searcher = function () {
                 filterTitle(resultsObj.probableHits, titleQuery));
         resultDiv.removeChild(document.getElementById(resumeReader.ids.resultsListDiv));
         resultDiv.appendChild(resultsList);
+        addPopOver();
     }
 
     function searchAndPrint() {
@@ -73,15 +83,28 @@ resumeReader.Searcher = function () {
                     $("#alertBox").addClass("hide");
                     resultsObj = JSON.parse(response);
                     printResult();
+                    var myModal = $("#myModal");
                     // for highlighting
-                    $('#myModal').on('shown', function () {
-                        var queries = searchQuery.match(/(?:[^\s"]+|"[^"]*")+/g);
-                        // this code is for highlighting keywords
-                        $('#myModal').find(".modal-body").wrapInTag({
-                            words: queries,
-                            tag: '<span>',
-                            ignoreWords: resumeReader.stopWords
-                        });
+                    myModal.on('shown', function () {
+                        var resumeBody = myModal.find(".modal-body"),
+                            queries = searchQuery.match(/(?:[^\s"]+|"[^"]*")+/g);
+                        // waiting until resume loading, then highlight words
+                        var resumeInterval = setInterval(function () {
+                            if (resumeBody.html() !== "Please Wait.. Loading Resume") {
+                                // clearing interval
+                                clearInterval(resumeInterval);
+                                // this code is for highlighting keywords
+                                resumeBody.wrapInTag({
+                                    words: queries,
+                                    tag: '<span>',
+                                    ignoreWords: resumeReader.stopWords
+                                });
+                            }
+
+                        }, 2000);
+                    });
+                    myModal.on('hide', function () {
+                        myModal.find(".modal-body").html("Please Wait.. Loading Resume");
                     });
                 },
                 error: function (xhr) {

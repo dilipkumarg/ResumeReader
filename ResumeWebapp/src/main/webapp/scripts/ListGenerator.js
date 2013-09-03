@@ -79,9 +79,9 @@ resumeReader.ListGenerator = function () {
             inactiveList = domEle.createDomEle("div", "inactive", "tab-pane", ""),
             probableList = domEle.createDomEle("div", "probable", "tab-pane", ""),
             navigationBar = domEle.createDomEle("ul", "", "nav nav-tabs nav-pills",
-                " <li class='active '> <a class='span2' href='#active' data-toggle='tab'>Active (" + Object.keys(activeHits).length + ")</a> </li>" +
-                    "<li><a class='span2' href='#probable' data-toggle='tab'>Probable (" + Object.keys(probableHits).length + ")</a></li>" +
-                    "<li><a class='span2' href='#inactive' data-toggle='tab'>Inactive (" + Object.keys(inactiveHits).length + ")</a></li>" +
+                " <li class='active '> <a class='span2 navTab' href='#active' data-original-title='Info' data-content='Present working employees' data-toggle='tab'>Active (" + Object.keys(activeHits).length + ")</a> </li>" +
+                    "<li><a class='span2 navTab' href='#probable' data-original-title='Info' data-content='Either present working or non working employees' data-toggle='tab'>Probable (" + Object.keys(probableHits).length + ")</a></li>" +
+                    "<li><a class='span2 navTab' href='#inactive' data-original-title='Info' data-content='Present Not working employees' data-toggle='tab'>Inactive (" + Object.keys(inactiveHits).length + ")</a></li>" +
                     "<li class='pull-right'><a href='javascript:toggleExpandAll();'>" +
                     "<span class=badge>" +
                     "<i title='Expand/Collapse all' id='expandAllIcon' class='icon-chevron-down'></i>" +

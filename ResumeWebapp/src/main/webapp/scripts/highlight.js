@@ -23,7 +23,7 @@ $.fn.wrapInTag = function (opts) {
         var html = $(this).html();
         for (var i = 0; i < o.words.length; i = i + 1) {
             // highlighting if and only if word not in ignore list.
-            if (o.ignoreWords.indexOf(o.words[i].toLowerCase()) == -1) {
+            if (o.ignoreWords.indexOf(o.words[i].toLowerCase()) === -1) {
                 var str = o.words[i].replace(/"/g, "").trim(),// deleting double quotes from word
                 // regular expression for selecting desired string.
                     re = new RegExp("([/\\s>])(" + str + "(\\([/\\w]+\\)){0,1}([-_.]*[/\\d]*)*)(([/\\W]){0,1}[/\\s<])", "gim");

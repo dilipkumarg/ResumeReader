@@ -8,6 +8,7 @@
 
     <script type="text/javascript" src='scripts/jquery-1.10.2.js'></script>
     <script type="text/javascript" src='scripts/bootstrap.js'></script>
+    <script type="text/javascript" src='scripts/CustomPrompt.js'></script>
     <script type="text/javascript" src='scripts/bootbox.js'></script>
     <script src="scripts/dropzone.js" type="text/javascript"></script>
     <script type="text/javascript" src="scripts/namespace.js"></script>
@@ -15,21 +16,7 @@
     <script type="text/javascript">
         $(function () {
             resumeReader.Configuration.loadConfigValues();
-            // setting dropzone properties
-            Dropzone.options.myAwesomeDropzone = {
-                autoProcessQueue: false,
-                acceptedFiles: ".pdf,.doc,.docx",
-                addRemoveLinks: true,
-                dictInvalidFileType: "Please upload only doc, docx and pdf files",
-                dictRemoveFile: "Clear file",
-                init: function () {
-                    var myDropZone = this;
-                    $("#btnUploadAll").click(function () {
-                        myDropZone.processQueue();
-                    });
-                }
 
-            };
 
             // binding events to the delete modals, to fetch file list from server
             var deleteModal = $("#fileDeleteModal"),
@@ -51,9 +38,9 @@
 
     <div id="headerDiv" class="row page-header text-center">
         <h1 id="heading">Resume Search Engine Configuration</h1>
-            <span class="pull-right">
-                <a class="muted" href="./">Search Engine</a>
-            </span>
+                <span class="pull-right">
+                    <a class="muted" href="./">Search Engine</a>
+                </span>
     </div>
 
     <div class="row">
@@ -81,7 +68,7 @@
                     <div class="input-prepend">
                         <button class="btn" type="button" id='btn-EmployeeToggle' data-toggle="button"
                                 data-target="#txtEmployeeList"
-                                onclick="$('#txtEmployeeList').toggleDisabled(); "><i class="icon-edit"></i></button>
+                                onclick="$('#txtEmployeeList').toggleDisabled();"><i class="icon-edit"></i></button>
                         <input type="text" id="txtEmployeeList" class="span5 inputBox"
                                placeholder="Employee List File"
                                disabled>
@@ -113,7 +100,9 @@
                 <legend>
                     UPDATE RESUMES
                 </legend>
-                <button class="btn btn-info" onclick="$(fileUploadModal).modal('show');">Upload New Resumes</button>
+                <button class="btn btn-info" onclick="resumeReader.Configuration.loadUploadBox('#fileUploadModal')">
+                    Upload New Resumes
+                </button>
                 <button class="btn btn-danger" onclick="$(fileDeleteModal).modal('show');">Delete Resumes</button>
             </fieldset>
         </div>
@@ -176,7 +165,9 @@
                 <span id="spanDeleteResponse">Response will be shown here</span>
             </div>
             <span class="help-block">After deleting documents, please update the index to reflect changes</span>
-            <button id="btnDeletedAll" class="btn btn-danger">Delete Selected</button>
+            <button id="btnDeletedAll" class="btn btn-danger" onclick="resumeReader.Configuration.deleteFiles();">Delete
+                Selected
+            </button>
             <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
         </div>
     </div>

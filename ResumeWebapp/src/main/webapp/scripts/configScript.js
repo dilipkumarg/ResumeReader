@@ -84,8 +84,11 @@ resumeReader.Configuration = function () {
         // updating if and only if something is changed
         if (userData.resumeDir !== "" || userData.employeeFile !== "") {
             bootbox.prompt('Enter security key', function (result) {
-                userData.securityKey = result;
-                doUpdateConfig(userData, btnUpdate);
+                // checking if user pressed ok or not
+                if (result !== null) {
+                    userData.securityKey = result;
+                    doUpdateConfig(userData, btnUpdate);
+                }
             });
         } else {
             $("#alertText").html("Text boxes are in disabled state, so nothing to update..!");
@@ -138,7 +141,7 @@ resumeReader.Configuration = function () {
 
     function updateIndex(e) {
         bootbox.prompt('Enter Security key', function (result) {
-            if (typeof result == 'undefined' || result == null || result === "") {
+            if (typeof result === 'undefined' || result === null || result === "") {
                 // doing nothing on empty security key.
                 return;
             }
@@ -175,10 +178,10 @@ resumeReader.Configuration = function () {
         var selected = targetDiv.find("label");
         for (var i = 0; i < selected.length; i++) {
             var selecter = selected[i].getElementsByTagName("span")[0];
-            if(selecter.innerHTML.toLowerCase().lastIndexOf(str.toLowerCase()) === -1) {
-                selected[i].setAttribute("class","hide");
+            if (selecter.innerHTML.toLowerCase().lastIndexOf(str.toLowerCase()) === -1) {
+                selected[i].setAttribute("class", "hide");
             } else {
-                selected[i].setAttribute("class","");
+                selected[i].setAttribute("class", "");
             }
         }
     }
@@ -187,7 +190,10 @@ resumeReader.Configuration = function () {
         var keys = Object.keys(fileObj);
         keys = keys.sort();
         for (var i = 0; i < keys.length; i++) {
-            targetDiv.append("<label><input type='checkbox' value='" + keys[i] + "'> <span>" + fileObj[keys[i]] + "</span></label>");
+            targetDiv.append("<label title='" + keys[i] + "'>\n\
+                                <input type='checkbox' value='" + keys[i] + "'> \n\
+                                <span>" + fileObj[keys[i]] + "</span>\n\
+                            </label>");
         }
         /*var sorted = orderFileNames(fileObj);
          for (var i = 0; i < sorted.length; i++) {
@@ -202,7 +208,7 @@ resumeReader.Configuration = function () {
 
     function loadFileList(targetDiv) {
         $.ajax({
-            url: "resumereader/upload",
+            url: "resumereader/delete",
             success: function (response) {
                 targetDiv.empty();
                 printList(JSON.parse(response), targetDiv);
@@ -211,6 +217,61 @@ resumeReader.Configuration = function () {
                 printFileFetchError(xhr, targetDiv);
             }
         });
+    }
+
+    function getSelectedFiles(targetDiv) {
+        var checkBoxes = targetDiv.find(":checkbox"),
+            selectedBoxes = [];
+
+        for (var i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                selectedBoxes.push(checkBoxes[i].getAttribute("value"));
+            }
+        }
+        return selectedBoxes;
+    }
+
+    function deleteFiles() {
+        var deleteModal = $("#fileDeleteModal");
+        var selectedBoxes = getSelectedFiles(deleteModal.find(".modal-body"));
+        var res = confirm("Are you sure you want to delete " + selectedBoxes.length + " files?");
+
+        if (res) {
+            deleteModal.myPrompt({showHide: true}, function (res) {
+                $.ajax({
+                    type: "post",
+                    url: "resumereader/delete",
+                    data: {
+                        filesList: JSON.stringify(selectedBoxes),
+                        accessKey: res
+                    }
+                });
+            });
+        }
+    }
+
+    var dropZoneInitiated = false;
+
+    function initiateDropZone() {
+        if (!dropZoneInitiated) {
+            dropZoneInitiated = true;
+            // setting dropzone properties
+            Dropzone.options.myAwesomeDropzone = {
+                autoProcessQueue: false,
+                acceptedFiles: ".pdf,.doc,.docx",
+                addRemoveLinks: true,
+                dictInvalidFileType: "Please upload only doc, docx and pdf files",
+                dictRemoveFile: "Clear file",
+                init: function () {
+                    var myDropZone = this;
+                    $("#btnUploadAll").click(function () {
+                        myDropZone.processQueue();
+                    });
+                }
+
+            };
+        }
+
     }
 
     return {
@@ -228,6 +289,16 @@ resumeReader.Configuration = function () {
         },
         filterByName: function (str) {
             filterByName(str, $("#fileDeleteModal").find(".modal-body"));
+        },
+        deleteFiles: function () {
+            deleteFiles();
+        },
+        loadUploadBox: function (targetDiv) {
+            $(targetDiv).myPrompt({}, function (res) {
+                initiateDropZone();
+                $(targetDiv).modal("show");
+
+            });
         }
-    }
+    };
 }();

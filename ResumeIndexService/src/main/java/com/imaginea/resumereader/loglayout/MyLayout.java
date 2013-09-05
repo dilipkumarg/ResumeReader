@@ -1,5 +1,9 @@
 package com.imaginea.resumereader.loglayout;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.log4j.HTMLLayout;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
@@ -10,7 +14,7 @@ import org.apache.log4j.spi.LoggingEvent;
 public class MyLayout extends HTMLLayout {
 	protected final int BUF_SIZE = 256;
 	protected final int MAX_CAPACITY = 1024;
-
+	Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	static String TRACE_PREFIX = "<br>&nbsp;&nbsp;&nbsp;&nbsp;";
 
 	// output buffer appended to when format() is invoked
@@ -78,7 +82,7 @@ public class MyLayout extends HTMLLayout {
 				+ Layout.LINE_SEP);
 
 		sbuf.append("<td class='timeCol'>");
-		sbuf.append(event.timeStamp - LoggingEvent.getStartTime());
+		sbuf.append(formatter.format(new Date()));
 		sbuf.append("</td>" + Layout.LINE_SEP);
 
 		String escapedThread = Transform.escapeTags(event.getThreadName());

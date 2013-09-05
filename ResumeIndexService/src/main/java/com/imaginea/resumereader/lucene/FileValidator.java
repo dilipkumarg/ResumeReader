@@ -4,14 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.FilePathHelper;
 
 public class FileValidator {
-	private final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private final Logger LOGGER = Logger.getLogger(this.getClass());
 	private final File indexDir;
 	private List<File> listOfFiles;
 	String[] suffix = { "docx", "doc", "pdf" };
@@ -27,7 +28,7 @@ public class FileValidator {
 	public List<File> hashFiles(File dataDir, long timeStamp)
 			throws IOException {
 		if (!dataDir.exists()) {
-			LOGGER.log(Level.SEVERE,
+			LOGGER.log(Level.FATAL,
 					"The File Direcory Path is incorrect, choose a correct path");
 			System.exit(1);
 		}

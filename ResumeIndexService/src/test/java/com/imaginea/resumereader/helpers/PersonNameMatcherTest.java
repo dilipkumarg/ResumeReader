@@ -8,8 +8,7 @@ public class PersonNameMatcherTest {
 
 	@Test
 	public void similarity() {
-		PersonNameMatcher personNameMatcher = new PersonNameMatcher();
 		assertTrue("The similarity index should be 1",
-				1 == personNameMatcher.compare("pramati", "pramati"));
+				1 == PersonNameMatcher.similarity("pramati", "pramati"));
 	}
 }

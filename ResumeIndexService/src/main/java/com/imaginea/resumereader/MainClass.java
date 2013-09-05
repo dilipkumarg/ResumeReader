@@ -119,7 +119,7 @@ public class MainClass {
 				new PropertyFileReader().getEmployeeExcelPath());
 		searchResult = resumeSearchService.search(args[1]);
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
-		resumeSegregator.findMaxSimilarity(searchResult.getTopHits(),
+		resumeSegregator.compareWithEmployeeList(searchResult.getTopHits(),
 				excelReader.read());
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
 		System.out.println("Search Duration:"

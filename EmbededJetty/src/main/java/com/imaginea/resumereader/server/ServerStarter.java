@@ -21,11 +21,20 @@ public class ServerStarter {
 
 	public static void main(String[] args) throws Exception {
 		ServerStarter serverStarter = new ServerStarter();
+		int port = 0;
 		if (args.length >= 1) {
+			if (args.length == 2) {
+				try {
+					port = Integer.parseInt(args[1]);
+				} catch (NumberFormatException ne) {
+					System.out.println("Please Enter proper port number");
+					throw ne;
+				}
+			}
 			if (args[0].equalsIgnoreCase("start")) {
-				serverStarter.startServer();
+				serverStarter.doStart(port);
 			} else if (args[0].equalsIgnoreCase("stop")) {
-				serverStarter.stopServer();
+				serverStarter.doStop(port);
 			} else {
 				System.out
 						.println("Please choose correct operations: start/stop");
@@ -36,7 +45,38 @@ public class ServerStarter {
 		}
 	}
 
-	private void startServer() throws Exception {
+	private void doStart(int port) throws Exception {
+		// if no port specified assigning to default
+		port = (port == 0) ? 7408 : port;
+		// checking if the ports available or not
+		if (PortChecker.portAvailable(port)
+				&& PortChecker.portAvailable(port - 1)) {
+			ServerStarter serverStarter = new ServerStarter();
+			serverStarter.startServer(port);
+		} else {
+			System.out
+					.println("Port is in use, please use different port "
+							+ "or if (you think) it is a ResumeSearchengine using this port, "
+							+ "stop the server using 'java -jar <war> stop <portnumber-1>'"
+							+ "then start again");
+		}
+	}
+
+	private void doStop(int port) throws UnknownHostException, IOException {
+		if (port != 0) {
+			ServerStarter serverStarter = new ServerStarter();
+			serverStarter.stopServer(port);
+		} else {
+			System.out
+					.println("Please specify the port to stop the server,"
+							+ "Default port for stop server is 7407."
+							+ "If you given any port number at the time of starting server, "
+							+ "then port number is <port number - 1>."
+							+ "For example: 7407 for 7408 port");
+		}
+	}
+
+	private void startServer(int port) throws Exception {
 		Server server = new Server();
 		SocketConnector connector = new SocketConnector();
 
@@ -45,7 +85,7 @@ public class ServerStarter {
 		 * connector.setMaxIdleTime(1000 * 60 * 60);
 		 * connector.setSoLingerTime(-1);
 		 */
-		connector.setPort(7408);
+		connector.setPort(port);
 		server.setConnectors(new Connector[] { connector });
 
 		WebAppContext context = new WebAppContext();
@@ -57,13 +97,13 @@ public class ServerStarter {
 		URL location = protectionDomain.getCodeSource().getLocation();
 		context.setWar(location.toExternalForm());
 		server.addHandler(context);
-		Thread monitor = new MonitorThread();
+		Thread monitor = new MonitorThread(port - 1);
 		monitor.start();
 		server.start();
 	}
 
-	private void stopServer() throws UnknownHostException, IOException {
-		Socket s = new Socket(InetAddress.getByName("127.0.0.1"), 7407);
+	private void stopServer(int port) throws UnknownHostException, IOException {
+		Socket s = new Socket(InetAddress.getByName("127.0.0.1"), port);
 		OutputStream out = s.getOutputStream();
 		System.out.println("*** sending jetty stop request");
 		out.write(("\r\n").getBytes());
@@ -76,11 +116,11 @@ public class ServerStarter {
 
 		private ServerSocket socket;
 
-		public MonitorThread() {
+		public MonitorThread(int port) {
 			setDaemon(true);
 			setName("StopMonitor");
 			try {
-				socket = new ServerSocket(7407, 1,
+				socket = new ServerSocket(port, 1,
 						InetAddress.getByName("127.0.0.1"));
 			} catch (Exception e) {
 				throw new RuntimeException(e);

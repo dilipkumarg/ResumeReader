@@ -17,16 +17,12 @@ resumeReader.Configuration = function () {
                 $("#" + ids.txtResumeDir).val(values.resumeDir);
                 $("#" + ids.txtEmployeeList).val(values.employeeListFile);
 
-                // enabling text boxes
-                $(".enableTextDiv").dblclick(function (evt) {
-                    var target = this.getAttribute("target");
-                    $(target).prop("disabled", false).focus();
-                });
-
                 // enabling submit button
                 $(".inputBox").change(function () {
                     $("#btnConfigUpdate").prop("disabled", false);
                 });
+
+                //$("#keyInputModal").modal("show");
             },
             error: function (xhr) {
                 printErrorAlert(xhr);
@@ -51,24 +47,17 @@ resumeReader.Configuration = function () {
         alertBox.addClass("alert-success");
     }
 
-    function updateConfiguration() {
-        var urlParam = resumeReader.urlParams,
-            ids = resumeReader.ids,
-            btnUpdate = $("#btnConfigUpdate"),
-            prevText = btnUpdate.text(),
-            resumeDir = $("#" + ids.txtResumeDir),
-            employeeFile = $("#" + ids.txtEmployeeList);
+    function doUpdateConfig(userData, btnUpdate) {
+        var prevText = btnUpdate.text();
         $.ajax({type: "post",
             url: resumeReader.url.config,
-            data: { resumeDir: resumeDir.val(),
-                employeeFile: employeeFile.val(),
-                securityKey: prompt("Please enter security key")
-            },
+            data: userData,
             beforeSend: function (xhr) {
                 btnUpdate.text("please wait..");
             },
             success: function (response) {
                 printSuccessAlert(response);
+                loadConfigValues();
             },
             error: function (xhr) {
                 printErrorAlert(xhr);
@@ -82,20 +71,49 @@ resumeReader.Configuration = function () {
         });
     }
 
-    function updateIndex(e, cleanUpdate) {
-        var prevText = e.target.innerHTML,
-            progressBarDiv = $("#progressBarDiv"),
-            progressBar = $("#progressBar");
+    function updateConfiguration() {
+        var ids = resumeReader.ids,
+            btnUpdate = $("#btnConfigUpdate"),
+            resumeDir = $("#" + ids.txtResumeDir),
+            employeeFile = $("#" + ids.txtEmployeeList);
+        // building data object, based on user requirements.
+        var userData = {
+            resumeDir: (resumeDir.attr("disabled") === "disabled") ? "" : resumeDir.val(),
+            employeeFile: (employeeFile.attr("disabled") === "disabled") ? "" : employeeFile.val()
+        };
+        // updating if and only if something is changed
+        if (userData.resumeDir !== "" || userData.employeeFile !== "") {
+            bootbox.prompt('Enter security key', function (result) {
+                // checking if user pressed ok or not
+                if (result !== null) {
+                    userData.securityKey = result;
+                    doUpdateConfig(userData, btnUpdate);
+                }
+            });
+        } else {
+            $("#alertText").html("Text boxes are in disabled state, so nothing to update..!");
+            var alertBox = $("#alertBox");
+            alertBox.removeClass("hide");
+            alertBox.removeClass("alert-success");
+            alertBox.addClass("alert-error");
+            loadConfigValues();
+        }
+    }
+
+
+    function doUpdate(userData, button) {
+        var progressBarDiv = $("#progressBarDiv"),
+            progressBar = $("#progressBar"),
+            interval;
         $.ajax({type: "post",
             url: resumeReader.url.update,
-            data: { cleanUpdate: cleanUpdate,
-                securityKey: prompt("Please enter security key")
-            },
+            data: userData,
             beforeSend: function (xhr) {
-                e.target.innerHTML = "please wait..";
+                button.button("loading");
                 progressBarDiv.removeClass("hide");
                 var i = 0;
-                setInterval(function () {
+                // for showing progress bar.
+                interval = setInterval(function () {
                     if (i < 90) {
                         progressBar.css("width", i + "%");
                         i++;
@@ -110,23 +128,177 @@ resumeReader.Configuration = function () {
             },
             complete: function (xhr, status) {
                 progressBar.css("width", "100%");
-                e.target.innerHTML = prevText;
-                progressBar.css("width", "0%");
-                progressBarDiv.addClass("hide");
+                clearInterval(interval);
+                button.button("reset");
+                // closing progress bar after 1 sec
+                setTimeout(function () {
+                    progressBarDiv.addClass("hide");
+                    progressBar.css("width", "0%");
+                }, 1000);
             }
         });
+    }
+
+    function updateIndex(e) {
+        bootbox.prompt('Enter Security key', function (result) {
+            if (typeof result === 'undefined' || result === null || result === "") {
+                // doing nothing on empty security key.
+                return;
+            }
+            // getting selected button.
+            // data-value is the attribute holding clean update and normal update
+            var btn = $("#" + e.target.id),
+                data = {
+                    cleanUpdate: btn.attr("data-value"),
+                    securityKey: result
+                };
+            // performing update
+            doUpdate(data, btn);
+        });
+    }
+
+    function orderFileNames(fileObj) {
+        var sortable = [];
+        for (var file in fileObj) {
+            if (fileObj.hasOwnProperty(file)) {
+                var obj = {
+                    name: fileObj[file],
+                    path: file
+                };
+                sortable.push(obj);
+            }
+        }
+        sortable.sort(function (file1, file2) {
+            return file1.name - file2.name;
+        });
+        return sortable;
+    }
+
+    function filterByName(str, targetDiv) {
+        var selected = targetDiv.find("label");
+        for (var i = 0; i < selected.length; i++) {
+            var selecter = selected[i].getElementsByTagName("span")[0];
+            if (selecter.innerHTML.toLowerCase().lastIndexOf(str.toLowerCase()) === -1) {
+                selected[i].setAttribute("class", "hide");
+            } else {
+                selected[i].setAttribute("class", "");
+            }
+        }
+    }
+
+    function printList(fileObj, targetDiv) {
+        var keys = Object.keys(fileObj);
+        keys = keys.sort();
+        for (var i = 0; i < keys.length; i++) {
+            targetDiv.append("<label title='" + keys[i] + "'>\n\
+                                <input type='checkbox' value='" + keys[i] + "'> \n\
+                                <span>" + fileObj[keys[i]] + "</span>\n\
+                            </label>");
+        }
+        /*var sorted = orderFileNames(fileObj);
+         for (var i = 0; i < sorted.length; i++) {
+         targetDiv.append("<label><input type='checkbox' value='" + sorted[i].path + "'> " + sorted[i].name + "</label>");
+         }*/
+    }
+
+    function printFileFetchError(xhr, targetDiv) {
+        targetDiv.html("An error occured:" + xhr.status + "<br />" + xhr.statusText +
+            "<br/>" + xhr.responseText);
+    }
+
+    function loadFileList(targetDiv) {
+        $.ajax({
+            url: "resumereader/delete",
+            success: function (response) {
+                targetDiv.empty();
+                printList(JSON.parse(response), targetDiv);
+            },
+            error: function (xhr) {
+                printFileFetchError(xhr, targetDiv);
+            }
+        });
+    }
+
+    function getSelectedFiles(targetDiv) {
+        var checkBoxes = targetDiv.find(":checkbox"),
+            selectedBoxes = [];
+
+        for (var i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                selectedBoxes.push(checkBoxes[i].getAttribute("value"));
+            }
+        }
+        return selectedBoxes;
+    }
+
+    function deleteFiles() {
+        var deleteModal = $("#fileDeleteModal");
+        var selectedBoxes = getSelectedFiles(deleteModal.find(".modal-body"));
+        var res = confirm("Are you sure you want to delete " + selectedBoxes.length + " files?");
+
+        if (res) {
+            deleteModal.myPrompt({showHide: true}, function (res) {
+                $.ajax({
+                    type: "post",
+                    url: "resumereader/delete",
+                    data: {
+                        filesList: JSON.stringify(selectedBoxes),
+                        accessKey: res
+                    }
+                });
+            });
+        }
+    }
+
+    var dropZoneInitiated = false;
+
+    function initiateDropZone() {
+        if (!dropZoneInitiated) {
+            dropZoneInitiated = true;
+            // setting dropzone properties
+            Dropzone.options.myAwesomeDropzone = {
+                autoProcessQueue: false,
+                acceptedFiles: ".pdf,.doc,.docx",
+                addRemoveLinks: true,
+                dictInvalidFileType: "Please upload only doc, docx and pdf files",
+                dictRemoveFile: "Clear file",
+                init: function () {
+                    var myDropZone = this;
+                    $("#btnUploadAll").click(function () {
+                        myDropZone.processQueue();
+                    });
+                }
+
+            };
+        }
+
     }
 
     return {
         loadConfigValues: function () {
             return loadConfigValues();
         },
-        updateIndex: function (e, cleanUpdate) {
-            return updateIndex(e, cleanUpdate);
+        updateIndex: function (e) {
+            return updateIndex(e);
         },
         updateConfiguration: function () {
             return updateConfiguration();
-        }
+        },
+        loadFileList: function (targetDiv) {
+            loadFileList(targetDiv);
+        },
+        filterByName: function (str) {
+            filterByName(str, $("#fileDeleteModal").find(".modal-body"));
+        },
+        deleteFiles: function () {
+            deleteFiles();
+        },
+        loadUploadBox: function (targetDiv) {
+            $(targetDiv).myPrompt({}, function (res) {
+                initiateDropZone();
+                $(targetDiv).modal("show");
 
-    }
+            });
+        }
+    };
 }();

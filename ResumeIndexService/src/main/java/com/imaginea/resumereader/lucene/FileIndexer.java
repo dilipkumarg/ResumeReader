@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -23,11 +23,11 @@ import com.imaginea.resumereader.helpers.FilePathHelper;
 import com.imaginea.resumereader.helpers.ResumeMetaExtractor;
 
 public class FileIndexer extends Indexer {
-	private static final Logger LOGGER = Logger
-			.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	private final Logger LOGGER = Logger.getLogger(this.getClass());
 
 	private FilePathHelper filePathHelper;
 	private ResumeMetaExtractor resumeMeta;
+
 	public FileIndexer(File indexDirFile) throws IOException,
 			FileDirectoryEmptyException {
 		super(indexDirFile);

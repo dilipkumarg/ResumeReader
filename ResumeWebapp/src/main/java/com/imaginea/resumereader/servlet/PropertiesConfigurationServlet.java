@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
@@ -13,6 +14,8 @@ import com.imaginea.resumereader.helpers.PropertyFileReader;
 
 public class PropertiesConfigurationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+
+	private final Logger LOGGER = Logger.getLogger(this.getClass());
 
 	@SuppressWarnings("unchecked")
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -22,6 +25,7 @@ public class PropertiesConfigurationServlet extends HttpServlet {
 		try {
 			prop = new PropertyFileReader();
 		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					e.getMessage());
 			return;
@@ -30,6 +34,7 @@ public class PropertiesConfigurationServlet extends HttpServlet {
 			configValues.put("resumeDir", prop.getResumeDirPath());
 			configValues.put("employeeListFile", prop.getEmployeeExcelPath());
 		} catch (FileDirectoryEmptyException e) {
+			LOGGER.error(e.getMessage());
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					e.getMessage());
 			return;
@@ -43,18 +48,32 @@ public class PropertiesConfigurationServlet extends HttpServlet {
 		try {
 			prop = new PropertyFileReader();
 		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					e.getMessage());
 			return;
 		}
 		if (req.getParameter("securityKey").trim()
 				.equals(prop.getSecurityKey())) {
-			prop.setResumeDirPath(req.getParameter("resumeDir"));
-			prop.setEmployeeExcelPath(req.getParameter("employeeFile"));
+			updateConfig(req, prop);
 			res.getWriter().print("Successfully updated");
 		} else {
+			LOGGER.warn("Security Key not matched");
 			res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
 					"Security Key not matched");
+		}
+	}
+
+	private void updateConfig(HttpServletRequest req, PropertyFileReader prop)
+			throws IOException {
+		String resumeDir = req.getParameter("resumeDir");
+		String employeeDir = req.getParameter("employeeFile");
+		// checking the input
+		if (resumeDir != null && resumeDir.length() > 1) {
+			prop.setResumeDirPath(resumeDir);
+		}
+		if (employeeDir != null && employeeDir.length() > 1) {
+			prop.setEmployeeExcelPath(employeeDir);
 		}
 	}
 }

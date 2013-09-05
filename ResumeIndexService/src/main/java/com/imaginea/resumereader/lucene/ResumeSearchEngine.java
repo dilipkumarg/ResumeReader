@@ -20,7 +20,6 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.search.postingshighlight.PostingsHighlighter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -46,30 +45,30 @@ public class ResumeSearchEngine {
 		this.maxHits = 1000;
 	}
 
-	public SearchResult searchKey(String queryString, Boolean allowDuplicates) throws IOException,
-			ParseException {
+	public SearchResult searchKey(String queryString, Boolean allowDuplicates)
+			throws IOException, ParseException {
 		long startTime = System.currentTimeMillis();
 		IndexReader indexReader = DirectoryReader.open(indexDirectory);
 		searcher = new IndexSearcher(indexReader);
-		PostingsHighlighter highlighter = new PostingsHighlighter();
 		Query query = new QueryParser(Version.LUCENE_43, defaultField,
 				new StandardAnalyzer(Version.LUCENE_43)).parse(queryString);
-		TopDocs docs = searcher.search(query, this.maxHits, new Sort(new SortField("title", SortField.Type.STRING)));
-		highlighter.highlight(IndexFieldNames.CONTENT_FIELD, query, searcher, docs);
+		TopDocs docs = searcher.search(query, this.maxHits, new Sort(
+				new SortField("title", SortField.Type.STRING)));
 		ScoreDoc[] scoreDocList = docs.scoreDocs;
 		TopScoreDocCollector collector = TopScoreDocCollector.create(
 				this.maxHits, true);
-		//searcher.search(query, collector);
+		// searcher.search(query, collector);
 		int totalHits = collector.getTotalHits();
 		// ensuring all results are in collector
 		if (totalHits > this.maxHits) {
 			collector = TopScoreDocCollector.create(totalHits, true);
-			searcher.search(query, this.maxHits, new Sort(new SortField("title", SortField.Type.STRING)));
+			searcher.search(query, this.maxHits, new Sort(new SortField(
+					"title", SortField.Type.STRING)));
 		}
-		//ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		// ScoreDoc[] hits = collector.topDocs().scoreDocs;
 		long endTime = System.currentTimeMillis();
-		return new SearchResult(extractHits(scoreDocList, allowDuplicates), collector.getTotalHits(),
-				endTime - startTime, queryString);
+		return new SearchResult(extractHits(scoreDocList, allowDuplicates),
+				collector.getTotalHits(), endTime - startTime, queryString);
 	}
 
 	// converting hits in SocreDoc to List of FileInfo Objects

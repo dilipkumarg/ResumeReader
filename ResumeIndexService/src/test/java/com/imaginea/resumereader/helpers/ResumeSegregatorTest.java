@@ -23,7 +23,7 @@ public class ResumeSegregatorTest {
 		personNames.add(new FileInfo(null, "Apurba nath", null, null));
 		List<String> employeeNames = new ArrayList<String>();
 		employeeNames.add("Apurba Nath");
-		resumeSegregator.findMaxSimilarity(personNames, employeeNames);
+		resumeSegregator.compareWithEmployeeList(personNames, employeeNames);
 		assertTrue("as", 2 == resumeSegregator.getActiveEmployees().size());
 		assertTrue("as", 0 == resumeSegregator.getProbableActiveEmployess()
 				.size());

@@ -1,48 +1,55 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app 
-   xmlns="http://java.sun.com/xml/ns/javaee" 
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-   version="2.5">
-  <servlet>
-    <servlet-name>Search</servlet-name>
-    <servlet-class>com.imaginea.resumereader.servlet.SearchServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Search</servlet-name>
-    <url-pattern>/resumereader/search</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>View</servlet-name>
-    <servlet-class>com.imaginea.resumereader.servlet.DocumentViewerServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>View</servlet-name>
-    <url-pattern>/resumereader/view</url-pattern>
-  </servlet-mapping> 
-  <servlet>
-    <servlet-name>Config</servlet-name>
-    <servlet-class>com.imaginea.resumereader.servlet.PropertiesConfigurationServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Config</servlet-name>
-    <url-pattern>/resumereader/config</url-pattern>
-  </servlet-mapping> 
-  <servlet>
-    <servlet-name>Update</servlet-name>
-    <servlet-class>com.imaginea.resumereader.servlet.IndexUpdateServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Update</servlet-name>
-    <url-pattern>/resumereader/update</url-pattern>
-  </servlet-mapping> 
-  
-   <servlet>
-    <servlet-name>ExcelEdit</servlet-name>
-    <servlet-class>com.imaginea.resumereader.servlet.ExcelWriterServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>ExcelEdit</servlet-name>
-    <url-pattern>/resumereader/editemployee</url-pattern>
-  </servlet-mapping> 
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+	<servlet>
+		<servlet-name>Search</servlet-name>
+		<servlet-class>com.imaginea.resumereader.servlet.SearchServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Search</servlet-name>
+		<url-pattern>/resumereader/search</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>View</servlet-name>
+		<servlet-class>com.imaginea.resumereader.servlet.DocumentViewerServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>View</servlet-name>
+		<url-pattern>/resumereader/view</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>Config</servlet-name>
+		<servlet-class>com.imaginea.resumereader.servlet.PropertiesConfigurationServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Config</servlet-name>
+		<url-pattern>/resumereader/config</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>Update</servlet-name>
+		<servlet-class>com.imaginea.resumereader.servlet.IndexUpdateServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Update</servlet-name>
+		<url-pattern>/resumereader/update</url-pattern>
+	</servlet-mapping>
+	<!-- Uploading documents -->
+	<servlet>
+		<servlet-name>Upload</servlet-name>
+		<servlet-class>com.imaginea.resumereader.servlet.ResumeUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Upload</servlet-name>
+		<url-pattern>/resumereader/upload</url-pattern>
+	</servlet-mapping>
+	<!-- Deleting documents -->
+	<servlet>
+		<servlet-name>Delete</servlet-name>
+		<servlet-class>com.imaginea.resumereader.servlet.ResumeDeleteServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Delete</servlet-name>
+		<url-pattern>/resumereader/delete</url-pattern>
+	</servlet-mapping>
 </web-app>

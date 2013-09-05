@@ -1,4 +1,4 @@
-package com.imaginea.resumereader.logger;
+package com.imaginea.resumereader.loglayout;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;

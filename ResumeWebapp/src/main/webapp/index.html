@@ -13,13 +13,28 @@
             var hashString = window.location.hash.trim();
             if (hashString.length > 0) {
                 var res = hashString.search("q="),
-                        key = hashString.substr(res + 2).trim();
-                resumeReader.Searcher.searchAndPrint(key);
+                        key = hashString.substr(res + 2).trim(),
+                        context = "",
+                        contextPos = key.indexOf("&c=");
+                if (contextPos !== -1) {
+                    context = key.substr(contextPos + 3);
+                    key = key.substr(0, contextPos);
+                }
+                resumeReader.Searcher.searchAndPrint(key, context);
             }
 
             // attaching help text for search box
             $("#" + resumeReader.ids.queryTextBox).popover({trigger: 'focus',
                 placement: 'bottom'});
+
+            // if Object.keys method not present creating new function
+            if (!Object.keys) Object.keys = function (o) {
+                if (o !== Object(o))
+                    throw new TypeError('Object.keys called on a non-object');
+                var k = [], p;
+                for (p in o) if (Object.prototype.hasOwnProperty.call(o, p)) k.push(p);
+                return k;
+            }
         });
     </script>
 </head>
@@ -51,7 +66,12 @@
             </div>
         </div>
     </div>
-    <div id="resultsDiv"></div>
+    <div>
+        <!-- <div class="loadingDiv">
+         </div>-->
+        <div id="resultsDiv"></div>
+    </div>
+
     <!-- Modal -->
     <div id="myModal" class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
@@ -59,9 +79,23 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="myModalLabel">Resume Content</h3>
         </div>
-        <div class="modal-body">
-            <p>Resume Content</p>
+        <div class="modal-body">Please Wait.. Loading Resume</div>
+    </div>
+    <!-- Modal for showing progress bar -->
+    <div id='progressBarModal' class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header text-center">
+            <span class="text-info">Please wait.. while we fetch results..!! </span>
         </div>
+        <div class="modal-body">
+            <div>
+                <!-- <img src="img/bar.gif">-->
+                <div class="centerPos">
+                    <img src="img/bar.gif">
+                </div>
+            </div>
+        </div>
+
     </div>
     <div id="alertBox" class="alert hide text-center">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

@@ -186,15 +186,27 @@ resumeReader.Configuration = function () {
         }
     }
 
-    function printList(fileObj, targetDiv) {
+    function printFileList(fileObj, targetDiv) {
         var keys = Object.keys(fileObj);
         keys = keys.sort();
         for (var i = 0; i < keys.length; i++) {
-            targetDiv.append("<label title='" + keys[i] + "'>\n\
-                                <input type='checkbox' value='" + keys[i] + "'> \n\
-                                <span>" + fileObj[keys[i]] + "</span>\n\
-                            </label>");
+            targetDiv.append("<label class='span6' title='" + keys[i] + "'>" +
+                "<input type='checkbox' class='file-check checkbox' value='" + keys[i] + "'>" +
+                " <span>" + fileObj[keys[i]] + "</span>" +
+                "</label>");
         }
+        // for toggle select all check box
+        $(".file-check").on("click", function () {
+            if ($(".file-check:checked").length === $(".file-check").length) {
+                $("#cbSelectAll").prop("checked", true);
+            } else {
+                $("#cbSelectAll").prop("checked", false);
+            }
+        });
+
+        $("#cbSelectAll").on("click", function () {
+            $(".file-check").prop("checked", this.checked);
+        });
         /*var sorted = orderFileNames(fileObj);
          for (var i = 0; i < sorted.length; i++) {
          targetDiv.append("<label><input type='checkbox' value='" + sorted[i].path + "'> " + sorted[i].name + "</label>");
@@ -211,7 +223,7 @@ resumeReader.Configuration = function () {
             url: "resumereader/delete",
             success: function (response) {
                 targetDiv.empty();
-                printList(JSON.parse(response), targetDiv);
+                printFileList(JSON.parse(response), targetDiv);
             },
             error: function (xhr) {
                 printFileFetchError(xhr, targetDiv);
@@ -234,44 +246,30 @@ resumeReader.Configuration = function () {
     function deleteFiles() {
         var deleteModal = $("#fileDeleteModal");
         var selectedBoxes = getSelectedFiles(deleteModal.find(".modal-body"));
-        var res = confirm("Are you sure you want to delete " + selectedBoxes.length + " files?");
-
-        if (res) {
-            deleteModal.myPrompt({showHide: true}, function (res) {
-                $.ajax({
-                    type: "post",
-                    url: "resumereader/delete",
-                    data: {
-                        filesList: JSON.stringify(selectedBoxes),
-                        accessKey: res
-                    }
-                });
-            });
-        }
-    }
-
-    var dropZoneInitiated = false;
-
-    function initiateDropZone() {
-        if (!dropZoneInitiated) {
-            dropZoneInitiated = true;
-            // setting dropzone properties
-            Dropzone.options.myAwesomeDropzone = {
-                autoProcessQueue: false,
-                acceptedFiles: ".pdf,.doc,.docx",
-                addRemoveLinks: true,
-                dictInvalidFileType: "Please upload only doc, docx and pdf files",
-                dictRemoveFile: "Clear file",
-                init: function () {
-                    var myDropZone = this;
-                    $("#btnUploadAll").click(function () {
-                        myDropZone.processQueue();
+        if (selectedBoxes.length > 0) {
+            var res = confirm("Are you sure you want to delete " + selectedBoxes.length + " file(s)?");
+            if (res) {
+                deleteModal.myPrompt({showHide: true}, function (res) {
+                    $.ajax({
+                        type: "post",
+                        url: "resumereader/delete",
+                        data: {
+                            filesList: JSON.stringify(selectedBoxes),
+                            accessKey: res
+                        },
+                        success: function (res) {
+                            printSuccessAlert(res);
+                        },
+                        error: function (xhr) {
+                            printErrorAlert(xhr);
+                        },
+                        complete: function () {
+                            deleteModal.modal("hide");
+                        }
                     });
-                }
-
-            };
+                });
+            }
         }
-
     }
 
     return {
@@ -295,7 +293,6 @@ resumeReader.Configuration = function () {
         },
         loadUploadBox: function (targetDiv) {
             $(targetDiv).myPrompt({}, function (res) {
-                initiateDropZone();
                 $(targetDiv).modal("show");
 
             });

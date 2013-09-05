@@ -105,3 +105,7 @@ span.highlight {
 #fileUploadModal.dropzone {
     min-height: 250px;
 }
+
+.checkbox {
+    margin-top: 0px; !important
+}

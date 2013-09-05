@@ -15,7 +15,7 @@ $.fn.myPrompt = function (opts, callbackfn) {
             promptModal = $("<div id='promptModal' class='modal hide fade' tabindex='-1' role='dialog' " +
                 "aria-labelledby='myModalLabel' aria-hidden='true'></div>").appendTo("body");
         if (o.showHide) {
-            selectedModal.css({display:"none"});
+            selectedModal.css({display: "none"});
         }
         promptModal.empty();
         promptModal.append($("<div class='" + o.headerClass + "'>" + o.header + "</div>"));
@@ -29,23 +29,34 @@ $.fn.myPrompt = function (opts, callbackfn) {
             "</div>"));
 
         promptModal.modal("show");
-        $("#btnOk").click(function () {
+        $(o.inputBoxId).on("keyup", function (e) {
+            if (e.keyCode == 13) {
+                doOk();
+            }
+        });
+        function doOk() {
             var val = $(o.inputBoxId).val();
             if (o.showHide) {
-                selectedModal.css({display:"block"});
+                selectedModal.css({display: "block"});
             }
             promptModal.modal("hide");
             promptModal.remove();
             // calling call back function
             callbackfn.call(this, val);
+        }
+
+        $("#btnOk").click(function () {
+            doOk();
         });
         $("#btnCancel").click(function () {
             if (o.showHide) {
-                selectedModal.css({display:"block"});
+                selectedModal.css({display: "block"});
             }
             promptModal.modal("hide");
             promptModal.remove();
         });
+        $(o.inputBoxId).focus();
+
     });
 };
 

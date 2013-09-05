@@ -3,7 +3,9 @@ package com.imaginea.resumereader.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
@@ -27,12 +29,17 @@ public class ResumeDeleteServlet extends HttpServlet {
 	private String indexDirPath = "";
 	private FilePathHelper pathHelper;
 
+	public ResumeDeleteServlet() throws FileDirectoryEmptyException,
+			IOException {
+		pathHelper = new FilePathHelper();
+
+	}
+
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
 		PropertyFileReader prop = null;
 		try {
 			prop = new PropertyFileReader();
-			pathHelper = new FilePathHelper();
 			File resumeDir = new File(prop.getResumeDirPath());
 			indexDirPath = new File(prop.getIndexDirPath()).getCanonicalPath();
 			Map<String, String> filesList = new HashMap<String, String>();
@@ -81,17 +88,52 @@ public class ResumeDeleteServlet extends HttpServlet {
 			throws IOException {
 		PrintWriter out = res.getWriter();
 		try {
-			JSONArray filesList = (JSONArray) new JSONParser().parse(req
+			JSONArray reqArray = (JSONArray) new JSONParser().parse(req
 					.getParameter("filesList"));
+			List<String> filesList = jsonToFullFilePathList(reqArray);
+			List<String> notDeleted = deleteFiles(filesList);
 
-			for (Object file : filesList) {
-				out.println((String) file);
+			if (notDeleted.size() == 0 || filesList.size() == 0) {
+				out.print("Selected Files(" + filesList.size()
+						+ ") Successfully deleted");
+			} else if (notDeleted.size() < filesList.size()) {
+				out.print("Some of the files or not deleted");
+				for (String filePath : notDeleted) {
+					out.println(filePath);
+				}
+			} else {
+				res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						"some thing went wrong. please try again");
 			}
-			
-			// TODO delete files here
 
 		} catch (ParseException e) {
 			res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Json");
+			LOGGER.error(e.getMessage(), e);
+			return;
 		}
+	}
+
+	private List<String> jsonToFullFilePathList(JSONArray jArray) {
+		List<String> filesFullList = new ArrayList<String>();
+
+		for (Object file : jArray) {
+			filesFullList.add(pathHelper.getCanonicalPath((String) file));
+			// out.println((String) file);
+		}
+		return filesFullList;
+	}
+
+	private List<String> deleteFiles(List<String> fileList) {
+		List<String> notDeleted = new ArrayList<String>();
+		for (String filePath : fileList) {
+			LOGGER.info("Deleting File:" + filePath);
+			File file = new File(filePath);
+			// if file not deleted adding to not Deleted list
+			if (!file.delete()) {
+				LOGGER.error("File Deletion failed:" + filePath);
+				notDeleted.add(filePath);
+			}
+		}
+		return notDeleted;
 	}
 }

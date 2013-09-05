@@ -21,6 +21,32 @@
             // binding events to the delete modals, to fetch file list from server
             var deleteModal = $("#fileDeleteModal"),
                     prevBodyTxt = deleteModal.find(".modal-body").html();
+
+            // setting dropzone properties
+            Dropzone.options.myAwesomeDropzone = {
+                autoProcessQueue: false,
+                acceptedFiles: ".pdf,.doc,.docx",
+                addRemoveLinks: true,
+                parallelUploads: 15,
+                dictInvalidFileType: "Please upload only doc, docx and pdf files",
+                //dictRemoveFile: "Clear file",
+                init: function () {
+                    var myDropZone = this;
+                    $("#btnUploadAll").click(function () {
+                                myDropZone.processQueue();
+                                //myDropZone.removeAllFiles();
+                            }
+                    );
+                    $("#fileUploadModal").on("hidden", function () {
+                        myDropZone.removeAllFiles();
+                    });
+                    myDropZone.on("complete", function (file) {
+                        //myDropZone.removeFile(file);
+                    });
+                }
+
+            };
+
             // loading data
             deleteModal.on('show', function () {
                 resumeReader.Configuration.loadFileList(deleteModal.find(".modal-body"));
@@ -154,7 +180,11 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <div>
                 <h3 id="deleteModalLabel">Select files to delete</h3>
-                <input type="text" onkeyup="resumeReader.Configuration.filterByName($(this).val())"
+
+                <label class="span4">
+                    <input type="checkbox" id="cbSelectAll" class='checkbox'> Toggle All
+                </label>
+                <input type="text" placeholder="Filter Names" onkeyup="resumeReader.Configuration.filterByName($(this).val())"
                        class="span2 search-query">
             </div>
         </div>

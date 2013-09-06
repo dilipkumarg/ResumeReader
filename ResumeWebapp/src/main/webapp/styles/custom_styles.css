@@ -109,3 +109,19 @@ span.highlight {
 .checkbox {
     margin-top: 0px; !important
 }
+.modal .modal-body .dropzone {
+    min-height: 260px;
+}
+.modal .modal-body .dropzone .dz-preview {
+    margin: 5px;
+
+}
+.modal .modal-body .dropzone .dz-preview .dz-details{
+    width: 88px;
+    height: 80px;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+.modal .modal-body .dropzone .dz-preview .dz-details .dz-filename{
+    font-size: 10px;
+}

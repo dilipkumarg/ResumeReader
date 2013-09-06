@@ -53,7 +53,7 @@ public class PropertiesConfigurationServlet extends HttpServlet {
 					e.getMessage());
 			return;
 		}
-		if (req.getParameter("securityKey").trim()
+		if (req.getHeader("accessKey").trim()
 				.equals(prop.getSecurityKey())) {
 			updateConfig(req, prop);
 			res.getWriter().print("Successfully updated");

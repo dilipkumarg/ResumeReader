@@ -1,6 +1,6 @@
 $.fn.myPrompt = function (opts, callbackfn) {
     var o = $.extend({
-        header: "Authentication Required!",
+        header: "<h3>Authentication Required!</h3>",
         headerClass: "modal-header",
         inputBox: "<input type='password' id='txtPwd' placeholder='Enter Security Key here!' class='span3'>",
         inputBoxId: "#txtPwd",
@@ -28,7 +28,16 @@ $.fn.myPrompt = function (opts, callbackfn) {
             "<button id='btnOk' class='btn btn-primary'>Ok</button> " +
             "</div>"));
 
-        promptModal.modal("show");
+        promptModal.modal({
+            show: true,
+            keyboard: false,
+            backdrop: "static"
+        });
+
+        promptModal.on("shown", function () {
+            $(o.inputBoxId).focus();
+        });
+
         $(o.inputBoxId).on("keyup", function (e) {
             if (e.keyCode == 13) {
                 doOk();
@@ -42,7 +51,9 @@ $.fn.myPrompt = function (opts, callbackfn) {
             promptModal.modal("hide");
             promptModal.remove();
             // calling call back function
-            callbackfn.call(this, val);
+            if (typeof callbackfn == "function") {
+                callbackfn.call(this, val);
+            }
         }
 
         $("#btnOk").click(function () {
@@ -55,8 +66,6 @@ $.fn.myPrompt = function (opts, callbackfn) {
             promptModal.modal("hide");
             promptModal.remove();
         });
-        $(o.inputBoxId).focus();
-
     });
 };
 

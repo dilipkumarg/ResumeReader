@@ -21,7 +21,7 @@ public class IndexUpdateServlet extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
 		try {
-			if (isAutorizedUser(req.getParameter("securityKey"))) {
+			if (isAutorizedUser(req.getHeader("accessKey"))) {
 				boolean cleanUpdate = Boolean.parseBoolean(req
 						.getParameter("cleanUpdate"));
 				ResumeIndexSearcher resumeIndexer = new ResumeIndexSearcher();

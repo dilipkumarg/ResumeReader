@@ -28,18 +28,17 @@ public class ResumeDeleteServlet extends HttpServlet {
 	private Logger LOGGER = Logger.getLogger(this.getClass());
 	private String indexDirPath = "";
 	private FilePathHelper pathHelper;
+	private PropertyFileReader prop;
 
 	public ResumeDeleteServlet() throws FileDirectoryEmptyException,
 			IOException {
 		pathHelper = new FilePathHelper();
-
+		prop = new PropertyFileReader();
 	}
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		PropertyFileReader prop = null;
 		try {
-			prop = new PropertyFileReader();
 			File resumeDir = new File(prop.getResumeDirPath());
 			indexDirPath = new File(prop.getIndexDirPath()).getCanonicalPath();
 			Map<String, String> filesList = new HashMap<String, String>();
@@ -87,29 +86,35 @@ public class ResumeDeleteServlet extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
 		PrintWriter out = res.getWriter();
-		try {
-			JSONArray reqArray = (JSONArray) new JSONParser().parse(req
-					.getParameter("filesList"));
-			List<String> filesList = jsonToFullFilePathList(reqArray);
-			List<String> notDeleted = deleteFiles(filesList);
+		if (req.getHeader("accessKey").equals(prop.getSecurityKey())) {
+			try {
+				JSONArray reqArray = (JSONArray) new JSONParser().parse(req
+						.getParameter("filesList"));
+				List<String> filesList = jsonToFullFilePathList(reqArray);
+				List<String> notDeleted = deleteFiles(filesList);
 
-			if (notDeleted.size() == 0 || filesList.size() == 0) {
-				out.print("Selected Files(" + filesList.size()
-						+ ") Successfully deleted");
-			} else if (notDeleted.size() < filesList.size()) {
-				out.print("Some of the files or not deleted");
-				for (String filePath : notDeleted) {
-					out.println(filePath);
+				if (notDeleted.size() == 0 || filesList.size() == 0) {
+					out.print("Selected Files(" + filesList.size()
+							+ ") Successfully deleted");
+				} else if (notDeleted.size() < filesList.size()) {
+					out.print("Some of the files or not deleted");
+					for (String filePath : notDeleted) {
+						out.println(filePath);
+					}
+				} else {
+					res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+							"some thing went wrong. please try again");
 				}
-			} else {
-				res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"some thing went wrong. please try again");
-			}
 
-		} catch (ParseException e) {
-			res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Json");
-			LOGGER.error(e.getMessage(), e);
-			return;
+			} catch (ParseException e) {
+				res.sendError(HttpServletResponse.SC_BAD_REQUEST,
+						"Invalid Json");
+				LOGGER.error(e.getMessage(), e);
+				return;
+			}
+		} else {
+			res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+					"Security Key Not Matched");
 		}
 	}
 

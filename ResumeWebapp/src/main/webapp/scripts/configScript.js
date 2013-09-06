@@ -47,12 +47,14 @@ resumeReader.Configuration = function () {
         alertBox.addClass("alert-success");
     }
 
-    function doUpdateConfig(userData, btnUpdate) {
+    function doUpdateConfig(userData, btnUpdate, securityKey) {
         var prevText = btnUpdate.text();
         $.ajax({type: "post",
             url: resumeReader.url.config,
             data: userData,
             beforeSend: function (xhr) {
+                // adding security key
+                xhr.setRequestHeader(resumeReader.urlParams.securityKey, securityKey);
                 btnUpdate.text("please wait..");
             },
             success: function (response) {
@@ -83,11 +85,10 @@ resumeReader.Configuration = function () {
         };
         // updating if and only if something is changed
         if (userData.resumeDir !== "" || userData.employeeFile !== "") {
-            bootbox.prompt('Enter security key', function (result) {
+            $('body').myPrompt({}, function (result) {
                 // checking if user pressed ok or not
                 if (result !== null) {
-                    userData.securityKey = result;
-                    doUpdateConfig(userData, btnUpdate);
+                    doUpdateConfig(userData, btnUpdate, result);
                 }
             });
         } else {
@@ -101,7 +102,7 @@ resumeReader.Configuration = function () {
     }
 
 
-    function doUpdate(userData, button) {
+    function doUpdate(userData, button, securityKey) {
         var progressBarDiv = $("#progressBarDiv"),
             progressBar = $("#progressBar"),
             interval;
@@ -109,6 +110,8 @@ resumeReader.Configuration = function () {
             url: resumeReader.url.update,
             data: userData,
             beforeSend: function (xhr) {
+                // adding security key
+                xhr.setRequestHeader(resumeReader.urlParams.securityKey, securityKey);
                 button.button("loading");
                 progressBarDiv.removeClass("hide");
                 var i = 0;
@@ -140,7 +143,7 @@ resumeReader.Configuration = function () {
     }
 
     function updateIndex(e) {
-        bootbox.prompt('Enter Security key', function (result) {
+        $("body").myPrompt({}, function (result) {
             if (typeof result === 'undefined' || result === null || result === "") {
                 // doing nothing on empty security key.
                 return;
@@ -149,39 +152,22 @@ resumeReader.Configuration = function () {
             // data-value is the attribute holding clean update and normal update
             var btn = $("#" + e.target.id),
                 data = {
-                    cleanUpdate: btn.attr("data-value"),
-                    securityKey: result
+                    cleanUpdate: btn.attr("data-value")
                 };
             // performing update
-            doUpdate(data, btn);
+            doUpdate(data, btn, result);
         });
     }
 
-    function orderFileNames(fileObj) {
-        var sortable = [];
-        for (var file in fileObj) {
-            if (fileObj.hasOwnProperty(file)) {
-                var obj = {
-                    name: fileObj[file],
-                    path: file
-                };
-                sortable.push(obj);
-            }
-        }
-        sortable.sort(function (file1, file2) {
-            return file1.name - file2.name;
-        });
-        return sortable;
-    }
 
     function filterByName(str, targetDiv) {
         var selected = targetDiv.find("label");
         for (var i = 0; i < selected.length; i++) {
-            var selecter = selected[i].getElementsByTagName("span")[0];
-            if (selecter.innerHTML.toLowerCase().lastIndexOf(str.toLowerCase()) === -1) {
+            var selector = selected[i].getElementsByTagName("span")[0];
+            if (selector.innerHTML.toLowerCase().lastIndexOf(str.toLowerCase()) === -1) {
                 selected[i].setAttribute("class", "hide");
             } else {
-                selected[i].setAttribute("class", "");
+                selected[i].setAttribute("class", "span6");
             }
         }
     }
@@ -203,14 +189,10 @@ resumeReader.Configuration = function () {
                 $("#cbSelectAll").prop("checked", false);
             }
         });
-
+        // for checking all on select all button
         $("#cbSelectAll").on("click", function () {
             $(".file-check").prop("checked", this.checked);
         });
-        /*var sorted = orderFileNames(fileObj);
-         for (var i = 0; i < sorted.length; i++) {
-         targetDiv.append("<label><input type='checkbox' value='" + sorted[i].path + "'> " + sorted[i].name + "</label>");
-         }*/
     }
 
     function printFileFetchError(xhr, targetDiv) {
@@ -254,8 +236,11 @@ resumeReader.Configuration = function () {
                         type: "post",
                         url: "resumereader/delete",
                         data: {
-                            filesList: JSON.stringify(selectedBoxes),
-                            accessKey: res
+                            filesList: JSON.stringify(selectedBoxes)
+                        },
+                        beforeSend: function (xhr) {
+                            // adding security key in request header
+                            xhr.setRequestHeader(resumeReader.urlParams.securityKey, res);
                         },
                         success: function (res) {
                             printSuccessAlert(res);
@@ -270,6 +255,45 @@ resumeReader.Configuration = function () {
                 });
             }
         }
+    }
+
+    var DZintialized = false;
+    var myDropzone;
+
+    function configDropZone(securityKey) {
+        if (!DZintialized) {
+            DZintialized = true;
+            myDropzone = new Dropzone("#my-awesome-dropzone", {
+                autoProcessQueue: false,
+                acceptedFiles: ".pdf,.doc,.docx",
+                addRemoveLinks: true,
+                parallelUploads: 15,
+                maxFiles:15,
+                //uploadMultiple:true,
+                dictInvalidFileType: "Please upload only doc, docx and pdf files"
+            });
+            $("#btnUploadAll").click(function () {
+                    myDropzone.processQueue();
+                }
+            );
+            $("#fileUploadModal").on("hidden", function () {
+                myDropzone.removeAllFiles();
+                $("#uploadModalAlert").addClass("hide");
+            });
+            myDropzone.on("complete", function (file) {
+                //console.log(file);
+                var alertBox = $("#uploadModalAlert");
+                alertBox.removeClass("hide");
+                alertBox.find("span").html(file.xhr.response);
+            });
+        } else {
+            // removing previous security key
+            myDropzone.off("sending");
+        }
+        myDropzone.on("sending", function (file, xhr, formData) {
+            xhr.setRequestHeader(resumeReader.urlParams.securityKey, securityKey);
+
+        });
     }
 
     return {
@@ -294,7 +318,7 @@ resumeReader.Configuration = function () {
         loadUploadBox: function (targetDiv) {
             $(targetDiv).myPrompt({}, function (res) {
                 $(targetDiv).modal("show");
-
+                configDropZone(res);
             });
         }
     };

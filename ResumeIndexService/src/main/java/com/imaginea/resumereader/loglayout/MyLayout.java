@@ -82,7 +82,7 @@ public class MyLayout extends HTMLLayout {
 				+ Layout.LINE_SEP);
 
 		sbuf.append("<td class='timeCol'>");
-		sbuf.append(formatter.format(new Date()));
+		sbuf.append(formatter.format(System.currentTimeMillis()));
 		sbuf.append("</td>" + Layout.LINE_SEP);
 
 		String escapedThread = Transform.escapeTags(event.getThreadName());

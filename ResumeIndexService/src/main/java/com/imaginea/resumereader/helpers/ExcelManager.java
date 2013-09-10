@@ -31,11 +31,11 @@ public class ExcelManager {
 
 	}
 
-	public static void main(String[] args) throws IOException {
+	/*public static void main(String[] args) throws IOException {
 		ExcelManager excelManager = new ExcelManager(
 				"/home/ashwin/Desktop/Book1.xlsx");
 		excelManager.delete(0);
-	}
+	}*/
 
 	/*
 	 * public ExcelManager() { this.fileIS =
@@ -131,7 +131,7 @@ public class ExcelManager {
 		}
 	}
 
-	void delete(int index) throws IOException {
+	void delete(List<Integer> index) throws IOException {
 		Map<String, Object[]> data = readDelete(index);
 		new File(this.filePath).delete();
 		XSSFWorkbook workbook = new XSSFWorkbook();
@@ -162,7 +162,7 @@ public class ExcelManager {
 		}
 	}
 
-	Map<String, Object[]> readDelete(int index) throws IOException {
+	Map<String, Object[]> readDelete(List<Integer> index) throws IOException {
 		String employeeName;
 		int employeeId, i = 0;
 		Cell cell;
@@ -184,7 +184,7 @@ public class ExcelManager {
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext()) {
 				XSSFRow row = (XSSFRow) rows.next();
-				if (i++ == index) {
+				if (index.contains(i)) {
 					continue;
 				} else {
 					Iterator<Cell> cells = row.cellIterator();

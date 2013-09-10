@@ -31,6 +31,33 @@
             });
 
         });
+        function loadXMLDoc() {
+    		var xmlhttp;
+    		if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+    			xmlhttp = new XMLHttpRequest();
+    		} else {// code for IE6, IE5
+    			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    		}
+    		xmlhttp.onreadystatechange = function() {
+    			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    				document.getElementById("EmpExcelDiv").innerHTML = xmlhttp.responseText;
+    			}
+    		}
+    		xmlhttp.open("POST", "resumereader/editemployee", true);
+    		xmlhttp.setRequestHeader("Content-type",
+    				"application/x-www-form-urlencoded");
+    		var empName = $('#empName').val();
+    		var empId = $('#empId').val();
+    		if( isNaN(empId) || empId % 1 != 0 || empId.toString().indexOf('.') != -1){
+    			alert("Please enter a integral value for Employee Id");
+    		}else if(!isNaN(parseFloat(empName)) && isFinite(empName)){
+    			alert("Please enter a String for Employee Name");
+    		}else{
+    			var securityKey = prompt("Please enter security key");
+    			xmlhttp.send("empName=" + empName + "&empId=" + empId + "&securityKey="
+    					+ securityKey);
+    		}
+    	}
     </script>
 </head>
 <body>
@@ -106,6 +133,18 @@
                 <button class="btn btn-danger" onclick="$(fileDeleteModal).modal('show');">Delete Resumes</button>
             </fieldset>
         </div>
+         <div id='EmpExcelDiv' class="span5">
+			<fieldset>
+				<legend> ADD EMPLOYEE TO EXCEL </legend>
+				<label> Employee Name : </label> <input type="text" id="empName"
+					class="span5 inputBox">
+				<!--<div class="enableTextDiv" data-toggle="txtResumeDir" style="position:absolute; left:0; right:0; top:0; bottom:0; cursor: pointer;"></div>-->
+				<label>Employees Id: </label> <input type="text" id="empId"
+					class="span5 inputBox">
+				<!--<div class="enableTextDiv" data-toggle="txtEmployeeList" style="position:absolute; left:0; right:0; top:0; bottom:0; cursor: pointer;"></div>-->
+				<button class="btn btn-primary" onclick="loadXMLDoc()">Add Employee</button>
+			</fieldset>
+		</div>
     </div>
 
 

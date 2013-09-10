@@ -1,5 +1,6 @@
 package com.imaginea.resumereader.helpers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -26,19 +27,22 @@ public class ExcelManager {
 	public ExcelManager(String inputFile) throws FileNotFoundException {
 
 		this.fileIS = new FileInputStream(inputFile);
-		filePath = inputFile;
+		this.filePath = inputFile;
 
 	}
-/*public static void main(String[] args) throws IOException {
-	PropertyFileReader prop = new PropertyFileReader();
-	ExcelManager excelManager = new ExcelManager("/home/ashwin/Documents/Book1.xlsx");
-	excelManager.write("ashwin", 1234);
-}*/
-	/*public ExcelManager() {
-		this.fileIS = ExcelManager.class.getClassLoader().getResourceAsStream(
-				("Book1.xlsx"));
-		filePath = ExcelManager.class.getClassLoader().getResource("Book1.xlsx");
-	}*/
+
+	public static void main(String[] args) throws IOException {
+		ExcelManager excelManager = new ExcelManager(
+				"/home/ashwin/Desktop/Book1.xlsx");
+		excelManager.delete(0);
+	}
+
+	/*
+	 * public ExcelManager() { this.fileIS =
+	 * ExcelManager.class.getClassLoader().getResourceAsStream( ("Book1.xlsx"));
+	 * filePath = ExcelManager.class.getClassLoader().getResource("Book1.xlsx");
+	 * }
+	 */
 
 	public List<String> read() throws IOException {
 		// Create an ArrayList to store the data read from excel sheet.
@@ -77,8 +81,7 @@ public class ExcelManager {
 		return data;
 	}
 
-	public void write(String employeeName, int employeeId)
-			throws IOException {
+	public void write(String employeeName, int employeeId) throws IOException {
 		// Get the Excel workbook
 		XSSFWorkbook workbook = new XSSFWorkbook(this.fileIS);
 
@@ -94,8 +97,8 @@ public class ExcelManager {
 		 * data = excelReader.read();
 		 */
 		Map<String, Object[]> data = new TreeMap<String, Object[]>();
-		data.put(Integer.toString(++i), new Object[] { employeeName,
-				employeeId });
+		data.put(Integer.toString(++i),
+				new Object[] { employeeName, employeeId });
 		/*
 		 * data.put(Integer.toString(++i), new Object[] {"Lokesh", 11425 });
 		 * data.put(Integer.toString(++i), new Object[] {"John", 11426 });
@@ -128,4 +131,83 @@ public class ExcelManager {
 		}
 	}
 
+	void delete(int index) throws IOException {
+		Map<String, Object[]> data = readDelete(index);
+		new File(this.filePath).delete();
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("Sheet1");
+		// Iterate over data and write to sheet
+		Set<String> keyset = data.keySet();
+		int rownum = 0;
+		for (String key : keyset) {
+			Row row = ((XSSFSheet) sheet).createRow(rownum++);
+			Object[] objArr = data.get(key);
+			int cellnum = 0;
+			for (Object obj : objArr) {
+				Cell cell = row.createCell(cellnum++);
+				if (obj instanceof String)
+					cell.setCellValue((String) obj);
+				else if (obj instanceof Integer)
+					cell.setCellValue((Integer) obj);
+			}
+		}
+		try {
+			// Write the workbook in file system
+			FileOutputStream out = new FileOutputStream(this.filePath);
+			workbook.write(out);
+			out.close();
+			System.out.println("Book1.xlsx written successfully on disk.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	Map<String, Object[]> readDelete(int index) throws IOException {
+		String employeeName;
+		int employeeId, i = 0;
+		Cell cell;
+		// Create an ArrayList to store the data read from excel sheet.
+		Map<String, Object[]> data = new TreeMap<String, Object[]>();
+		try {
+			//
+			// Create an excel workbook from the file system.
+			//
+			XSSFWorkbook workbook = new XSSFWorkbook(this.fileIS);
+			//
+			// Get the first sheet on the workbook.
+			//
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			//
+			// When we have a sheet object in hand we can iterate on
+			// each sheet's rows and on each row's cells. We store the
+			// data read in an ArrayList
+			Iterator<Row> rows = sheet.rowIterator();
+			while (rows.hasNext()) {
+				XSSFRow row = (XSSFRow) rows.next();
+				if (i++ == index) {
+					continue;
+				} else {
+					Iterator<Cell> cells = row.cellIterator();
+					employeeName = cells.next().getStringCellValue();
+					cell = cells.next();
+					if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+						employeeId = Integer.parseInt(cell.toString());
+					} else {
+						employeeId = (int) cell.getNumericCellValue();
+					}
+					data.put(Integer.toString(i++), new Object[] {
+							employeeName, employeeId });
+				}
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (this.fileIS != null) {
+				this.fileIS.close();
+			}
+		}
+		return data;
+
+	}
 }

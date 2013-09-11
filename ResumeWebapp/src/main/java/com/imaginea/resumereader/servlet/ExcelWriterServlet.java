@@ -1,0 +1,35 @@
+package com.imaginea.resumereader.servlet;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.imaginea.resumereader.helpers.ExcelManager;
+import com.imaginea.resumereader.helpers.PropertyFileReader;
+
+public class ExcelWriterServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	
+	public void doPost(HttpServletRequest req, HttpServletResponse res)
+			throws IOException {
+		ExcelManager excelManager = null;
+		PropertyFileReader prop = null;
+		try {
+			prop = new PropertyFileReader();
+			excelManager = new ExcelManager(prop.getEmployeeExcelPath());
+		} catch (IOException e) {
+			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					e.getMessage());
+			return;
+		}if (req.getParameter("securityKey").trim()
+				.equals(prop.getSecurityKey())) {
+			excelManager.write(req.getParameter("empName"), Integer.parseInt(req.getParameter("empId")));
+			res.getWriter().print("Employee Successfully added");
+		}else {
+			res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+					"Security Key not matched");
+		}
+	}
+}

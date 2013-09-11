@@ -2,8 +2,6 @@ package com.imaginea.resumereader;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,8 +11,7 @@ import com.imaginea.resumereader.base.ResumeIndexSearcher;
 import com.imaginea.resumereader.entities.FileInfo;
 import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
-import com.imaginea.resumereader.helpers.ExcelReader;
-import com.imaginea.resumereader.helpers.MyHtmlFormatter;
+import com.imaginea.resumereader.helpers.ExcelManager;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.helpers.ResumeSegregator;
 
@@ -22,14 +19,8 @@ public class MainClass {
 	public static final Logger LOGGER = Logger
 			.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private PropertyFileReader properties;
-	private FileHandler fileHTML;
-	private Formatter formatterHTML;
 	public MainClass() throws IOException {
 		properties = new PropertyFileReader();
-		fileHTML = new FileHandler("Logging.html");
-		formatterHTML = new MyHtmlFormatter();
-		fileHTML.setFormatter(formatterHTML);
-		LOGGER.addHandler(fileHTML);
 	}
 
 	public static void main(String[] args) throws ParseException, IOException,
@@ -124,12 +115,12 @@ public class MainClass {
 		}
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
-		ExcelReader excelReader = new ExcelReader(
+		ExcelManager excelReader = new ExcelManager(
 				new PropertyFileReader().getEmployeeExcelPath());
 		searchResult = resumeSearchService.search(args[1]);
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
 		resumeSegregator.compareWithEmployeeList(searchResult.getTopHits(),
-				excelReader.read());
+				excelReader.readToDelete(null));
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
 		System.out.println("Search Duration:"
 				+ searchResult.getSearchDuration() + "ms");

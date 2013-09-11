@@ -17,7 +17,6 @@ public class FileValidator {
 	private List<File> listOfFiles;
 	String[] suffix = { "docx", "doc", "pdf" };
 	private FilePathHelper filePathHelper;
-
 	
 	public FileValidator(File indexDirFile) throws IOException,
 			FileDirectoryEmptyException {

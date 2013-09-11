@@ -17,7 +17,7 @@ import com.imaginea.resumereader.base.ResumeIndexSearcher;
 import com.imaginea.resumereader.entities.FileInfo;
 import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
-import com.imaginea.resumereader.helpers.ExcelReader;
+import com.imaginea.resumereader.helpers.ExcelManager;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.helpers.ResumeSegregator;
 import com.imaginea.resumereader.helpers.StringHighlighter;
@@ -38,7 +38,7 @@ public class SearchServlet extends HttpServlet {
 		PrintWriter printWriter = res.getWriter();
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
-		ExcelReader excelReader = new ExcelReader(
+		ExcelManager excelReader = new ExcelManager(
 				new PropertyFileReader().getEmployeeExcelPath());
 		try {
 			searchResult = resumeSearchService.search(searchKey, false);
@@ -56,7 +56,7 @@ public class SearchServlet extends HttpServlet {
 		long startTime = System.currentTimeMillis();
 		resumeSegregator.compareWithEmployeeList(
 				resumeSegregator.removeDuplicates(searchResult.getTopHits()),
-				excelReader.read());
+				excelReader.readToDelete(null));
 		segTime = System.currentTimeMillis() - startTime;
 		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}

@@ -33,6 +33,19 @@
                 deleteModal.find(".modal-body").html(prevBodyTxt);
             });
 
+            // for checking all on select all button
+            $("#cbSelectAll").on("click", function () {
+                $(".file-check").prop("checked", this.checked);
+                // toggle select filtered on select all toggle
+                $("#cbSelectFiltered").prop("checked", this.checked);
+            });
+            // for checking all on select filtered button
+            $("#cbSelectFiltered").on("click", function () {
+                $(".show").find(".file-check").prop("checked", this.checked);
+                resumeReader.Configuration.checkSelectAll();
+            });
+
+
         });
     </script>
 </head>
@@ -106,7 +119,9 @@
                 <button class="btn btn-info" onclick="resumeReader.Configuration.loadUploadBox('#fileUploadModal')">
                     Upload New Resumes
                 </button>
-                <button class="btn btn-danger" onclick="$(fileDeleteModal).modal('show');">Delete Resumes</button>
+                <button class="btn btn-danger"
+                        onclick="$(fileDeleteModal).modal({'show': true, 'backdrop' : 'static'});">Delete Resumes
+                </button>
             </fieldset>
         </div>
     </div>
@@ -126,7 +141,7 @@
          aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3 id="uploadModalLabel">Drop Files Here to Upload</h3>
+            <h3 id="uploadModalLabel" class="text-center text-info">Drop Files Here to Upload</h3>
         </div>
         <div class="modal-body">
             <form action="resumereader/upload"
@@ -136,14 +151,10 @@
                 <div class="fallback">
                     <input name="file" type="file" multiple/>
                 </div>
-                <div id="uploadModalAlert" class="alert alert-info hide">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <span>Alerts will be shown here</span>
-                </div>
             </form>
         </div>
         <div class="modal-footer">
-            <span class="help-block"><strong>Hint!</strong> After uploading documents, please update the index to reflect changes</span>
+            <span class="help-block text-info"><strong class="text-info">Hint!</strong> After uploading documents, please update the index to reflect changes</span>
             <button id="btnUploadAll" class="btn btn-primary">Upload All
             </button>
             <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -156,14 +167,19 @@
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <div>
-                <h3 id="deleteModalLabel">Select files to delete</h3>
-
-                <label class="span4">
-                    <input type="checkbox" id="cbSelectAll" class='checkbox'> Toggle All
-                </label>
-                <input type="text" placeholder="Filter Names"
-                       onkeyup="resumeReader.Configuration.filterByName($(this).val())"
-                       class="span2 search-query">
+                <h3 id="deleteModalLabel" class="text-center text-info">Select files to delete</h3>
+                <hr>
+                <div>
+                    <label id="lblSelectAll" class="span2">
+                        <input type="checkbox" id="cbSelectAll" class='checkbox'><span> Toggle All</span>
+                    </label>
+                    <label id="lblSelectFiltered" class="span2 invisible" id="selectFiltered">
+                        <input type="checkbox" id="cbSelectFiltered" class='checkbox'> <span> Toggle Filtered </span>
+                    </label>
+                    <input type="text" placeholder="Filter Names"
+                           onkeyup="resumeReader.Configuration.filterByName($(this).val())"
+                           class="span2 search-query">
+                </div>
             </div>
         </div>
         <div class="modal-body">Please wait.. fetching results</div>
@@ -172,7 +188,7 @@
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <span id="spanDeleteResponse">Response will be shown here</span>
             </div>
-            <span class="help-block">After deleting documents, please update the index to reflect changes</span>
+            <span class="help-block"><strong class="text-info">Hint!</strong> After deleting documents, please update the index to reflect changes</span>
             <button id="btnDeletedAll" class="btn btn-danger" onclick="resumeReader.Configuration.deleteFiles();">Delete
                 Selected
             </button>

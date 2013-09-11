@@ -28,7 +28,7 @@ resumeReader.Searcher = function () {
         var context = ((queryObj.context !== "") ? queryObj.context : queryObj.query),
             resultDiv = $("#" + resumeReader.ids.resultsDiv),
             resultHeaderDiv = resumeReader.ResultHeaderCreator.createResultHeaderDiv(queryObj.query, resultsObj.contextKey,
-                resultsObj.totalHits, resultsObj.searchDuration),
+                resultsObj.totalHits, resultsObj.searchDuration, resultsObj.SegregationTime, resultsObj.highlightTime),
             resultsList = resumeReader.ListGenerator.createResultsList(resultsObj.activeHits, resultsObj.inActiveHits,
                 resultsObj.probableHits);
 
@@ -54,7 +54,6 @@ resumeReader.Searcher = function () {
 
     function filterResults(titleQuery) {
         var resultDiv = document.getElementById(resumeReader.ids.resultsDiv),
-            resultsListDiv = $("#" + resumeReader.ids.resultsListDiv),
             resultsList = resumeReader.ListGenerator.createResultsList(filterTitle(resultsObj.activeHits, titleQuery),
                 filterTitle(resultsObj.inActiveHits, titleQuery),
                 filterTitle(resultsObj.probableHits, titleQuery));
@@ -101,7 +100,7 @@ resumeReader.Searcher = function () {
                                 });
                             }
 
-                        }, 2000);
+                        }, 1000);
                     });
                     myModal.on('hide', function () {
                         myModal.find(".modal-body").html("Please Wait.. Loading Resume");

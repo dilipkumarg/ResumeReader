@@ -11,7 +11,7 @@ resumeReader.ResultHeaderCreator = function () {
     var domEle = resumeReader.ElementCreator,
         ids = resumeReader.ids;
 
-    function createResultHeaderDiv(searchKey,context, totalHits, timeTaken) {
+    function createResultHeaderDiv(searchKey, context, totalHits, timeTaken, segTime, highTime) {
         var headerDiv = domEle.createDomEle("div", ids.resultHeaderDiv, "navbar row container", ""),
             queryLabel = domEle.createDomEle("span", ids.queryLabel, "label label-info",
                 "Search Key: " + searchKey),
@@ -20,10 +20,16 @@ resumeReader.ResultHeaderCreator = function () {
             totalHitsLabel = domEle.createDomEle("span", ids.hitsLabel,
                 "label label-info left-margin", "Total Hits: " + totalHits),
             timeTakenLabel = domEle.createDomEle("span", ids.timeTakenLabel,
-                "label label-info left-margin", "Search Duration: " + timeTaken + "ms");
+                "label label-info left-margin", "Search Duration: " + timeTaken + "ms"),
+            segTimeTakenLabel = domEle.createDomEle("span", "",
+                "label label-info left-margin", "Segregation Time: " + segTime + "ms"),
+            highTimeTakenLabel = domEle.createDomEle("span", "",
+                "label label-info left-margin", "Highlight Time: " + highTime + "ms");
         headerDiv.appendChild(queryLabel);
         headerDiv.appendChild(contextLabel);
         headerDiv.appendChild(timeTakenLabel);
+        headerDiv.appendChild(segTimeTakenLabel);
+        headerDiv.appendChild(highTimeTakenLabel);
         headerDiv.appendChild(totalHitsLabel);
         headerDiv.appendChild(createTitleSearchBox());
         return headerDiv;
@@ -40,8 +46,8 @@ resumeReader.ResultHeaderCreator = function () {
     }
 
     return {
-        createResultHeaderDiv: function (searchKey, context, totalHits, timeTaken) {
-            return createResultHeaderDiv(searchKey, context, totalHits, timeTaken);
+        createResultHeaderDiv: function (searchKey, context, totalHits, timeTaken, segTime, highTime) {
+            return createResultHeaderDiv(searchKey, context, totalHits, timeTaken, segTime, highTime);
         }
     };
 }();

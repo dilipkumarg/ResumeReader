@@ -6,15 +6,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.imaginea.resumereader.entities.FileInfo;
-
 public class StringHighlighter {
 	private final String preTag;
 	private final String postTag;
 
 	/**
 	 * An unmodifiable set containing some common English words that are not
-	 * usually useful for searching.
+	 * usually useful for searching & Highlighting.
 	 */
 
 	private final List<String> stopWords = Arrays.asList("a", "an", "and",
@@ -26,42 +24,6 @@ public class StringHighlighter {
 	 * maxWords is the count of total words before and after the keyword
 	 */
 	private final int maxWords;
-
-	// TODO delete this function
-	public static void main(String[] args) {
-		StringHighlighter sh = new StringHighlighter(
-				"<span class='highlight'>", "</span>", 20);
-		/*
-		 * List<String> keywords = new ArrayList<String>();
-		 * keywords.add("java"); keywords.add("AND"); keywords.add("java");
-		 */
-
-		List<FileInfo> tmpList = new ArrayList<FileInfo>();
-
-		for (int i = 0; i < 5; i++) {
-			FileInfo tmp = new FileInfo("", "abc" + i, "", "");
-			tmpList.add(tmp);
-		}
-
-		// sh.mySplitter(keywords);
-
-		// String[] contextKeys = keywords.split("(?:[^\\s\"]+|\"[^\"]*\")+");
-
-		// System.out.println(contextKeys[0]);
-		/*
-		 * keywords="\"java script\""; System.out .println(sh
-		 * .highlightFragment(
-		 * "chalo is that am succedded or not i think i did.. like the way we told this language requires lot of things script hello this is,  scripting languages are more oftenly used i think i succedded in capturing groups please do support me if am not succedded.. i think i did java,"
-		 * , keywords));
-		 */
-		// System.out.println(sh.makeKeyword(keywords));
-		ResumeSegregator rs = new ResumeSegregator();
-		int i = 0;
-		for (FileInfo tmp : rs.removeDuplicates(tmpList)) {
-			System.out.println(i++ + ":" + tmp.getTitle());
-		}
-
-	}
 
 	/**
 	 * Function returns the List of sub strings from given string, splitting
@@ -79,12 +41,6 @@ public class StringHighlighter {
 			words.add(m.group());
 		}
 		return words;
-	}
-
-	private double testRegex(String input) {
-		// return input.replaceAll("(?:^|\\s)(?=\\w(?=([\\s]+)\\w[\\s]))", "");
-		return PersonNameMatcher.similarity("Bhavani Sankar Jagabhatula",
-				"Bhavani Shankar Jagabhatula");
 	}
 
 	public StringHighlighter(String preTag, String postTag, int maxWords) {

@@ -8,21 +8,20 @@
 
 resumeReader.Configuration = function () {
     "use strict";
+    var ids = resumeReader.ids;
+
     function loadConfigValues() {
         $.ajax({type: "get",
             url: resumeReader.url.config,
             success: function (response) {
-                var values = jQuery.parseJSON(response),
-                    ids = resumeReader.ids;
+                var values = jQuery.parseJSON(response);
                 $("#" + ids.txtResumeDir).val(values.resumeDir);
                 $("#" + ids.txtEmployeeList).val(values.employeeListFile);
 
                 // enabling submit button
                 $(".inputBox").change(function () {
-                    $("#btnConfigUpdate").prop("disabled", false);
+                    $("#" + ids.btnConfigUpdate).prop("disabled", false);
                 });
-
-                //$("#keyInputModal").modal("show");
             },
             error: function (xhr) {
                 printErrorAlert(xhr);
@@ -33,7 +32,7 @@ resumeReader.Configuration = function () {
     function printErrorAlert(xhr) {
         $("#alertText").html("An error occured:" + xhr.status + "<br />" + xhr.statusText +
             "<br/>" + xhr.responseText);
-        var alertBox = $("#alertBox");
+        var alertBox = $("#" + ids.alertBox);
         alertBox.removeClass("hide");
         alertBox.removeClass("alert-success");
         alertBox.addClass("alert-error");
@@ -41,7 +40,7 @@ resumeReader.Configuration = function () {
 
     function printSuccessAlert(response) {
         $("#alertText").text(response);
-        var alertBox = $("#alertBox");
+        var alertBox = $("#" + ids.alertBox);
         alertBox.removeClass("hide");
         alertBox.removeClass("alert-error");
         alertBox.addClass("alert-success");
@@ -74,8 +73,7 @@ resumeReader.Configuration = function () {
     }
 
     function updateConfiguration() {
-        var ids = resumeReader.ids,
-            btnUpdate = $("#btnConfigUpdate"),
+        var btnUpdate = $("#" + ids.btnConfigUpdate),
             resumeDir = $("#" + ids.txtResumeDir),
             employeeFile = $("#" + ids.txtEmployeeList);
         // building data object, based on user requirements.
@@ -103,8 +101,8 @@ resumeReader.Configuration = function () {
 
 
     function doUpdate(userData, button, securityKey) {
-        var progressBarDiv = $("#progressBarDiv"),
-            progressBar = $("#progressBar"),
+        var progressBarDiv = $("#" + ids.progressBarDiv),
+            progressBar = $("#" + ids.progressBar),
             interval;
         $.ajax({type: "post",
             url: resumeReader.url.update,
@@ -167,7 +165,7 @@ resumeReader.Configuration = function () {
             if (selector.innerHTML.toLowerCase().lastIndexOf(str.toLowerCase()) === -1) {
                 selected[i].setAttribute("class", "hide");
             } else {
-                selected[i].setAttribute("class", "span6");
+                selected[i].setAttribute("class", "span6 show");
             }
         }
     }
@@ -176,23 +174,37 @@ resumeReader.Configuration = function () {
         var keys = Object.keys(fileObj);
         keys = keys.sort();
         for (var i = 0; i < keys.length; i++) {
-            targetDiv.append("<label class='span6' title='" + keys[i] + "'>" +
+            targetDiv.append("<label class='span6 show' title='" + keys[i] + "'>" +
                 "<input type='checkbox' class='file-check checkbox' value='" + keys[i] + "'>" +
                 " <span>" + fileObj[keys[i]] + "</span>" +
                 "</label>");
         }
-        // for toggle select all check box
-        $(".file-check").on("click", function () {
-            if ($(".file-check:checked").length === $(".file-check").length) {
-                $("#cbSelectAll").prop("checked", true);
-            } else {
-                $("#cbSelectAll").prop("checked", false);
-            }
+        // adding events for the checkboxes
+        var cbFile = $(".file-check");
+        // removing previous event
+        cbFile.off("change");
+        // for toggle select all and select filtered check box
+        cbFile.on("change", function () {
+            checkSelectAll();
+            checkSelectFiltered();
         });
-        // for checking all on select all button
-        $("#cbSelectAll").on("click", function () {
-            $(".file-check").prop("checked", this.checked);
-        });
+    }
+
+    function checkSelectAll() {
+        if ($(".file-check:checked").length === $(".file-check").length) {
+            $("#" + ids.cbSelectAll).prop("checked", true);
+        } else {
+            $("#" + ids.cbSelectAll).prop("checked", false);
+        }
+    }
+
+    function checkSelectFiltered() {
+        var showedBoxes = $(".show");
+        if (showedBoxes.find(".file-check:checked").length === showedBoxes.find(".file-check").length) {
+            $("#" + ids.cbSelectFiltered).prop("checked", true);
+        } else {
+            $("#" + ids.cbSelectFiltered).prop("checked", false);
+        }
     }
 
     function printFileFetchError(xhr, targetDiv) {
@@ -202,7 +214,7 @@ resumeReader.Configuration = function () {
 
     function loadFileList(targetDiv) {
         $.ajax({
-            url: "resumereader/delete",
+            url: resumeReader.url.delete,
             success: function (response) {
                 targetDiv.empty();
                 printFileList(JSON.parse(response), targetDiv);
@@ -226,7 +238,7 @@ resumeReader.Configuration = function () {
     }
 
     function deleteFiles() {
-        var deleteModal = $("#fileDeleteModal");
+        var deleteModal = $("#" + ids.modalDelete);
         var selectedBoxes = getSelectedFiles(deleteModal.find(".modal-body"));
         if (selectedBoxes.length > 0) {
             var res = confirm("Are you sure you want to delete " + selectedBoxes.length + " file(s)?");
@@ -234,7 +246,7 @@ resumeReader.Configuration = function () {
                 deleteModal.myPrompt({showHide: true}, function (res) {
                     $.ajax({
                         type: "post",
-                        url: "resumereader/delete",
+                        url: resumeReader.url.delete,
                         data: {
                             filesList: JSON.stringify(selectedBoxes)
                         },
@@ -263,35 +275,36 @@ resumeReader.Configuration = function () {
     function configDropZone(securityKey) {
         if (!DZintialized) {
             DZintialized = true;
-            myDropzone = new Dropzone("#my-awesome-dropzone", {
+            myDropzone = new Dropzone("#" + ids.dropZone, {
                 autoProcessQueue: false,
                 acceptedFiles: ".pdf,.doc,.docx",
                 addRemoveLinks: true,
-                parallelUploads: 15,
-                maxFiles:15,
+                parallelUploads: 10,
+                maxFiles: 10,
                 //uploadMultiple:true,
                 dictInvalidFileType: "Please upload only doc, docx and pdf files"
             });
-            $("#btnUploadAll").click(function () {
+            $("#" + ids.btnUploadAll).click(function () {
                     myDropzone.processQueue();
                 }
             );
-            $("#fileUploadModal").on("hidden", function () {
+            $("#" + ids.modalUpload).on("hidden", function () {
                 myDropzone.removeAllFiles();
-                $("#uploadModalAlert").addClass("hide");
-            });
-            myDropzone.on("complete", function (file) {
-                //console.log(file);
-                var alertBox = $("#uploadModalAlert");
-                alertBox.removeClass("hide");
-                alertBox.find("span").html(file.xhr.response);
             });
         } else {
             // removing previous security key
             myDropzone.off("sending");
         }
+        // adding security key in the request header for authentication
         myDropzone.on("sending", function (file, xhr, formData) {
             xhr.setRequestHeader(resumeReader.urlParams.securityKey, securityKey);
+
+        });
+        myDropzone.on("complete", function (file) {
+            // printing error message
+            $(file.previewTemplate).find(".dz-error-message").html("<label>" +
+                "<strong>Error Code: " + file.xhr.status + "</strong>" +
+                "<br>" + file.xhr.statusText + "</label>");
 
         });
     }
@@ -310,14 +323,27 @@ resumeReader.Configuration = function () {
             loadFileList(targetDiv);
         },
         filterByName: function (str) {
-            filterByName(str, $("#fileDeleteModal").find(".modal-body"));
+            filterByName(str, $("#" + ids.modalDelete).find(".modal-body"));
+            // for hiding and un hiding select all filtered checkbox
+            if (str === "") {
+                $("#" + ids.lblSelectFiltered).addClass("invisible");
+            } else {
+                $("#" + ids.lblSelectFiltered).removeClass("invisible");
+                checkSelectFiltered();
+            }
+        },
+        checkSelectAll: function () {
+            checkSelectAll();
         },
         deleteFiles: function () {
             deleteFiles();
         },
         loadUploadBox: function (targetDiv) {
             $(targetDiv).myPrompt({}, function (res) {
-                $(targetDiv).modal("show");
+                $(targetDiv).modal({
+                    "show": true,
+                    "backdrop": "static"
+                });
                 configDropZone(res);
             });
         }

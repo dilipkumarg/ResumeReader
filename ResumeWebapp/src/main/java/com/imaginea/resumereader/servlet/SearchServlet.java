@@ -26,6 +26,8 @@ public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final Logger LOGGER = Logger.getLogger(this.getClass());
 	private String contextKey;
+	private long segTime = 0;
+	private long highTime = 0;
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
@@ -51,10 +53,11 @@ public class SearchServlet extends HttpServlet {
 		}
 		// searchResult.setTopHits(removeDuplicates(searchResult.getTopHits()));
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
-
+		long startTime = System.currentTimeMillis();
 		resumeSegregator.compareWithEmployeeList(
 				resumeSegregator.removeDuplicates(searchResult.getTopHits()),
 				excelReader.read());
+		segTime = System.currentTimeMillis() - startTime;
 		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}
 
@@ -76,14 +79,17 @@ public class SearchServlet extends HttpServlet {
 		jsonObj.put("searchDuration", searchResult.getSearchDuration());
 		jsonObj.put("searchKey", searchResult.getQuery());
 		jsonObj.put("contextKey", contextKey);
+		jsonObj.put("SegregationTime", segTime);
 
+		long startTime = System.currentTimeMillis();
 		jsonObj.put("activeHits",
 				hitsToJson(resumeSegregator.getActiveEmployees()));
 		jsonObj.put("inActiveHits",
 				hitsToJson(resumeSegregator.getInactiveEmployees()));
 		jsonObj.put("probableHits",
 				hitsToJson(resumeSegregator.getProbableActiveEmployess()));
-
+		highTime = System.currentTimeMillis() - startTime;
+		jsonObj.put("highlightTime", highTime);
 		return jsonObj;
 	}
 

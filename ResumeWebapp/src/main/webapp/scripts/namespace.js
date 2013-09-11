@@ -12,7 +12,18 @@ var resumeReader = {
         txtEmployeeList: "txtEmployeeList",
         titleSearchBox: "txtTitleSearch",
         btnResumeToggle: "btn-ResumeToggle",
-        btnEmployeeToggle: "btn-EmployeeToggle"
+        btnEmployeeToggle: "btn-EmployeeToggle",
+        modalDelete: "fileDeleteModal",
+        modalUpload: "fileUploadModal",
+        lblSelectFiltered: "lblSelectFiltered",
+        cbSelectFiltered: "cbSelectFiltered",
+        cbSelectAll:"cbSelectAll",
+        btnUploadAll : "btnUploadAll",
+        dropZone: "my-awesome-dropzone",
+        progressBar: "progressBar",
+        progressBarDiv: "progressBarDiv",
+        btnConfigUpdate: "btnConfigUpdate",
+        alertBox: "alertBox"
     },
     idsPrefix: {
         itemSummary: "itemSummary",
@@ -27,7 +38,8 @@ var resumeReader = {
         search: "resumereader/search",
         view: "resumereader/view",
         config: "resumereader/config",
-        update: "resumereader/update"
+        update: "resumereader/update",
+        delete: "resumereader/delete"
     },
     urlParams: {
         searchKey: "searchKey",

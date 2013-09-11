@@ -4,24 +4,40 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Welcome to Resume Search Engine</title>
     <script type="text/javascript" src="scripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="scripts/jquery.ba-hashchange.js"></script>
     <script type="text/javascript" src="scripts/bootstrap.js"></script>
     <link type="text/css" rel="stylesheet" href="styles/bootstrap.css">
     <link type="text/css" rel="stylesheet" href="styles/custom_styles.css">
     <script type="text/javascript">
         // loading hash based page
         $(function () {
-            var hashString = window.location.hash.trim();
-            if (hashString.length > 0) {
-                var res = hashString.search("q="),
-                        key = hashString.substr(res + 2).trim(),
-                        context = "",
-                        contextPos = key.indexOf("&c=");
-                if (contextPos !== -1) {
-                    context = key.substr(contextPos + 3);
-                    key = key.substr(0, contextPos);
+            // These two properties, set after jQuery and the hashchange event plugin are
+            // loaded, only need to be used when document.domain is set (to fix the "access
+            // denied" error in IE6/7).
+            $.fn.hashchange.src = '../../document-domain.html';
+            $.fn.hashchange.domain = document.domain;
+
+            // Bind an event to window.onhashchange that, when the hash changes, gets the
+            // hash and adds the class "selected" to any matching nav link.
+            $(window).hashchange(function () {
+                var hashString = location.hash;
+                if (hashString.length > 0) {
+                    var res = hashString.search("q="),
+                            key = hashString.substr(res + 2).trim(),
+                            context = "",
+                            contextPos = key.indexOf("&c=");
+                    if (contextPos !== -1) {
+                        context = key.substr(contextPos + 3);
+                        key = key.substr(0, contextPos);
+                    }
+                    resumeReader.Searcher.searchAndPrint(key, context);
                 }
-                resumeReader.Searcher.searchAndPrint(key, context);
-            }
+
+            });
+
+            // Since the event is only triggered when the hash changes, we need to trigger
+            // the event now, to handle the hash the page may have loaded with.
+            $(window).hashchange();
 
             // attaching help text for search box
             $("#" + resumeReader.ids.queryTextBox).popover({trigger: 'focus',

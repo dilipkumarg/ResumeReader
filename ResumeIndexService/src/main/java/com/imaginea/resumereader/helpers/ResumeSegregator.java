@@ -40,7 +40,7 @@ public class ResumeSegregator {
 	}
 
 	public List<FileInfo> removeDuplicates(List<FileInfo> employeeList) {
-		// taking copy of results for duplicate elimination
+		// storing unique entries in the result List
 		List<FileInfo> resultList = new ArrayList<FileInfo>();
 		for (FileInfo emp1 : employeeList) {
 			double similarity = 0.0, jaro = 0.0;
@@ -70,7 +70,7 @@ public class ResumeSegregator {
 		employee.setCloseMatch(closeMatch + " (" + df.format(similarity * 100)
 				+ "%)");
 		// 0.95 would confirm the right match barring few character
-		// displacements/removals eg : apurb for apurba
+		// displacements/removals eg : dhurva for dhruva
 		if (similarity >= 0.95) {
 			activeEmployees.add(employee);
 		} else if (similarity >= 0.85 && similarity < 0.95) {

@@ -102,13 +102,15 @@ span.highlight {
     margin-left: 2%;
 }
 
-#fileUploadModal.dropzone {
+/*#fileUploadModal.dropzone {
     min-height: 250px;
-}
+}*/
 
 .checkbox {
-    margin-top: 0px; !important
+    margin-top: 0 !important;
 }
+
+/*
 .modal .modal-body .dropzone {
     min-height: 260px;
 }
@@ -124,4 +126,4 @@ span.highlight {
 }
 .modal .modal-body .dropzone .dz-preview .dz-details .dz-filename{
     font-size: 10px;
-}
+}*/

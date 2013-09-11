@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.junit.Test;
 
@@ -21,8 +23,8 @@ public class ResumeSegregatorTest {
 		// PropertyFileReader().getEmployeeExcelPath());
 		personNames.add(new FileInfo(null, "Apurba Nath", null, null));
 		personNames.add(new FileInfo(null, "Apurba nath", null, null));
-		List<String> employeeNames = new ArrayList<String>();
-		employeeNames.add("Apurba Nath");
+		Map<String, Object[]> employeeNames = new TreeMap<String, Object[]>();
+		employeeNames.put(Integer.toString(0), new Object[] {"Apurba Nath", 11425 });
 		resumeSegregator.compareWithEmployeeList(personNames, employeeNames);
 		assertTrue("as", 2 == resumeSegregator.getActiveEmployees().size());
 		assertTrue("as", 0 == resumeSegregator.getProbableActiveEmployess()

@@ -54,7 +54,7 @@ public class SearchServlet extends HttpServlet {
 
 		resumeSegregator.compareWithEmployeeList(
 				resumeSegregator.removeDuplicates(searchResult.getTopHits()),
-				excelReader.read());
+				excelReader.readToDelete(null));
 		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}
 

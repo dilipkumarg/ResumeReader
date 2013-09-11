@@ -120,7 +120,7 @@ public class MainClass {
 		searchResult = resumeSearchService.search(args[1]);
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
 		resumeSegregator.compareWithEmployeeList(searchResult.getTopHits(),
-				excelReader.read());
+				excelReader.readToDelete(null));
 		System.out.println("Total Hits:" + searchResult.getTotalHitCount());
 		System.out.println("Search Duration:"
 				+ searchResult.getSearchDuration() + "ms");

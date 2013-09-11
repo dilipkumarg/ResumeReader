@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.TreeMap;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -34,7 +32,9 @@ public class ExcelManager {
 	/*public static void main(String[] args) throws IOException {
 		ExcelManager excelManager = new ExcelManager(
 				"/home/ashwin/Desktop/Book1.xlsx");
-		excelManager.delete(0);
+		List<Integer> index = new ArrayList<Integer>();
+		index.add(394);
+		excelManager.delete(index);
 	}*/
 
 	/*
@@ -44,7 +44,7 @@ public class ExcelManager {
 	 * }
 	 */
 
-	public List<String> read() throws IOException {
+	/*public List<String> read() throws IOException {
 		// Create an ArrayList to store the data read from excel sheet.
 		List<String> data = new ArrayList<String>();
 		try {
@@ -79,7 +79,7 @@ public class ExcelManager {
 			}
 		}
 		return data;
-	}
+	}*/
 
 	public void write(String employeeName, int employeeId) throws IOException {
 		// Get the Excel workbook
@@ -132,7 +132,7 @@ public class ExcelManager {
 	}
 
 	void delete(List<Integer> index) throws IOException {
-		Map<String, Object[]> data = readDelete(index);
+		Map<String, Object[]> data = readToDelete(index);
 		new File(this.filePath).delete();
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet("Sheet1");
@@ -162,7 +162,7 @@ public class ExcelManager {
 		}
 	}
 
-	Map<String, Object[]> readDelete(List<Integer> index) throws IOException {
+	public Map<String, Object[]> readToDelete(List<Integer> index) throws IOException {
 		String employeeName;
 		int employeeId, i = 0;
 		Cell cell;
@@ -184,11 +184,13 @@ public class ExcelManager {
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext()) {
 				XSSFRow row = (XSSFRow) rows.next();
-				if (index.contains(i)) {
+				if (index!= null && index.contains(i)) {
+					i++;
 					continue;
 				} else {
 					Iterator<Cell> cells = row.cellIterator();
 					employeeName = cells.next().getStringCellValue();
+					if("".equals(employeeName.trim()))break;
 					cell = cells.next();
 					if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
 						employeeId = Integer.parseInt(cell.toString());

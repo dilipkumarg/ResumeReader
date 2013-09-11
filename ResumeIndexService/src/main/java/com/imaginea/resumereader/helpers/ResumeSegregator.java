@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.imaginea.resumereader.entities.FileInfo;
 
@@ -20,15 +22,18 @@ public class ResumeSegregator {
 	}
 
 	public void compareWithEmployeeList(List<FileInfo> personNames,
-			List<String> employeeNames) throws IOException,
+			Map<String, Object[]> map) throws IOException,
 			FileNotFoundException {
 		if (personNames != null) {
+			Set<String> keyset = map.keySet();
+			String employee;
 			for (FileInfo person : personNames) {
 				double similarity = 0.0, jaro;
 				String closeMatch = "";
-				for (String employee : employeeNames) {
+				for (String key : keyset) {
+					employee = ((String) map.get(key)[0]).toLowerCase();
 					jaro = PersonNameMatcher.similarity(person.getTitle()
-							.toLowerCase(), employee.toLowerCase());
+							.toLowerCase(), employee);
 					if (jaro > similarity) {
 						similarity = jaro;
 						closeMatch = employee;

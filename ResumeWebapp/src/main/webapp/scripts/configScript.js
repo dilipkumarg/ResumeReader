@@ -169,8 +169,13 @@ resumeReader.Configuration = function () {
             }
         }
     }
+<<<<<<< HEAD
 
     function printFileList(fileObj, targetDiv) {
+=======
+    
+    function printList(fileObj, targetDiv) {
+>>>>>>> employee delete
         var keys = Object.keys(fileObj);
         keys = keys.sort();
         for (var i = 0; i < keys.length; i++) {
@@ -224,6 +229,19 @@ resumeReader.Configuration = function () {
             }
         });
     }
+    
+    function loadEmployeeList(targetDiv) {
+        $.ajax({
+            url: "resumereader/exceldelete",
+            success: function (response) {
+                targetDiv.empty();
+                printList(JSON.parse(response), targetDiv);
+            },
+            error: function (xhr) {
+                printFileFetchError(xhr, targetDiv);
+            }
+        });
+    }
 
     function getSelectedFiles(targetDiv) {
         var checkBoxes = targetDiv.find(":checkbox"),
@@ -266,6 +284,25 @@ resumeReader.Configuration = function () {
                     });
                 });
             }
+        }
+    }
+    
+    function deleteEmployees() {
+        var deleteModal = $("#employeeDeleteModal");
+        var selectedBoxes = getSelectedFiles(deleteModal.find(".modal-body"));
+        var res = confirm("Are you sure you want to delete " + selectedBoxes.length + " employees?");
+
+        if (res) {
+            deleteModal.myPrompt({showHide: true}, function (res) {
+                $.ajax({
+                    type: "post",
+                    url: "/resumereader/exceldelete",
+                    data: {
+                    	employeeList: JSON.stringify(selectedBoxes),
+                        accessKey: res
+                    }
+                });
+            });
         }
     }
 
@@ -322,6 +359,9 @@ resumeReader.Configuration = function () {
         loadFileList: function (targetDiv) {
             loadFileList(targetDiv);
         },
+        loadEmployeeList: function (targetDiv) {
+        	loadEmployeeList(targetDiv);
+        },
         filterByName: function (str) {
             filterByName(str, $("#" + ids.modalDelete).find(".modal-body"));
             // for hiding and un hiding select all filtered checkbox
@@ -335,8 +375,14 @@ resumeReader.Configuration = function () {
         checkSelectAll: function () {
             checkSelectAll();
         },
+        filterByEmployeeName: function (str) {
+            filterByName(str, $("#employeeDeleteModal").find(".modal-body"));
+        },
         deleteFiles: function () {
             deleteFiles();
+        },
+        deleteEmployees: function () {
+        	deleteEmployees();
         },
         loadUploadBox: function (targetDiv) {
             $(targetDiv).myPrompt({}, function (res) {

@@ -61,4 +61,13 @@
     <servlet-name>ExcelEdit</servlet-name>
     <url-pattern>/resumereader/editemployee</url-pattern>
   </servlet-mapping> 
+  <!-- Deleting employees from Excel -->
+	<servlet>
+		<servlet-name>ExcelDelete</servlet-name>
+		<servlet-class>com.imaginea.resumereader.servlet.EmployeeEditServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ExcelDelete</servlet-name>
+		<url-pattern>/resumereader/exceldelete</url-pattern>
+	</servlet-mapping>
 </web-app>

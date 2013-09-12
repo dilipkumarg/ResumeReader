@@ -56,7 +56,7 @@ public class SearchServlet extends HttpServlet {
 		long startTime = System.currentTimeMillis();
 		resumeSegregator.compareWithEmployeeList(
 				resumeSegregator.removeDuplicates(searchResult.getTopHits()),
-				excelReader.readToDelete(null));
+				excelReader.read(null));
 		segTime = System.currentTimeMillis() - startTime;
 		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}

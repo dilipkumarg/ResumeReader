@@ -29,13 +29,12 @@ public class ExcelManager {
 
 	}
 
-	/*public static void main(String[] args) throws IOException {
-		ExcelManager excelManager = new ExcelManager(
-				"/home/ashwin/Desktop/Book1.xlsx");
-		List<Integer> index = new ArrayList<Integer>();
-		index.add(394);
-		excelManager.delete(index);
-	}*/
+	/*
+	 * public static void main(String[] args) throws IOException { ExcelManager
+	 * excelManager = new ExcelManager( "/home/ashwin/Desktop/Book1.xlsx");
+	 * List<Integer> index = new ArrayList<Integer>(); index.add(394);
+	 * excelManager.delete(index); }
+	 */
 
 	/*
 	 * public ExcelManager() { this.fileIS =
@@ -44,42 +43,23 @@ public class ExcelManager {
 	 * }
 	 */
 
-	/*public List<String> read() throws IOException {
-		// Create an ArrayList to store the data read from excel sheet.
-		List<String> data = new ArrayList<String>();
-		try {
-			//
-			// Create an excel workbook from the file system.
-			//
-			XSSFWorkbook workbook = new XSSFWorkbook(this.fileIS);
-			//
-			// Get the first sheet on the workbook.
-			//
-			XSSFSheet sheet = workbook.getSheetAt(0);
-			//
-			// When we have a sheet object in hand we can iterate on
-			// each sheet's rows and on each row's cells. We store the
-			// data read in an ArrayList
-			Iterator<Row> rows = sheet.rowIterator();
-			while (rows.hasNext()) {
-				XSSFRow row = (XSSFRow) rows.next();
-				Iterator<Cell> cells = row.cellIterator();
-
-				while (cells.hasNext()) {
-					XSSFCell cell = (XSSFCell) cells.next();
-					data.add(cell.toString());
-					break;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (this.fileIS != null) {
-				this.fileIS.close();
-			}
-		}
-		return data;
-	}*/
+	/*
+	 * public List<String> read() throws IOException { // Create an ArrayList to
+	 * store the data read from excel sheet. List<String> data = new
+	 * ArrayList<String>(); try { // // Create an excel workbook from the file
+	 * system. // XSSFWorkbook workbook = new XSSFWorkbook(this.fileIS); // //
+	 * Get the first sheet on the workbook. // XSSFSheet sheet =
+	 * workbook.getSheetAt(0); // // When we have a sheet object in hand we can
+	 * iterate on // each sheet's rows and on each row's cells. We store the //
+	 * data read in an ArrayList Iterator<Row> rows = sheet.rowIterator(); while
+	 * (rows.hasNext()) { XSSFRow row = (XSSFRow) rows.next(); Iterator<Cell>
+	 * cells = row.cellIterator();
+	 * 
+	 * while (cells.hasNext()) { XSSFCell cell = (XSSFCell) cells.next();
+	 * data.add(cell.toString()); break; } } } catch (IOException e) {
+	 * e.printStackTrace(); } finally { if (this.fileIS != null) {
+	 * this.fileIS.close(); } } return data; }
+	 */
 
 	public void write(String employeeName, int employeeId) throws IOException {
 		// Get the Excel workbook
@@ -162,7 +142,8 @@ public class ExcelManager {
 		}
 	}
 
-	public Map<String, Object[]> readToDelete(List<Integer> index) throws IOException {
+	public Map<String, Object[]> readToDelete(List<Integer> index)
+			throws IOException {
 		String employeeName;
 		int employeeId, i = 0;
 		Cell cell;
@@ -184,13 +165,14 @@ public class ExcelManager {
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext()) {
 				XSSFRow row = (XSSFRow) rows.next();
-				if (index!= null && index.contains(i)) {
+				if (index != null && index.contains(i)) {
 					i++;
 					continue;
 				} else {
 					Iterator<Cell> cells = row.cellIterator();
 					employeeName = cells.next().getStringCellValue();
-					if("".equals(employeeName.trim()))break;
+					if ("".equals(employeeName.trim()))
+						break;
 					cell = cells.next();
 					if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
 						employeeId = Integer.parseInt(cell.toString());

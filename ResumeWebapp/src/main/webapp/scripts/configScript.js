@@ -174,8 +174,8 @@ resumeReader.Configuration = function () {
         var keys = Object.keys(fileObj);
         keys = keys.sort();
         for (var i = 0; i < keys.length; i++) {
-            targetDiv.append("<label class='span6 show' title='" + keys[i] + "'>" +
-                "<input type='checkbox' class='file-check checkbox' value='" + keys[i] + "'>" +
+            targetDiv.append("<label class='span6 show checkbox' title='" + keys[i] + "'>" +
+                "<input type='checkbox' class='file-check' value='" + keys[i] + "'>" +
                 " <span>" + fileObj[keys[i]] + "</span>" +
                 "</label>");
         }

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.imaginea.resumereader.base.ResumeIndexSearcher;
@@ -18,9 +17,9 @@ import com.imaginea.resumereader.entities.FileInfo;
 import com.imaginea.resumereader.entities.SearchResult;
 import com.imaginea.resumereader.exceptions.FileDirectoryEmptyException;
 import com.imaginea.resumereader.helpers.ExcelManager;
+import com.imaginea.resumereader.helpers.HitsToJson;
 import com.imaginea.resumereader.helpers.PropertyFileReader;
 import com.imaginea.resumereader.helpers.ResumeSegregator;
-import com.imaginea.resumereader.helpers.StringHighlighter;
 
 public class SearchServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -61,16 +60,6 @@ public class SearchServlet extends HttpServlet {
 		printWriter.print(toJsonString(searchResult, resumeSegregator));
 	}
 
-	/*
-	 * private String[] myCustomSplitter(String word) { String[] words = new
-	 * String(); Pattern p = Pattern.compile("(?:[^\\s\"]+|\"[^\"]*\")+");
-	 * Matcher m = p.matcher(word);
-	 * 
-	 * while(m.find()) { words[words.length] = m.group(); }
-	 * 
-	 * return words; }
-	 */
-
 	@SuppressWarnings("unchecked")
 	private JSONObject toJsonString(SearchResult searchResult,
 			ResumeSegregator resumeSegregator) {
@@ -93,24 +82,8 @@ public class SearchServlet extends HttpServlet {
 		return jsonObj;
 	}
 
-	@SuppressWarnings("unchecked")
 	private JSONObject hitsToJson(List<FileInfo> hits) {
-		JSONObject hitsJSON = new JSONObject();
-		StringHighlighter sh = new StringHighlighter(
-				"<span class='highlight'>", "</span>", 20);
-		for (FileInfo hit : hits) {
-			JSONObject fileObj = new JSONObject();
-			JSONArray fragments = new JSONArray();
-			fileObj.put("filepath", hit.getFilePath());
-			fileObj.put("closematch", hit.getCloseMatch());
-			// highlighting the context and putting in array
-			for (String highFragment : sh.highlightFragments(hit.getContent(),
-					this.contextKey)) {
-				fragments.add(highFragment);
-			}
-			fileObj.put("summary", fragments);
-			hitsJSON.put(hit.getTitle(), fileObj);
-		}
-		return hitsJSON;
+		HitsToJson hitsJson = new HitsToJson(this.contextKey, hits);
+		return hitsJson.hitsToJson();
 	}
 }

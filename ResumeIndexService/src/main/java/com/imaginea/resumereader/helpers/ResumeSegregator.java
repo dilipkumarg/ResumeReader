@@ -1,12 +1,13 @@
 package com.imaginea.resumereader.helpers;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
 
 import com.imaginea.resumereader.entities.FileInfo;
 
@@ -22,26 +23,86 @@ public class ResumeSegregator {
 	}
 
 	public void compareWithEmployeeList(List<FileInfo> personNames,
-			Map<String, Object[]> map) throws IOException,
-			FileNotFoundException {
-		if (personNames != null) {
-			Set<String> keyset = map.keySet();
-			String employee;
-			for (FileInfo person : personNames) {
-				double similarity = 0.0, jaro;
-				String closeMatch = "";
-				for (String key : keyset) {
-					employee = ((String) map.get(key)[0]).toLowerCase();
-					jaro = PersonNameMatcher.similarity(person.getTitle()
-							.toLowerCase(), employee);
-					if (jaro > similarity) {
-						similarity = jaro;
-						closeMatch = employee;
-					}
-				}
-				segregate(similarity, person, closeMatch);
+			Map<String, Object[]> map) throws IOException {
+		// calling worker class
+		ForkJoinComapareWithEmployee process = new ForkJoinComapareWithEmployee(
+				personNames, map);
+		ForkJoinPool pool = new ForkJoinPool();
+		pool.invoke(process);
+	}
+
+	/**
+	 * This class uses fork-join framework for doing parallel processing. And
+	 * this mainly used for decreasing response time
+	 * 
+	 * @author dilip
+	 * 
+	 */
+	class ForkJoinComapareWithEmployee extends RecursiveAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		static final int THRESHOLD = 1;
+		List<FileInfo> empList;
+		Map<String, Object[]> empMap;
+
+		ForkJoinComapareWithEmployee(List<FileInfo> personNames,
+				Map<String, Object[]> map) {
+			this.empList = personNames;
+			this.empMap = map;
+		}
+
+		@Override
+		protected void compute() {
+			if (empList.size() <= THRESHOLD) {
+				computeDirect();
+			} else {
+				// dividing the list into two parts
+				int center = empList.size() / 2;
+				List<FileInfo> lPart = splitList(empList, 0, center);
+				List<FileInfo> rPart = splitList(empList, center,
+						empList.size());
+				invokeAll(new ForkJoinComapareWithEmployee(lPart, empMap),
+						new ForkJoinComapareWithEmployee(rPart, empMap));
 			}
 		}
+
+		protected void computeDirect() {
+			if (empList != null) {
+				Set<String> keyset = empMap.keySet();
+				String employee;
+				for (FileInfo person : empList) {
+					double similarity = 0.0, jaro;
+					String closeMatch = "";
+					for (String key : keyset) {
+						employee = ((String) empMap.get(key)[0]).toLowerCase();
+						jaro = PersonNameMatcher.similarity(person.getTitle()
+								.toLowerCase(), employee);
+						if (jaro > similarity) {
+							similarity = jaro;
+							closeMatch = employee;
+						}
+						if (jaro == 1.0) {
+							// if exact match found breaking remaining loop
+							break;
+						}
+					}
+					segregate(similarity, person, closeMatch);
+				}
+			}
+		}
+
+		// it is generic function to split a list
+		protected <T> List<T> splitList(List<T> list, int start, int end) {
+			List<T> part = new ArrayList<T>();
+			for (int i = start; i < end; i++) {
+				part.add(list.get(i));
+			}
+			return part;
+		}
+
 	}
 
 	public List<FileInfo> removeDuplicates(List<FileInfo> employeeList) {
@@ -68,6 +129,7 @@ public class ResumeSegregator {
 		return resultList;
 	}
 
+	// it will put the employee in appropriate list based on similarity
 	private void segregate(double similarity, FileInfo employee,
 			String closeMatch) {
 		// attaching match details

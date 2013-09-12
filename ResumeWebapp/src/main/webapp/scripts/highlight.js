@@ -27,7 +27,7 @@ $.fn.wrapInTag = function (opts) {
                 var str = o.words[i].replace(/"/g, "").trim(),// deleting double quotes from word
                 // regular expression for selecting desired string.
                     re = new RegExp("([/\\s>])(" + str + "(\\([/\\w]+\\)){0,1}([-_.]*[/\\d]*)*)(([/\\W]){0,1}[/\\s<])", "gim");
-                html = html.replace(re, '$1' + o.tag.replace('>', ' class="highlight"> ') + '$2' + o.tag.replace('<', '</') + '$5 ');
+                html = html.replace(re, '$1' + o.tag.replace('>', ' class="highlight"> ') + '$2' + o.tag.replace('<', '</') + '$5');
             }
         }
         $(this).html(html);

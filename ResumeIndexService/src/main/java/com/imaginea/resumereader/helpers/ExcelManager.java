@@ -29,38 +29,6 @@ public class ExcelManager {
 
 	}
 
-	/*
-	 * public static void main(String[] args) throws IOException { ExcelManager
-	 * excelManager = new ExcelManager( "/home/ashwin/Desktop/Book1.xlsx");
-	 * List<String> index = new ArrayList<String>(); index.add("11450");
-	 * excelManager.delete(index); }
-	 */
-
-	/*
-	 * public ExcelManager() { this.fileIS =
-	 * ExcelManager.class.getClassLoader().getResourceAsStream( ("Book1.xlsx"));
-	 * filePath = ExcelManager.class.getClassLoader().getResource("Book1.xlsx");
-	 * }
-	 */
-
-	/*
-	 * public List<String> read() throws IOException { // Create an ArrayList to
-	 * store the data read from excel sheet. List<String> data = new
-	 * ArrayList<String>(); try { // // Create an excel workbook from the file
-	 * system. // XSSFWorkbook workbook = new XSSFWorkbook(this.fileIS); // //
-	 * Get the first sheet on the workbook. // XSSFSheet sheet =
-	 * workbook.getSheetAt(0); // // When we have a sheet object in hand we can
-	 * iterate on // each sheet's rows and on each row's cells. We store the //
-	 * data read in an ArrayList Iterator<Row> rows = sheet.rowIterator(); while
-	 * (rows.hasNext()) { XSSFRow row = (XSSFRow) rows.next(); Iterator<Cell>
-	 * cells = row.cellIterator();
-	 * 
-	 * while (cells.hasNext()) { XSSFCell cell = (XSSFCell) cells.next();
-	 * data.add(cell.toString()); break; } } } catch (IOException e) {
-	 * e.printStackTrace(); } finally { if (this.fileIS != null) {
-	 * this.fileIS.close(); } } return data; }
-	 */
-
 	public void write(String employeeName, int employeeId) throws IOException {
 		// Get the Excel workbook
 		XSSFWorkbook workbook = new XSSFWorkbook(this.fileIS);
@@ -79,12 +47,6 @@ public class ExcelManager {
 		Map<String, Object[]> data = new TreeMap<String, Object[]>();
 		data.put(Integer.toString(++i),
 				new Object[] { employeeName, employeeId });
-		/*
-		 * data.put(Integer.toString(++i), new Object[] {"Lokesh", 11425 });
-		 * data.put(Integer.toString(++i), new Object[] {"John", 11426 });
-		 * data.put(Integer.toString(++i), new Object[] {"Brian", 11427 });
-		 */
-
 		// Iterate over data and write to sheet
 		Set<String> keyset = data.keySet();
 		int rownum = lastColumnIndex + 1;

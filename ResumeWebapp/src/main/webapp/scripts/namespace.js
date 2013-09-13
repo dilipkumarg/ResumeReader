@@ -39,7 +39,9 @@ var resumeReader = {
         view: "resumereader/view",
         config: "resumereader/config",
         update: "resumereader/update",
-        delete: "resumereader/delete"
+        delete: "resumereader/delete",
+        exceldelete: "resumereader/exceldelete",
+        exceladd: "resumereader/addemployee"
     },
     urlParams: {
         searchKey: "searchKey",

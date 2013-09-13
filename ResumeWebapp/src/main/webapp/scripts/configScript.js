@@ -222,10 +222,25 @@ resumeReader.Configuration = function () {
             }
         });
     }
+    
+    function validateEmployee() {
+    	var valid = true;
+        var empName = $('#empName').val();
+		var empId = $('#empId').val();
+		if (isNaN(empId) || empId % 1 != 0
+				|| empId.toString().indexOf('.') != -1) {
+			alert("Please enter a integral value for Employee Id");
+			valid = false;
+		} else if (!isNaN(parseFloat(empName)) && isFinite(empName)) {
+			alert("Please enter a String for Employee Name");
+			valid = false;
+		}
+		return valid;
+    }
 
     function loadEmployeeList(targetDiv) {
         $.ajax({
-            url: "resumereader/exceldelete",
+            url: resumeReader.url.exceldelete,
             success: function (response) {
                 targetDiv.empty();
                 printList(JSON.parse(response), targetDiv);
@@ -279,7 +294,36 @@ resumeReader.Configuration = function () {
             }
         }
     }
-
+    
+    function addEmployee() {
+    	if(validateEmployee()) {
+        var addModal = $("#EmpExcelDiv");
+        	addModal.myPrompt({showHide: true}, function (res) {
+                    $.ajax({
+                        type: "post",
+                        url: resumeReader.url.exceladd,
+                        data: {
+                        	empName : $('#empName').val(),
+                    		empId : $('#empId').val()
+                        },
+                        beforeSend: function (xhr) {
+                            // adding security key in request header
+                            xhr.setRequestHeader(resumeReader.urlParams.securityKey, res);
+                        },
+                        success: function (res) {
+                            printSuccessAlert(res);
+                        },
+                        error: function (xhr) {
+                            printErrorAlert(xhr);
+                        },
+                        complete: function () {
+                        	addModal.modal("hide");
+                        }
+                    });
+                });
+    	}
+    }
+    
     function deleteEmployees() {
         var deleteModal = $("#employeeDeleteModal");
         var selectedBoxes = getSelectedFiles(deleteModal.find(".modal-body"));
@@ -289,7 +333,7 @@ resumeReader.Configuration = function () {
                 deleteModal.myPrompt({showHide: true}, function (res) {
                     $.ajax({
                         type: "post",
-                        url: "resumereader/exceldelete",
+                        url: resumeReader.url.exceldelete,
                         data: {
                             employeeList: JSON.stringify(selectedBoxes),
                             accessKey: res
@@ -365,6 +409,9 @@ resumeReader.Configuration = function () {
         },
         loadFileList: function (targetDiv) {
             loadFileList(targetDiv);
+        },
+        addEmployee: function (targetDiv) {
+        	addEmployee(targetDiv);
         },
         loadEmployeeList: function (targetDiv) {
             loadEmployeeList(targetDiv);

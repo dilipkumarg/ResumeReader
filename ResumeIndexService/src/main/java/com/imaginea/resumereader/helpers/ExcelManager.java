@@ -32,7 +32,7 @@ public class ExcelManager {
 	/*
 	 * public static void main(String[] args) throws IOException { ExcelManager
 	 * excelManager = new ExcelManager( "/home/ashwin/Desktop/Book1.xlsx");
-	 * List<Integer> index = new ArrayList<Integer>(); index.add(394);
+	 * List<String> index = new ArrayList<String>(); index.add("11450");
 	 * excelManager.delete(index); }
 	 */
 
@@ -111,25 +111,21 @@ public class ExcelManager {
 		}
 	}
 
-	void delete(List<Integer> index) throws IOException {
-		Map<String, Object[]> data = readToDelete(index);
+	public void delete(List<String> index) throws IOException {
+		Map<Integer, String> data = read(index);
 		new File(this.filePath).delete();
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet("Sheet1");
 		// Iterate over data and write to sheet
-		Set<String> keyset = data.keySet();
-		int rownum = 0;
-		for (String key : keyset) {
+		int cellnum, rownum = 0;
+		Cell cell;
+		for (Map.Entry<Integer, String> entry : data.entrySet()) {
 			Row row = ((XSSFSheet) sheet).createRow(rownum++);
-			Object[] objArr = data.get(key);
-			int cellnum = 0;
-			for (Object obj : objArr) {
-				Cell cell = row.createCell(cellnum++);
-				if (obj instanceof String)
-					cell.setCellValue((String) obj);
-				else if (obj instanceof Integer)
-					cell.setCellValue((Integer) obj);
-			}
+			cellnum = 0;
+			cell = row.createCell(cellnum++);
+			cell.setCellValue(entry.getValue());
+			cell = row.createCell(cellnum++);
+			cell.setCellValue(entry.getKey());
 		}
 		try {
 			// Write the workbook in file system
@@ -142,13 +138,12 @@ public class ExcelManager {
 		}
 	}
 
-	public Map<String, Object[]> readToDelete(List<Integer> index)
-			throws IOException {
+	public Map<Integer, String> read(List<String> index) throws IOException {
 		String employeeName;
-		int employeeId, i = 0;
+		int employeeId;
 		Cell cell;
 		// Create an ArrayList to store the data read from excel sheet.
-		Map<String, Object[]> data = new TreeMap<String, Object[]>();
+		Map<Integer, String> data = new TreeMap<Integer, String>();
 		try {
 			//
 			// Create an excel workbook from the file system.
@@ -165,22 +160,20 @@ public class ExcelManager {
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext()) {
 				XSSFRow row = (XSSFRow) rows.next();
-				if (index != null && index.contains(i)) {
-					i++;
+				Iterator<Cell> cells = row.cellIterator();
+				employeeName = cells.next().getStringCellValue();
+				if ("".equals(employeeName.trim()))
+					break;
+				cell = cells.next();
+				if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+					employeeId = Integer.parseInt(cell.toString());
+				} else {
+					employeeId = (int) cell.getNumericCellValue();
+				}
+				if (index != null && index.contains(employeeId + "")) {
 					continue;
 				} else {
-					Iterator<Cell> cells = row.cellIterator();
-					employeeName = cells.next().getStringCellValue();
-					if ("".equals(employeeName.trim()))
-						break;
-					cell = cells.next();
-					if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-						employeeId = Integer.parseInt(cell.toString());
-					} else {
-						employeeId = (int) cell.getNumericCellValue();
-					}
-					data.put(Integer.toString(i++), new Object[] {
-							employeeName, employeeId });
+					data.put(employeeId, employeeName);
 				}
 
 			}

@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
@@ -23,7 +22,7 @@ public class ResumeSegregator {
 	}
 
 	public void compareWithEmployeeList(List<FileInfo> personNames,
-			Map<String, Object[]> map) throws IOException {
+			Map<Integer, String> map) throws IOException {
 		// calling worker class
 		ForkJoinComapareWithEmployee process = new ForkJoinComapareWithEmployee(
 				personNames, map);
@@ -46,10 +45,10 @@ public class ResumeSegregator {
 		private static final long serialVersionUID = 1L;
 		static final int THRESHOLD = 1;
 		List<FileInfo> empList;
-		Map<String, Object[]> empMap;
+		Map<Integer, String> empMap;
 
 		ForkJoinComapareWithEmployee(List<FileInfo> personNames,
-				Map<String, Object[]> map) {
+				Map<Integer, String> map) {
 			this.empList = personNames;
 			this.empMap = map;
 		}
@@ -71,25 +70,25 @@ public class ResumeSegregator {
 
 		protected void computeDirect() {
 			if (empList != null) {
-				Set<String> keyset = empMap.keySet();
 				String employee;
 				for (FileInfo person : empList) {
-					double similarity = 0.0, jaro;
+					double maxScore = 0.0, jaroScore;
 					String closeMatch = "";
-					for (String key : keyset) {
-						employee = ((String) empMap.get(key)[0]).toLowerCase();
-						jaro = PersonNameMatcher.similarity(person.getTitle()
-								.toLowerCase(), employee);
-						if (jaro > similarity) {
-							similarity = jaro;
+					for (Map.Entry<Integer, String> entry : empMap.entrySet()) {
+						employee = (entry.getValue()).toLowerCase();
+						jaroScore = PersonNameMatcher.similarity(person
+								.getTitle().toLowerCase(), employee);
+						if (jaroScore > maxScore) {
+							maxScore = jaroScore;
 							closeMatch = employee;
-						}
-						if (jaro == 1.0) {
 							// if exact match found breaking remaining loop
-							break;
+							if (maxScore == 1.0) {
+								break;
+							}
 						}
+
 					}
-					segregate(similarity, person, closeMatch);
+					segregate(maxScore, person, closeMatch);
 				}
 			}
 		}

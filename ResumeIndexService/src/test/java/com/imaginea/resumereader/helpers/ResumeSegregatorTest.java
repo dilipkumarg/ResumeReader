@@ -23,8 +23,8 @@ public class ResumeSegregatorTest {
 		// PropertyFileReader().getEmployeeExcelPath());
 		personNames.add(new FileInfo(null, "Apurba Nath", null, null));
 		personNames.add(new FileInfo(null, "Apurba nath", null, null));
-		Map<String, Object[]> employeeNames = new TreeMap<String, Object[]>();
-		employeeNames.put(Integer.toString(0), new Object[] {"Apurba Nath", 11425 });
+		Map<Integer, String> employeeNames = new TreeMap<Integer, String>();
+		employeeNames.put(11425, "Apurba Nath");
 		resumeSegregator.compareWithEmployeeList(personNames, employeeNames);
 		assertTrue("as", 2 == resumeSegregator.getActiveEmployees().size());
 		assertTrue("as", 0 == resumeSegregator.getProbableActiveEmployess()

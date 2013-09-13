@@ -47,6 +47,34 @@
 
 
         });
+        $(function () {
+            resumeReader.Configuration.loadConfigValues();
+
+
+            // binding events to the delete modals, to fetch file list from server
+            var deleteModal = $("#employeeDeleteModal"),
+                    prevBodyTxt = deleteModal.find(".modal-body").html();
+            // loading data
+            deleteModal.on('show', function () {
+                resumeReader.Configuration.loadEmployeeList(deleteModal.find(".modal-body"));
+            });
+            // removing data for fresh copy
+            deleteModal.on('hide', function () {
+                deleteModal.find(".modal-body").html(prevBodyTxt);
+            });
+
+            // for checking all on select all button
+            $("#cbSelectAllEmp").on("click", function () {
+                $(".file-check").prop("checked", this.checked);
+                // toggle select filtered on select all toggle
+                $("#cbSelectFilteredEmp").prop("checked", this.checked);
+            });
+            // for checking all on select filtered button
+            $("#cbSelectFilteredEmp").on("click", function () {
+                $(".show").find(".file-check").prop("checked", this.checked);
+                resumeReader.Configuration.checkSelectAll();
+            });
+        });
         function loadXMLDoc() {
             var xmlhttp;
             if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -161,8 +189,10 @@
                                                      class="span5 inputBox">
                 <!--<div class="enableTextDiv" data-toggle="txtEmployeeList" style="position:absolute; left:0; right:0; top:0; bottom:0; cursor: pointer;"></div>-->
                 <button class="btn btn-primary" onclick="loadXMLDoc()">Add Employee</button>
+                <button class="btn btn-danger" onclick="$(employeeDeleteModal).modal('show');">Delete Resumes</button>
             </fieldset>
         </div>
+
     </div>
 
 
@@ -235,6 +265,41 @@
         </div>
     </div>
 
+
+    <div id="employeeDeleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <div>
+                <h3 id="deleteModalEmployeeLabel">Select employees to delete</h3>
+                <hr>
+                <div>
+                    <label id="lblSelectAllEmp" class="span2 checkbox">
+                        <input type="checkbox" id="cbSelectAllEmp"><span> Toggle All</span>
+                    </label>
+                    <label id="lblSelectFilteredEmp" class="span2 invisible checkbox">
+                        <input type="checkbox" id="cbSelectFilteredEmp"> <span> Toggle Filtered </span>
+                    </label>
+                    <input type="text" placeholder="Filter Names"
+                           onkeyup="resumeReader.Configuration.filterByEmployeeName($(this).val())"
+                           class="span2 search-query">
+                </div>
+            </div>
+        </div>
+        <div class="modal-body">Please wait.. fetching results</div>
+        <div class="modal-footer">
+            <div class="alert hide">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <span id="spanDeleteEmpResponse">Response will be shown here</span>
+            </div>
+            <span class="help-block">After deleting documents, please update the index to reflect changes</span>
+            <button id="btnDeleteAll" class="btn btn-danger"
+                    onclick="resumeReader.Configuration.deleteEmployees();">Delete
+                Selected
+            </button>
+            <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        </div>
+    </div>
 </div>
 </body>
 </html>

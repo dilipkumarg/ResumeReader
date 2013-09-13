@@ -1,9 +1,6 @@
 /**
- * Created with JetBrains WebStorm.
- * User: dilip
- * Date: 12/8/13
- * Time: 2:33 PM
- * To change this template use File | Settings | File Templates.
+ * Created with JetBrains WebStorm. User: dilip Date: 12/8/13 Time: 2:33 PM To
+ * change this template use File | Settings | File Templates.
  */
 
 resumeReader.Configuration = function () {
@@ -147,7 +144,8 @@ resumeReader.Configuration = function () {
                 return;
             }
             // getting selected button.
-            // data-value is the attribute holding clean update and normal update
+            // data-value is the attribute holding clean update and normal
+            // update
             var btn = $("#" + e.target.id),
                 data = {
                     cleanUpdate: btn.attr("data-value")
@@ -165,12 +163,12 @@ resumeReader.Configuration = function () {
             if (selector.innerHTML.toLowerCase().lastIndexOf(str.toLowerCase()) === -1) {
                 selected[i].setAttribute("class", "hide");
             } else {
-                selected[i].setAttribute("class", "span6 show");
+                selected[i].setAttribute("class", "span6 show checkbox");
             }
         }
     }
 
-    function printFileList(fileObj, targetDiv) {
+    function printList(fileObj, targetDiv) {
         var keys = Object.keys(fileObj);
         keys = keys.sort();
         for (var i = 0; i < keys.length; i++) {
@@ -217,7 +215,20 @@ resumeReader.Configuration = function () {
             url: resumeReader.url.delete,
             success: function (response) {
                 targetDiv.empty();
-                printFileList(JSON.parse(response), targetDiv);
+                printList(JSON.parse(response), targetDiv);
+            },
+            error: function (xhr) {
+                printFileFetchError(xhr, targetDiv);
+            }
+        });
+    }
+
+    function loadEmployeeList(targetDiv) {
+        $.ajax({
+            url: "resumereader/exceldelete",
+            success: function (response) {
+                targetDiv.empty();
+                printList(JSON.parse(response), targetDiv);
             },
             error: function (xhr) {
                 printFileFetchError(xhr, targetDiv);
@@ -269,6 +280,39 @@ resumeReader.Configuration = function () {
         }
     }
 
+    function deleteEmployees() {
+        var deleteModal = $("#employeeDeleteModal");
+        var selectedBoxes = getSelectedFiles(deleteModal.find(".modal-body"));
+        if (selectedBoxes.length > 0) {
+            var res = confirm("Are you sure you want to delete " + selectedBoxes.length + " employees?");
+            if (res) {
+                deleteModal.myPrompt({showHide: true}, function (res) {
+                    $.ajax({
+                        type: "post",
+                        url: "resumereader/exceldelete",
+                        data: {
+                            employeeList: JSON.stringify(selectedBoxes),
+                            accessKey: res
+                        },
+                        beforeSend: function (xhr) {
+                            // adding security key in request header
+                            xhr.setRequestHeader(resumeReader.urlParams.securityKey, res);
+                        },
+                        success: function (res) {
+                            printSuccessAlert(res);
+                        },
+                        error: function (xhr) {
+                            printErrorAlert(xhr);
+                        },
+                        complete: function () {
+                            deleteModal.modal("hide");
+                        }
+                    });
+                });
+            }
+        }
+    }
+
     var DZintialized = false;
     var myDropzone;
 
@@ -281,7 +325,7 @@ resumeReader.Configuration = function () {
                 addRemoveLinks: true,
                 parallelUploads: 10,
                 maxFiles: 10,
-                //uploadMultiple:true,
+                // uploadMultiple:true,
                 dictInvalidFileType: "Please upload only doc, docx and pdf files"
             });
             $("#" + ids.btnUploadAll).click(function () {
@@ -322,6 +366,9 @@ resumeReader.Configuration = function () {
         loadFileList: function (targetDiv) {
             loadFileList(targetDiv);
         },
+        loadEmployeeList: function (targetDiv) {
+            loadEmployeeList(targetDiv);
+        },
         filterByName: function (str) {
             filterByName(str, $("#" + ids.modalDelete).find(".modal-body"));
             // for hiding and un hiding select all filtered checkbox
@@ -335,8 +382,14 @@ resumeReader.Configuration = function () {
         checkSelectAll: function () {
             checkSelectAll();
         },
+        filterByEmployeeName: function (str) {
+            filterByName(str, $("#employeeDeleteModal").find(".modal-body"));
+        },
         deleteFiles: function () {
             deleteFiles();
+        },
+        deleteEmployees: function () {
+            deleteEmployees();
         },
         loadUploadBox: function (targetDiv) {
             $(targetDiv).myPrompt({}, function (res) {

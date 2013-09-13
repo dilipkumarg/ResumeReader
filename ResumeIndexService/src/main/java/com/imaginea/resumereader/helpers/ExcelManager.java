@@ -29,12 +29,13 @@ public class ExcelManager {
 
 	}
 
-	/*
-	 * public static void main(String[] args) throws IOException { ExcelManager
-	 * excelManager = new ExcelManager( "/home/ashwin/Desktop/Book1.xlsx");
-	 * List<Integer> index = new ArrayList<Integer>(); index.add(394);
-	 * excelManager.delete(index); }
-	 */
+	/*public static void main(String[] args) throws IOException {
+		ExcelManager excelManager = new ExcelManager(
+				"/home/ashwin/Desktop/Book1.xlsx");
+		List<String> index = new ArrayList<String>();
+		index.add("11450");
+		excelManager.delete(index);
+	}*/
 
 	/*
 	 * public ExcelManager() { this.fileIS =
@@ -111,7 +112,7 @@ public class ExcelManager {
 		}
 	}
 
-	void delete(List<String> index) throws IOException {
+	public void delete(List<String> index) throws IOException {
 		Map<Integer, String> data = read(index);
 		new File(this.filePath).delete();
 		XSSFWorkbook workbook = new XSSFWorkbook();
@@ -140,7 +141,7 @@ public class ExcelManager {
 
 	public Map<Integer, String> read(List<String> index) throws IOException {
 		String employeeName;
-		int employeeId, i = 0;
+		int employeeId;
 		Cell cell;
 		// Create an ArrayList to store the data read from excel sheet.
 		Map<Integer, String> data = new TreeMap<Integer, String>();
@@ -160,20 +161,19 @@ public class ExcelManager {
 			Iterator<Row> rows = sheet.rowIterator();
 			while (rows.hasNext()) {
 				XSSFRow row = (XSSFRow) rows.next();
-				if (index != null && index.contains(i)) {
-					i++;
+				Iterator<Cell> cells = row.cellIterator();
+				employeeName = cells.next().getStringCellValue();
+				if ("".equals(employeeName.trim()))
+					break;
+				cell = cells.next();
+				if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+					employeeId = Integer.parseInt(cell.toString());
+				} else {
+					employeeId = (int) cell.getNumericCellValue();
+				}
+				if (index != null && index.contains(employeeId+"")) {
 					continue;
 				} else {
-					Iterator<Cell> cells = row.cellIterator();
-					employeeName = cells.next().getStringCellValue();
-					if ("".equals(employeeName.trim()))
-						break;
-					cell = cells.next();
-					if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-						employeeId = Integer.parseInt(cell.toString());
-					} else {
-						employeeId = (int) cell.getNumericCellValue();
-					}
 					data.put(employeeId, employeeName);
 				}
 

@@ -32,7 +32,7 @@ public class DocumentViewerServlet extends HttpServlet {
 		String filePath = req.getParameter("filename");
 		String resumePath = "";
 		try {
-			resumePath = new FilePathHelper().getCanonicalPath(filePath);
+			resumePath = FilePathHelper.getInstance().getCanonicalPath(filePath);
 			LOGGER.log(Level.INFO, "viewing document: " + filePath
 					+ "\n ResumePath:" + resumePath);
 		} catch (FileDirectoryEmptyException fe) {

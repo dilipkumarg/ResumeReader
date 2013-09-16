@@ -16,7 +16,7 @@ public class ResumeIndexSearcher {
 	PropertyFileReader properties;
 
 	public ResumeIndexSearcher() throws IOException {
-		properties = new PropertyFileReader();
+		properties = PropertyFileReader.getInstance();
 	}
 
 	public int updateIndex() throws IOException, FileDirectoryEmptyException,

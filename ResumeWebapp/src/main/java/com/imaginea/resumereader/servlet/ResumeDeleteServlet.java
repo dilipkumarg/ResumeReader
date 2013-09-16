@@ -32,8 +32,8 @@ public class ResumeDeleteServlet extends HttpServlet {
 
 	public ResumeDeleteServlet() throws FileDirectoryEmptyException,
 			IOException {
-		pathHelper = new FilePathHelper();
-		prop = new PropertyFileReader();
+		pathHelper = FilePathHelper.getInstance();
+		prop = PropertyFileReader.getInstance();
 	}
 
 	public void doGet(HttpServletRequest req, HttpServletResponse res)

@@ -23,7 +23,7 @@ public class PropertiesConfigurationServlet extends HttpServlet {
 		JSONObject configValues = new JSONObject();
 		PropertyFileReader prop = null;
 		try {
-			prop = new PropertyFileReader();
+			prop = PropertyFileReader.getInstance();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -46,7 +46,7 @@ public class PropertiesConfigurationServlet extends HttpServlet {
 			throws IOException {
 		PropertyFileReader prop = null;
 		try {
-			prop = new PropertyFileReader();
+			prop = PropertyFileReader.getInstance();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,

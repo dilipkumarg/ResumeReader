@@ -2,7 +2,6 @@ package com.imaginea.resumereader.loglayout;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.apache.log4j.HTMLLayout;
 import org.apache.log4j.Layout;
@@ -143,7 +142,7 @@ public class MyLayout extends HTMLLayout {
 		return sbuf.toString();
 	}
 
-	void appendThrowableAsHTML(String[] s, StringBuffer sbuf) {
+	void appendThrowableAsHTML(final String[] s, final StringBuffer sbuf) {
 		if (s != null) {
 			int len = s.length;
 			if (len == 0)

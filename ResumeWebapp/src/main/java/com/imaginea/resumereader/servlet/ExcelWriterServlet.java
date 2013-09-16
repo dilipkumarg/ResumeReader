@@ -17,7 +17,7 @@ public class ExcelWriterServlet extends HttpServlet {
 		ExcelManager excelManager = null;
 		PropertyFileReader prop = null;
 		try {
-			prop = new PropertyFileReader();
+			prop = PropertyFileReader.getInstance();
 			excelManager = new ExcelManager(prop.getEmployeeExcelPath());
 		} catch (IOException e) {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,

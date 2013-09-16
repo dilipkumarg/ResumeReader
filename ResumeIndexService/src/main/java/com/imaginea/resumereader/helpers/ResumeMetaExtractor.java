@@ -12,9 +12,17 @@ import org.apache.tika.exception.TikaException;
 
 public class ResumeMetaExtractor {
 	private List<String> dictionary = null;
+	private static ResumeMetaExtractor instance = null;
 
-	public ResumeMetaExtractor() {
+	private ResumeMetaExtractor() {
 
+	}
+
+	public static ResumeMetaExtractor getInstance() {
+		if (instance == null) {
+			instance = new ResumeMetaExtractor();
+		}
+		return instance;
 	}
 
 	public String getResumeSummary(String body) throws IOException,
@@ -142,7 +150,7 @@ public class ResumeMetaExtractor {
 				this.dictionary.add(s.next().toLowerCase());
 			}
 			s.close();
-			// adding tech abbrevations 
+			// adding tech abbrevations
 			Scanner abbrev = new Scanner(this.getClass().getClassLoader()
 					.getResourceAsStream("abbrevations_tech.txt"));
 			while (abbrev.hasNext()) {

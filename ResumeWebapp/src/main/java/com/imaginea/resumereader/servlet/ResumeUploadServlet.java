@@ -28,7 +28,7 @@ public class ResumeUploadServlet extends HttpServlet {
 			throws IOException {
 		response.setContentType("application/json");
 		PrintWriter out = response.getWriter();
-		PropertyFileReader prop = new PropertyFileReader();
+		PropertyFileReader prop = PropertyFileReader.getInstance();
 		if (request.getHeader("accessKey").equals(prop.getSecurityKey())) {
 			// checking whether user sending MultiPart content or not
 			if (ServletFileUpload.isMultipartContent(request)) {

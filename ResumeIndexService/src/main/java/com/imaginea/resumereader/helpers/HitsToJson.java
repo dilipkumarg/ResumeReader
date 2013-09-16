@@ -17,12 +17,12 @@ public class HitsToJson {
 	String contextKey;
 	List<FileInfo> hits;
 
-	class HitToJson extends RecursiveAction {
+	class ForkInHitsToJson extends RecursiveAction {
 		private static final long serialVersionUID = 1L;
 		static final int FILE_COUNT_THRESHOLD = 1;
 		final int start, length;
 
-		HitToJson(int start, int length) {
+		ForkInHitsToJson(int start, int length) {
 			this.start = start;
 			this.length = length;
 		}
@@ -37,8 +37,9 @@ public class HitsToJson {
 				 * List<FileInfo> part1 = splitList(hits, 0, center);
 				 * List<FileInfo> part2 = splitList(hits, center, hits.size());
 				 */
-				invokeAll(new HitToJson(this.start, split), new HitToJson(start
-						+ split, this.length - split));
+				invokeAll(
+						new ForkInHitsToJson(this.start, split),
+						new ForkInHitsToJson(start + split, this.length - split));
 			}
 		}
 
@@ -74,7 +75,7 @@ public class HitsToJson {
 	}
 
 	public JSONObject hitsToJson() {
-		HitToJson process = new HitToJson(0, hits.size());
+		ForkInHitsToJson process = new ForkInHitsToJson(0, hits.size());
 		ForkJoinPool pool = new ForkJoinPool();
 		pool.invoke(process);
 		return this.hitsJSON;

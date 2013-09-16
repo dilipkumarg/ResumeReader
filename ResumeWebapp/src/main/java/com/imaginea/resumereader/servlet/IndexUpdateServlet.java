@@ -55,7 +55,7 @@ public class IndexUpdateServlet extends HttpServlet {
 
 	private boolean isAutorizedUser(String securityKey) throws IOException {
 		PropertyFileReader prop = null;
-		prop = new PropertyFileReader();
+		prop = PropertyFileReader.getInstance();
 		if (securityKey.trim().equals(prop.getSecurityKey())) {
 			return true;
 		}

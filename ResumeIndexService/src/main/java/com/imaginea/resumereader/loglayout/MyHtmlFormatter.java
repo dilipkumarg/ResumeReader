@@ -1,4 +1,4 @@
-package com.imaginea.resumereader.helpers;
+package com.imaginea.resumereader.loglayout;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -27,7 +27,7 @@ public class EmployeeEditServlet extends HttpServlet {
 			throws IOException {
 		PropertyFileReader prop = null;
 		try {
-			prop = new PropertyFileReader();
+			prop = PropertyFileReader.getInstance();
 			ExcelManager excel = new ExcelManager(prop.getEmployeeExcelPath());
 			res.getWriter().print(toJson(excel.read(null)).toJSONString());
 		} catch (IOException e) {
@@ -41,7 +41,7 @@ public class EmployeeEditServlet extends HttpServlet {
 
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
-		PropertyFileReader prop = new PropertyFileReader();
+		PropertyFileReader prop = PropertyFileReader.getInstance();
 		PrintWriter out = res.getWriter();
 		if (req.getHeader("accessKey").equals(prop.getSecurityKey())) {
 			try {

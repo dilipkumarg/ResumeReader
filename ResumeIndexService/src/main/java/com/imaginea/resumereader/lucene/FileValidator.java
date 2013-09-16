@@ -22,7 +22,7 @@ public class FileValidator {
 			FileDirectoryEmptyException {
 		this.indexDir = indexDirFile;
 		this.listOfFiles = new ArrayList<File>();
-		this.filePathHelper = new FilePathHelper();
+		this.filePathHelper = FilePathHelper.getInstance();
 	}
 
 	public List<File> hashFiles(File dataDir, long timeStamp)

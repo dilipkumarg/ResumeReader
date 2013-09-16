@@ -22,8 +22,9 @@ public class PropertyFileReader {
 	private final String EMPLOYEE_EXCEL = "EmployeeExcel";
 	private final String SECURITY_KEY = "securityKey";
 	private final Logger LOGGER = Logger.getLogger(this.getClass());
+	private static PropertyFileReader instance = null;
 
-	public PropertyFileReader() throws IOException {
+	private PropertyFileReader() throws IOException {
 		propResumeDir = new Properties();
 		propTimeStamp = new Properties();
 		try {
@@ -36,6 +37,13 @@ public class PropertyFileReader {
 			this.setEmployeeExcelPath("Resumes/Book1.xlsx");
 			this.setSecurityKey("pramati123");
 		}
+	}
+
+	public static PropertyFileReader getInstance() throws IOException {
+		if (instance == null) {
+			instance = new PropertyFileReader();
+		}
+		return instance;
 	}
 
 	/**

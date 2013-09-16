@@ -38,7 +38,7 @@ public class SearchServlet extends HttpServlet {
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
 		ExcelManager excelReader = new ExcelManager(
-				new PropertyFileReader().getEmployeeExcelPath());
+				PropertyFileReader.getInstance().getEmployeeExcelPath());
 		try {
 			searchResult = resumeSearchService.search(searchKey, false);
 		} catch (FileDirectoryEmptyException e) {

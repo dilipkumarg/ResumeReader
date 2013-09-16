@@ -19,8 +19,9 @@ public class MainClass {
 	public static final Logger LOGGER = Logger
 			.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private PropertyFileReader properties;
+
 	public MainClass() throws IOException {
-		properties = new PropertyFileReader();
+		properties = PropertyFileReader.getInstance();
 	}
 
 	public static void main(String[] args) throws ParseException, IOException,
@@ -116,7 +117,7 @@ public class MainClass {
 		ResumeIndexSearcher resumeSearchService = new ResumeIndexSearcher();
 		SearchResult searchResult = null;
 		ExcelManager excelReader = new ExcelManager(
-				new PropertyFileReader().getEmployeeExcelPath());
+				properties.getEmployeeExcelPath());
 		searchResult = resumeSearchService.search(args[1]);
 		ResumeSegregator resumeSegregator = new ResumeSegregator();
 		resumeSegregator.compareWithEmployeeList(searchResult.getTopHits(),

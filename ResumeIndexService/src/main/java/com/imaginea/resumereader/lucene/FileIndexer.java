@@ -31,8 +31,8 @@ public class FileIndexer extends Indexer {
 	public FileIndexer(File indexDirFile) throws IOException,
 			FileDirectoryEmptyException {
 		super(indexDirFile);
-		this.filePathHelper = new FilePathHelper();
-		this.resumeMeta = new ResumeMetaExtractor();
+		this.filePathHelper = FilePathHelper.getInstance();
+		this.resumeMeta = ResumeMetaExtractor.getInstance();
 	}
 
 	public void indexFiles(List<File> filesToIndex) throws IOException {

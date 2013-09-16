@@ -11,23 +11,24 @@ import com.imaginea.resumereader.helpers.PropertyFileReader;
 
 public class ExcelWriterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws IOException {
 		ExcelManager excelManager = null;
 		PropertyFileReader prop = null;
-		try {
-			prop = PropertyFileReader.getInstance();
-			excelManager = new ExcelManager(prop.getEmployeeExcelPath());
-		} catch (IOException e) {
-			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					e.getMessage());
-			return;
-		}if (req.getParameter("securityKey").trim()
-				.equals(prop.getSecurityKey())) {
-			excelManager.write(req.getParameter("empName"), Integer.parseInt(req.getParameter("empId")));
+		prop = PropertyFileReader.getInstance();
+		if (req.getHeader("accessKey").equals(prop.getSecurityKey())) {
+			try {
+				excelManager = new ExcelManager(prop.getEmployeeExcelPath());
+			} catch (IOException e) {
+				res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						e.getMessage());
+				return;
+			}
+			excelManager.write(req.getParameter("empName"),
+					Integer.parseInt(req.getParameter("empId")));
 			res.getWriter().print("Employee Successfully added");
-		}else {
+		} else {
 			res.sendError(HttpServletResponse.SC_UNAUTHORIZED,
 					"Security Key not matched");
 		}

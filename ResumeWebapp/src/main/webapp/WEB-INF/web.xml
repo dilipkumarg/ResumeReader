@@ -59,7 +59,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>ExcelEdit</servlet-name>
-    <url-pattern>/resumereader/editemployee</url-pattern>
+    <url-pattern>/resumereader/addemployee</url-pattern>
   </servlet-mapping> 
   <!-- Deleting employees from Excel -->
 	<servlet>

@@ -1,133 +1,77 @@
 <!DOCTYPE html>
-<html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Welcome to Resume Search Engine</title>
-    <script type="text/javascript" src="scripts/jquery-1.10.2.js"></script>
-    <script type="text/javascript" src="scripts/jquery.ba-hashchange.js"></script>
-    <script type="text/javascript" src="scripts/bootstrap.js"></script>
-    <link type="text/css" rel="stylesheet" href="styles/bootstrap.css">
-    <link type="text/css" rel="stylesheet" href="styles/custom_styles.css">
-    <script type="text/javascript">
-        // loading hash based page
-        $(function () {
-            // These two properties, set after jQuery and the hashchange event plugin are
-            // loaded, only need to be used when document.domain is set (to fix the "access
-            // denied" error in IE6/7).
-            $.fn.hashchange.src = '../../document-domain.html';
-            $.fn.hashchange.domain = document.domain;
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title></title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width"/>
+    <link rel="stylesheet" href="styles/bootstrap.css"/>
+    <link rel="stylesheet" href="styles/main.css"/>
+    <title>Welcome to Resume Search Engine | Pramati Technologies</title>
 
-            // Bind an event to window.onhashchange that, when the hash changes, gets the
-            // hash and adds the class "selected" to any matching nav link.
-            $(window).hashchange(function () {
-                var hashString = location.hash;
-                if (hashString.length > 0) {
-                    var res = hashString.search("q="),
-                            key = hashString.substr(res + 2).trim(),
-                            context = "",
-                            contextPos = key.indexOf("&c=");
-                    if (contextPos !== -1) {
-                        context = key.substr(contextPos + 3);
-                        key = key.substr(0, contextPos);
-                    }
-                    resumeReader.Searcher.searchAndPrint(key, context);
-                }
-
-            });
-
-            // Since the event is only triggered when the hash changes, we need to trigger
-            // the event now, to handle the hash the page may have loaded with.
-            $(window).hashchange();
-
-            // attaching help text for search box
-            $("#" + resumeReader.ids.queryTextBox).popover({trigger: 'focus',
-                placement: 'bottom'});
-
-            // if Object.keys method not present creating new function
-            if (!Object.keys) Object.keys = function (o) {
-                if (o !== Object(o))
-                    throw new TypeError('Object.keys called on a non-object');
-                var k = [], p;
-                for (p in o) if (Object.prototype.hasOwnProperty.call(o, p)) k.push(p);
-                return k;
-            }
-        });
-    </script>
 </head>
-<body>
-<div id="body" class="well well-large container">
-    <div id="searchDiv" class="text-center">
-        <div id="headerDiv" class="row page-header">
-            <h1 id="heading">Resume Search Engine</h1>
-            <span class="pull-right">
-                <a class="muted" href="config.html">Cofigure</a><br>
-            </span>
-        </div>
-        <div id="searchForm">
-            <form class="form-search" action="javascript:searchQuery();">
-                <div class="input-append">
-                    <input id="queryText" class="span6" type="text" data-toggle="popover" data-placement="top"
-                           data-content='Use quotes for compound strings like "spring mvc"' title=""
-                           data-original-title="Hint!"
-                           placeholder="Search Query Here!" required="required">
-                    <button type="submit" class="btn">
-                        <i class="icon-search"></i>
-                    </button>
-                </div>
-            </form>
-            <div id="searchHint" class="alert alert-info invisible">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Hint!</strong> use quotes for strings like "java script".
-            </div>
-        </div>
-    </div>
-    <div>
-        <!-- <div class="loadingDiv">
-         </div>-->
-        <div id="resultsDiv"></div>
-    </div>
+<body ng-app="resumeSearchApp">
 
-    <!-- Modal -->
-    <div id="myModal" class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel">Resume Content</h3>
-        </div>
-        <div class="modal-body">Please Wait.. Loading Resume</div>
-    </div>
-    <!-- Modal for showing progress bar -->
-    <div id='progressBarModal' class="modal hide fade span8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-         aria-hidden="true">
-        <div class="modal-header text-center">
-            <span class="text-info">Please wait.. while we fetch results..!! </span>
-        </div>
-        <div class="modal-body">
-            <div>
-                <!-- <img src="img/bar.gif">-->
-                <div class="centerPos">
-                    <img src="img/bar.gif">
+<!--[if lt IE 7]>
+<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser
+    today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better
+    experience this site.</p>
+<![endif]-->
+
+<!--[if lt IE 9]>
+<script src="scripts/vendor/es5-shim.min.js"></script>
+<script src="scripts/vendor/json3.min.js"></script>
+<![endif]-->
+
+<!-- Application content -->
+<div class="main-content">
+    <!-- Page Header goes here-->
+    <div id='header-div'>
+        <header class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <div class="pull-left">
+                        <a class="brand" role="button" href="#">
+                            Resume Search Engine
+                        </a>
+                    </div>
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                            <li><a href="#"> Configuration </a>
+                            </li>
+                            <li><a href="#">Logs</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-
+        </header>
     </div>
-    <div id="alertBox" class="alert hide text-center">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        <span id="alertText"> Here status will be shown</span>
+    <!-- Content goes here -->
+    <div class="top-margin" ng-view></div>
+
+    <!-- Page footer goes here -->
+    <div id='footer-div'>
+        <footer class="page-footer">
+            <div class="container">
+                <p>Site by <a href="#">Imaginea Technologies</a></p>
+            </div>
+        </footer>
     </div>
 </div>
-<script>
-    // this code is for dynamically loading different resumes on the modal
-    $('#myModal').on('hidden', function () {
-        $(this).removeData('modal');
-    });
-</script>
-<script type="text/javascript" src="scripts/highlight.js"></script>
-<script type="text/javascript" src="scripts/namespace.js"></script>
-<script type="text/javascript" src="scripts/ElementCreator.js"></script>
-<script type="text/javascript" src="scripts/ListGenerator.js"></script>
-<script type="text/javascript" src="scripts/ResultHeaderCreator.js"></script>
-<script type="text/javascript" src="scripts/search.js"></script>
+
+<script src="scripts/vendor/angular.js"></script>
+
+<!-- build:js scripts/scripts.js -->
+<script src="scripts/app.js"></script>
+<script src="scripts/controllers/main.js"></script>
+<!-- endbuild -->
 </body>
 </html>

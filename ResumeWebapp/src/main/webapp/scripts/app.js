@@ -1,6 +1,6 @@
 'use strict';
 
-var sampleYeomanAppApp = angular.module('resumeSearchApp', [])
+var sampleYeomanAppApp = angular.module('resumeSearchApp', ['ui.bootstrap'])
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
       .when('/', {

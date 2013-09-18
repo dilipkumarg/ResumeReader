@@ -3,75 +3,72 @@
         <!--<label class="span3">Search Resumes:</label>-->
         <img src="img/resume-logo.jpg" alt="Pramati Logo" class="span2"/>
         <input type="text" placeholder="Enter query here!" class="span7"/>
-        <button class="btn btn-primary btn-large"><i class="icon-white icon-search"></i></button>
+        <button class="btn btn-primary btn-large btn-search"><i class="icon-white icon-search"></i></button>
     </div>
 
     <!-- Results display here-->
     <div id='results-div' class="row-fluid">
-        <div id="results-header" class="row-fluid results-header">
-            <span class="label label-info">Search Key: java</span>
-            <span class="label label-info">Context Key: eclipse</span>
-            <span class="label label-info">Total Hits: 350</span>
-            <span class="label label-info">Search Duration: 10ms</span>
-            <span class="label label-info">Segregation Duration: 400ms</span>
-            <span class="label label-info">Highlight Duration: 2467ms</span>
+        <div id="results-header" class="row results-header">
+            <span class="label label-info">Search Key: {{ result.searchKey }}</span>
+            <span class="label label-info">Context Key: {{ result.contextKey }}</span>
+            <span class="label label-info">Total Hits: {{ result.totalHits }}</span>
+            <span class="label label-info">Search Duration: {{ result.searchDuration }}ms</span>
+            <span class="label label-info">Segregation Duration: {{ result.searchDuration }}ms</span>
+            <span class="label label-info">Highlight Duration: {{ result.highlightTime }}ms</span>
         </div>
-        <div class="row-fluid results-container">
-            <div id="results-filter" class="span3 pull-left results-sidebar">
-                <div class="results-filter">
-                    <legend>Filter Results!</legend>
-                    <input type="text" class="span10"/>
-                </div>
-                <div class="results-order-by">
-                    <legend>Order By</legend>
-                    <label><input type="radio"/>Name</label>
-                    <label><input type="radio"/>Match percentage</label>
-                    <label><input type="radio"/>Highlight fragments</label>
-                </div>
+        <div class="row results-main">
+            <div id="results-sidebar" class="span3 results-sidebar">
+                <ul class="nav nav-list results-sidenav">
+                    <li class="{{ activeList.active }}">
+                        <a ng-click="showHits('active')"> <i class="icon-chevron-right"></i>Active ({{ count.active }})</a>
+                    </li>
+                    <li class="{{ activeList.probable }}">
+                        <a ng-click="showHits('probable')"><i class="icon-chevron-right"></i>Probable ({{ count.probable }})</a>
+                    </li>
+                    <li class="{{ activeList.inActive }}">
+                        <a ng-click="showHits('inActive')"><i class="icon-chevron-right"></i>InActive ({{ count.inActive }})</a>
+                    </li>
+                </ul>
             </div>
 
-            <div id="results-body" class="span9 pull-left results-body">
-                <div class="results-navbar row-fluid">
-                    <ul class="text-center">
-                        <li class="span3 active"><a class="" href="#">Active</a></li>
-                        <li class="span3"><a class="" href="#">Probable</a></li>
-                        <li class="span3"><a class="" href="#">In-Active</a></li>
-                    </ul>
+            <div id="results-body" class="span9 results-body">
+                <div class="row-fluid result-body-filter">
+                    <div class="results-filter pull-left span4">
+                        <input type="text" class="span12" placeholder="Filter Names"/>
+                    </div>
+                    <div class="results-order-by pull-left span4 offset1">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle btn">
+                                Order by
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a ng-href="#">Name</a></li>
+                                <li><a ng-href="#">Match Percentage</a></li>
+                                <li><a ng-href="#">Highlight count</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div class="row-fluid">
-                    <ul>
-                        <li>
-                            <div>
-                                <span>Arun Krishna Omkaram</span>
-                                <a href="#0.1_" title="Expand/Collapse Context">
-                                    <span> 2 <i class="icon-chevron-down"></i></span>
-                                </a>
-                                <a href="http://resumereader/view?filename=New%20Format%20Resume/ARUN%20KRISHNA%20OMKARAM.doc"
-                                   title="View Doc as Plain Text" target="_blank">
-                                    <i class="icon-eye-open"></i>
-                                </a>
-                            </div>
-                            <div>
-                                <p>technical hands on experience in implementing Java and C++. Also he has experience
-                                    in using Servlets, JSP, HTML, and Java <span>Script</span>. He has experience on He
-                                    has
-                                    Strong knowledge in Oracle 9i, MySQL, PL/SQL, stored procedures and database
-                                    concepts.
-                                </p>
-
-                                <p>
-                                    Programming Languages
-                                    Java, C, Objective C, C++, Cobol.
-
-                                    Web Technology
-                                    HTML5, CSS3, Java <span>Script</span>, JQuery, Servlets, JSP
-
-                                    Tools
-                                    Xcode, Yourkit java profiler, Subversion, Eclipse, Winrunner
-
-
-                                    WORK HISTORY
-
+                <div class="row-fluid results-container">
+                    <ul class="nav nav-tabs nav-stacked">
+                        <li class="resultListElement" ng-repeat="(name,person) in list">
+                            <div id="itemDivActive0" class="itemHeader" data-toggle="popover" data-placement="bottom"
+                                 data-content="{{ person.closematch }}" data-original-title="Related Match!"><span
+                                    class="titleLabel">{{ name }}</span><a
+                                    class="expandSummary offset1 pull-right span1"
+                                    href="#"
+                                    title="Expand/Collapse Context"><span
+                                    class="badge pull-right"> {{ person.summary.length }} <i
+                                    class="icon-chevron-down"></i></span></a><a
+                                    class="offset1 pull-right"
+                                    href="{{ person.filepath }}"
+                                    data-toggle="modal"
+                                    title="View Doc as Plain Text"
+                                    data-target="#myModal"><i
+                                    class="icon-eye-open"></i></a></div>
+                            <div class="summaryDiv">
+                                <p class="summaryPara" ng-repeat="para in person.summary" ng-bind-html-unsafe="para">
                                 </p>
                             </div>
                         </li>

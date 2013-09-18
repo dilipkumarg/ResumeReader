@@ -13,7 +13,10 @@
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width"/>
     <link rel="stylesheet" href="styles/bootstrap.css"/>
+    <link rel="stylesheet" href="styles/bootstrap-responsive.css"/>
     <link rel="stylesheet" href="styles/main.css"/>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="scripts/vendor/bootstrap.js"></script>
     <title>Welcome to Resume Search Engine | Pramati Technologies</title>
 
 </head>
@@ -28,6 +31,7 @@
 <!--[if lt IE 9]>
 <script src="scripts/vendor/es5-shim.min.js"></script>
 <script src="scripts/vendor/json3.min.js"></script>
+
 <![endif]-->
 
 <!-- Application content -->
@@ -37,6 +41,12 @@
         <header class="navbar navbar-fixed-top navbar-inverse">
             <div class="navbar-inner">
                 <div class="container-fluid">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+
                     <div class="pull-left brand-div">
                         <!-- <img src="img/pramati_logo.jpg" alt="Pramati Logo" class="span2"/>-->
                         <a class="brand" role="button" href="#">
@@ -46,9 +56,9 @@
                             Resume Search Engine
                         </a>-->
                     </div>
-                    <div class="nav-collapse pull-right">
+                    <div class="nav-collapse collapse navbar-responsive-collapse pull-right">
                         <ul class="nav">
-                          <!--  <li><a href="#">Resume Search Engine</a></li>-->
+                            <!--  <li><a href="#">Resume Search Engine</a></li>-->
                             <li><a href="#"> Configuration </a></li>
                             <li><a href="#">Logs</a></li>
                         </ul>
@@ -71,6 +81,7 @@
 </div>
 
 <script src="scripts/vendor/angular.js"></script>
+<script src="scripts/vendor/ui-bootstrap-0.6.0.js"></script>
 
 <!-- build:js scripts/scripts.js -->
 <script src="scripts/app.js"></script>
